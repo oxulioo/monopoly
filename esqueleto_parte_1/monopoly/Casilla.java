@@ -1,6 +1,6 @@
 package monopoly;
 //hola caracola
-
+//hola señoras
 //hola noa que tal hola javi que tal
 import partida.*;
 import java.util.ArrayList;
