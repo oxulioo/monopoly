@@ -35,6 +35,15 @@ public class Jugador {
     * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
      */
     public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
+        //verificar que el nombre no exista en el array de avatares creados
+        if(existeNombre(nombre, avCreados)){
+            System.out.println("Jugador existe");
+            return; //se debería lanzar una Excepción
+        }
+        //verificar que dos jugadores no tengan en el mismo tipo de avatar
+        //se logra al crear el nuevo avatar
+        Avatar avatar= new avatar ();
+
         this.nombre = nombre;
         this.fortuna = 15000000; // Todos los jugadores empiezan con 15M
         this.gastos = 0;
@@ -47,8 +56,15 @@ public class Jugador {
         this.avatar = new Avatar(tipoAvatar, avCreados);
 
         // Colocamos el avatar en la casilla inicial (Salida)
-        this.avatar.setPosicion(inicio);
+        //this.avatar.setPosicion(inicio);
     }
+    private boolean existeNombre(String nombre, ArrayList<Avatar> avCreadps){
+        for (Avatar avatar : avCreados){
+            if (avatar.getJugador().getNombre().equals(nombre))
+                return true;
+        }
+    }
+
 
     //Otros métodos:
     //Método para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
@@ -74,6 +90,13 @@ public class Jugador {
     /*Método para establecer al jugador en la cárcel. 
     * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
+    }
+
+
+    //Metodo para obtener el nombre del jugador
+
+    public String getNombre() {
+        return nombre;
     }
 
 }

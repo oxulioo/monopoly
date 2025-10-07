@@ -39,4 +39,9 @@ public class Avatar {
      */
     private void generarId(ArrayList<Avatar> avCreados) {
     }
+
+    //Método para obtener el jugador al que pertenece el avatar
+    public Jugador getJugador(){
+        return jugador;
+    }
 }
