@@ -17,6 +17,8 @@ public class Menu {
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
 
+    private int doblesConsecutivos = 0; // para contar dobles en el mismo turno
+
     // === Arranque ===
     public Menu() {
         iniciarPartida();
@@ -86,8 +88,9 @@ public class Menu {
             return;
         }
 
-        if (comando.equals("listar jugadores")) {
-            listarJugadores();
+        // lanzar dados
+        if (comando.equals("lanzar dados")) {
+            lanzarDados();
             return;
         }
 
@@ -195,6 +198,56 @@ public class Menu {
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.
     private void lanzarDados() {
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores. Crea uno con: crear jugador <Nombre> <tipoAvatar>");
+            return;
+        }
+        Jugador actual = jugadores.get(turno);
+
+        // Tiramos los dos dados usando hacerTirada() para conocer cada valor
+        int d1 = dado1.hacerTirada();
+        int d2 = dado2.hacerTirada();
+        int suma = d1 + d2;
+        boolean esDoble = (d1 == d2);
+
+        System.out.println("Dados: " + d1 + " + " + d2 + " = " + suma + (esDoble ? " (dobles)" : ""));
+
+        // Gestionar dobles y 3 dobles seguidos -> cárcel
+        if (esDoble) {
+            doblesConsecutivos++;
+            if (doblesConsecutivos >= 3) {
+                System.out.println("¡Tres dobles seguidos! " + actual.getNombre() + " va a la cárcel.");
+                try { tablero.enviarACarcel(actual); } catch (Throwable ignore) {}
+                doblesConsecutivos = 0;
+                tirado = true;  // el turno termina al ir a cárcel
+                try { System.out.println(tablero); } catch (Throwable ignore) {}
+                return;
+            }
+        } else {
+            doblesConsecutivos = 0;
+            tirado = true; // si no es doble, este turno ya no puede volver a tirar
+        }
+
+        // Mover al jugador 'suma' casillas (ajusta el método a vuestra API si se llama distinto)
+        try {
+            tablero.moverJugador(actual, suma);
+        } catch (Throwable e) {
+            System.out.println("(Aviso) Falta implementar el movimiento en Tablero.moverJugador(Jugador,int).");
+            return;
+        }
+
+        // Aplicar regla de la casilla donde cayó (si vuestro modelo lo tiene)
+        try { tablero.aplicarRegla(actual); } catch (Throwable ignore) {}
+
+        // Repintar tablero
+        try { System.out.println(tablero); } catch (Throwable ignore) {}
+
+        // Si sacó dobles (y no eran 3), puede volver a lanzar en este turno
+        if (esDoble) {
+            System.out.println(actual.getNombre() + " ha sacado dobles y puede volver a lanzar.");
+            tirado = false; // permitir otra tirada
+        }
+
     }
 
     /*Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
@@ -209,10 +262,52 @@ public class Menu {
 
     // Método que realiza las acciones asociadas al comando 'listar enventa'.
     private void listarVenta() {
+
     }
 
     // Método que realiza las acciones asociadas al comando 'listar jugadores'.
     private void listarJugadores() {
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores en la partida.");
+            return;
+        }
+
+        for (Jugador j : jugadores) {
+            String nombre = j.getNombre();
+
+            // Avatar: "tipo (ID)" si hay avatar; "-" si no
+            String avatarStr = "-";
+            Avatar a = j.getAvatar();
+            if (a != null) {
+                String tipo = a.getTipo();
+                String id   = a.getID();
+                avatarStr = (id != null && !id.isEmpty()) ? (tipo + " (" + id + ")") : tipo;
+            }
+
+            // Fortuna con 2 decimales
+            String fortunaStr = String.format("%.2f", j.getFortuna());
+
+            // Propiedades: lista de nombres o "-"
+            String propiedadesStr = "-";
+            java.util.List<Casilla> props = j.getPropiedades();
+            if (props != null && !props.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < props.size(); i++) {
+                    Casilla c = props.get(i);
+                    sb.append(c.getNombre());
+                    if (i < props.size() - 1) sb.append(", ");
+                }
+                propiedadesStr = sb.toString();
+            }
+
+            System.out.println("Jugador: " + nombre);
+            System.out.println("  Avatar: " + avatarStr);
+            System.out.println("  Fortuna: " + fortunaStr);
+            System.out.println("  Propiedades: " + propiedadesStr);
+            System.out.println("  Hipotecas: -");
+            System.out.println("  Edificios: -");
+            System.out.println();
+        }
     }
 
     // Método que realiza las acciones asociadas al comando 'listar avatares'.

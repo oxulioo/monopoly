@@ -51,12 +51,20 @@ public class Casilla {
 
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
     * Parámetros: nombre, posición en el tablero, impuesto establecido y dueño.
-     */
+    */
     public Casilla(String nombre, int posicion, float impuesto, Jugador duenho) {
         if(posicion<1||posicion>40){
             System.out.println("La posición debe estar entre 1 y 40");//No hay más de 40 casillas, trato el caso en el que se introduzca un valor no válido
         }
-
+        this.nombre=nombre;
+        this.tipo=TIMPUESTO;
+        this.posicion=posicion;
+        this.duenho=duenho;
+        this.valor=0;
+        this.hipoteca=0;
+        this.grupo=null;
+        this.impuesto=0;
+        this.hipoteca=0;
     }
 
     /*Constructor utilizado para crear las otras casillas (Suerte, Caja de comunidad y Especiales):
@@ -111,6 +119,7 @@ public class Casilla {
      * Valor devuelto: texto con esa información.
      */
     public String casEnVenta() {
+        boolean enVenta = (this.duenho == null) || ("Banca")
     }
 
 }
