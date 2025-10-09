@@ -65,6 +65,23 @@ public class Menu {
         System.out.println("[NO IMPLEMENTADO] " + comando);
     }
 
+    private void ejecutarFichero(String ruta) {
+        java.io.File f = new java.io.File(ruta);
+        if (!f.exists()) {                         // chequeo simple (opcional)
+            System.out.println("Error leyendo: " + ruta);
+            return;
+        }
+        try (java.util.Scanner sc = new java.util.Scanner(f)) {  // <- try-with-resources
+            while (sc.hasNextLine()) {
+                String linea = sc.nextLine();      // sin trim, como pediste
+                analizarComando(linea);
+            }
+        } catch (java.io.IOException e) {          // errores de E/S
+            System.out.println("Error leyendo: " + ruta);
+        }
+    }
+
+
     /*Método que realiza las acciones asociadas al comando 'describir jugador'.
     * Parámetro: comando introducido
      */
