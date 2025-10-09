@@ -12,9 +12,8 @@ public class Dado {
     }
     //Lanzamos 2 dados y sumamos sus valores.
     public int lanzarDados(){
-        private int dado1 = hacerTirada();
-        private int dado2 = hacerTirada();
-        public boolean esdoble(){ return dado1 == dado2;
+        int dado1 = hacerTirada();
+        int dado2 = hacerTirada();
         return dado1+dado2;
     }
 }

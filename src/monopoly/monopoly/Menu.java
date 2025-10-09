@@ -60,10 +60,66 @@ public class Menu {
             ejecutarFichero(ruta);
             return;
         }
+        // crear jugador <Nombre> <tipoAvatar>  (sin trim ni validación)
+        if (comando.startsWith("crear jugador ")) {
+            String resto = comando.substring("crear jugador ".length());
+            int idx = resto.lastIndexOf(' ');
+            if (idx <= 0 || idx == resto.length() - 1) {
+                System.out.println("Uso: crear jugador <Nombre> <tipoAvatar>");
+                return;
+            }
+            String nombre = resto.substring(0, idx);          // tal cual (puede tener espacios)
+            String tipo   = resto.substring(idx + 1);          // tal cual (sin validar)
+            crearJugador(nombre, tipo);
+            return;
+        }
+
+        // jugador: muestra quién tiene el turno
+        if (comando.equals("jugador")) {
+            mostrarJugadorActual();
+            return;
+        }
+
+        //listar jugadores
+        if (comando.equals("listar jugadores")) {
+            listarJugadores();
+            return;
+        }
+
+        if (comando.equals("listar jugadores")) {
+            listarJugadores();
+            return;
+        }
+
 
         // Aquí irán el resto de comandos
         System.out.println("[NO IMPLEMENTADO] " + comando);
     }
+
+    // Muestra quién tiene el turno actual (por índice 'turno')
+    private void mostrarJugadorActual() {
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores. Crea uno con: crear jugador <Nombre> <tipoAvatar>");
+            return;
+        }
+        if (turno < 0 || turno >= jugadores.size()) {
+            // Por si acaso, normalizamos el índice de turno
+            turno = turno % jugadores.size();
+            if (turno < 0) turno += jugadores.size();
+        }
+
+        Jugador actual = jugadores.get(turno);
+        // Asumiendo que Jugador tiene getNombre(). Si no, usa toString().
+        String nombre;
+        try {
+            nombre = actual.getNombre();
+        } catch (Throwable t) {
+            nombre = String.valueOf(actual); // fallback
+        }
+
+        System.out.println("Tiene el turno: " + nombre);
+    }
+
 
     private void ejecutarFichero(String ruta) {
         java.io.File f = new java.io.File(ruta);
@@ -81,11 +137,48 @@ public class Menu {
         }
     }
 
+    // Crea Jugador+Avatar en "Salida" y repinta el tablero (sin validación, sin trim)
+    private void crearJugador(String nombre, String tipoAvatar) {
+        // 1) Buscar casilla de inicio ("Salida")
+        Casilla salida = null;
+        try {
+            // Usa la API que tengáis; si no existe, cambiad esta línea por la correcta.
+            salida = tablero.encontrar_casilla("Salida");
+        } catch (Exception e) {
+            System.out.println("No se pudo localizar la casilla 'Salida'.");
+            return;
+        }
+        if (salida == null) {
+            System.out.println("No se encontró 'Salida' en el tablero.");
+            return;
+        }
+
+        // 2) Crear jugador (asumimos que el constructor genera el Avatar con ID aleatorio)
+        //    Firma esperada en vuestro modelo: Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados)
+        Jugador j;
+        try {
+            j = new Jugador(nombre, tipoAvatar, salida, avatares);
+        } catch (Exception e) {
+            System.out.println("Error creando jugador: " + e.getMessage());
+            return;
+        }
+
+        // 3) Registrar
+        jugadores.add(j);
+        // Si vuestro Jugador expone getAvatar(), podríais también: if (j.getAvatar()!=null) avatares.add(j.getAvatar());
+
+        // 4) Mensaje + “repintar” tablero
+        System.out.println("Creado jugador '" + nombre + "' con avatar '" + tipoAvatar + "' en Salida.");
+        try { System.out.println(tablero); } catch (Throwable ignored) {}
+    }
+
+
 
     /*Método que realiza las acciones asociadas al comando 'describir jugador'.
     * Parámetro: comando introducido
      */
-    private void descJugador(String[] partes) {
+    private void descJugador(String[] partes) { /// puedes pasar el nombre en vez de el string GRACIAS CORAZON
+
     }
 
     /*Método que realiza las acciones asociadas al comando 'describir avatar'.
