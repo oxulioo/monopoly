@@ -9,11 +9,15 @@ public class Casilla {
     //Atributos:
     private String nombre; //Nombre de la casilla
     private String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte y Impuesto).
+
     public static final String TSOLAR = "Solar";
-    public static final String TSERVICIO = "Servicio";
+    public static final String TESPECIAL = "Especial";
     public static final String TTRANSPORTE = "Transporte";
+    public static final String TSERVICIOS = "Servicios";
     public static final String TCOMUNIDAD = "Comunidad";
-    public static final String TSU
+    public static final String TSUERTE = "Suerte";
+    public static final String TIMPUESTO = "Impuesto";
+
     private float valor; //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
     private int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
     private Jugador duenho; //Dueño de la casilla (por defecto sería la banca).
