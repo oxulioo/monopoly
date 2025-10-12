@@ -139,7 +139,21 @@ public class Casilla {
         String nombre = (this.nombre == null) ? "" : this.nombre;
         String tipo = (this.tipo == null) ? "" : this.tipo;
         String dueno = (this.duenho == null) ? "Banca" : this.duenho.getNombre();
-        return "Casilla: " + nombre + " | Tipo: " + tipo + " | Posición: " + this.posicion + " | Valor: " + this.valor + " | Dueño: " + dueno;
+
+        String s="Casilla: " + nombre + " | Tipo: " + tipo + " | Posición: " + this.posicion + " | Dueño: " + dueno;
+
+        if(TSOLAR.equals(tipo)){
+            String color= (this.grupo!=null)?this.grupo.getColorGrupo(): "-";
+            s+=" | Grupo: " + color+ " | Valor: " +this.valor;
+        }else if(TSERVICIOS.equals(tipo)||TTRANSPORTE.equals(tipo)){
+            s+=" | Valor: "+this.valor;
+        }else if(TIMPUESTO.equals(tipo)){
+            s+=" | Impuesto: "+this.impuesto;
+        }else if(TESPECIAL.equals(tipo)&&"Parking".equals(nombre)){
+            s+= " | Bote: "+this.valor;
+        }
+
+        return s;
     }
 
     /* Método para mostrar información de una casilla en venta.

@@ -75,5 +75,10 @@ class Grupo {
         }
         return true;
     }
+    //Añado un getter del color
+    public String getColorGrupo(){
+        return colorGrupo;
+    }
+
 
 }

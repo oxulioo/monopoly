@@ -8,19 +8,20 @@ public class Valor {
     public static final float FORTUNA_INICIAL = 9543076.28f; // Cantidad que recibe cada jugador al comenzar la partida
     public static final float SUMA_VUELTA = 1301328.584f; // Cantidad que recibe un jugador al pasar pos la Salida
     */
-    public final class Valor{
-        private Valor() {}
-        //Para evitar errores de desbordamiento pongo L (long)
-        public static final long FORTUNA_INICIAL = 15000000L;
-        public static final long SUMA_VUELTA = 2000000L;
-        public static final long PRECIO_SALIR_CARCEL = 500000L;
-        public static final long IMPUESTO_FIJO = 2000000L;
-
-        public static final long FACTOR_SERVICIO = 50000L;
-        public static final long ALQUILER_TRANSPORTE = 250000L;
-        public static final long FORTUNA_BANCA = Long.MAX_VALUE; //Dado que la fortuna de la banca es ilimitada, le doy como valor el mayor número que cabe en un long con signo en Java.
+    public final class Valor {
+    private Valor() {
     }
-    
+
+    public static final float FORTUNA_INICIAL = 15000000f;
+    public static final float SUMA_VUELTA = 2000000f;
+    public static final float PRECIO_SALIR_CARCEL = 500000f;
+    public static final float IMPUESTO_FIJO = 2000000f;
+
+    public static final float FACTOR_SERVICIO = 50000f;
+    public static final float ALQUILER_TRANSPORTE = 250000f;
+    public static final float FORTUNA_BANCA = Float.MAX_VALUE; //Dado que la fortuna de la banca es ilimitada, le doy como valor el mayor número que cabe en un float con signo en Java.
+
+
     //Colores del texto:
     public static final String RESET = "\u001B[0m";
     public static final String BLACK = "\u001B[30m";
