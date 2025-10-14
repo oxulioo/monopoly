@@ -42,7 +42,7 @@ public class Jugador {
         }
         //verificar que dos jugadores no tengan en el mismo tipo de avatar
         //se logra al crear el nuevo avatar
-        Avatar avatar= new avatar ();
+        Avatar avatar= new avatar (); //pasamos this como jugador
 
         this.nombre = nombre;
         this.fortuna = 15000000; // Todos los jugadores empiezan con 15M
