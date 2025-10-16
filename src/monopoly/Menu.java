@@ -24,8 +24,15 @@ public class Menu {
     public Menu() {
         iniciarPartida();
     }
-    //imprimir tablero
 
+    // Imprime el tablero (usa toString() del Tablero)
+    private void verTablero() {
+        if (tablero == null) {
+            System.out.println("No hay tablero cargado.");
+            return;
+        }
+        System.out.println(tablero);
+    }
 
 
     // Método para inciar una partida: crea los jugadores y avatares.
@@ -743,12 +750,5 @@ public class Menu {
 }
 
 
-// Imprime el tablero (usa toString() del Tablero)
-private void verTablero() {
-    if (tablero == null) {
-        System.out.println("No hay tablero cargado.");
-        return;
-    }
-    System.out.println(tablero);
-}
+
 
