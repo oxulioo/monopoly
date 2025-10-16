@@ -66,7 +66,6 @@ public class Jugador {
             System.out.println("Jugador existe");
             return; //se debería lanzar una Excepción
         }
-        Avatar avatar= new avatar (); //pasamos this como jugador
 
         this.nombre = nombre;
         this.fortuna = 15000000; // Todos los jugadores empiezan con 15M
@@ -76,14 +75,14 @@ public class Jugador {
         this.propiedades = new ArrayList<>();
 
         // Creamos el avatar (pasamos tipo y lista de avatares ya creados para asegurar unicidad)
-        this.avatar = new Avatar(tipoAvatar, avCreados);
+        this.avatar = new Avatar(tipoAvatar, inicio, this, avCreados);
 
         // Colocamos el avatar en la casilla inicial (Salida)
         //this.avatar.setPosicion(inicio);
 
     }
 
-    private boolean existeNombre(String nombre, ArrayList<Avatar> avCreadps){
+    private boolean existeNombre(String nombre, ArrayList<Avatar> avCreados){
         for (Avatar avatar : avCreados){
             if (avatar.getJugador().getNombre().equals(nombre))
                 return true;

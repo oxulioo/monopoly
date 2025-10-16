@@ -132,14 +132,15 @@ public class Casilla {
 
         if(TESPECIAL.equals(tipo)&&"Parking".equalsIgnoreCase(nombre)){
             if(this.valor>0){
-                actual.cobrar(this.valor);
+                actual.sumarFortuna(this.valor);
                 this.valor=0;
             }
             return true;
         }
         if(TIMPUESTO.equals(tipo)){
-            float cantidad=(this.alquiler>0)?this.alquiler:Valor.IMPUESTO;
-            return actual.pagar(cantidad);
+            float cantidad=(this.alquiler>0)?this.alquiler:Valor.IMPUESTO_FIJO;
+            actual.pagarImpuesto(cantidad);
+            return true;
         }
         if(TTRANSPORTE.equals(tipo)){
             if(this.duenho!=null&&!this.duenho.equals(actual)){

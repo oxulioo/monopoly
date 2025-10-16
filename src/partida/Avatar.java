@@ -22,12 +22,12 @@ public class Avatar {
     private int nDobles;
 
     // ==== CONSTRUCTOR ====
-    public Avatar(char id, String tipo, Casilla posicion, Jugador jugador) {
-        this.id = id;
+    public Avatar(String tipo, Casilla posicion, Jugador jugador, ArrayList<Avatar> avcreados) {
         this.tipo = tipo;
         this.lugar = posicion;
         this.jugador = jugador;
         this.nDobles = 0;
+        this.generarId(avcreados);
     }
 
     // ==== GETTERS Y SETTERS ====
@@ -93,30 +93,30 @@ public class Avatar {
         }
     }
 
-    /*Método que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
-    * El ID generado será una letra mayúscula. Parámetros:
-    * - Un arraylist de los avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
-     */
-    private void generarId(ArrayList<Avatar> avCreados) { //pancho
+    // ==== GENERADOR DE ID ====
+
+    private void generarId(ArrayList<Avatar> avCreados) {
         char id;
-        do{
+        do {
             id = generarLetraMayuscula();
-        } while (existeId (avCreados, String.valueOf(id)));
+        } while (existeId(avCreados, id));
         this.id = id;
         avCreados.add(this);
     }
 
-    private boolean existeId(ArrayList<Avatar> avCreados, char id){ //pancho
+    private boolean existeId(ArrayList<Avatar> avCreados, char id) {
         for (Avatar avatar : avCreados) {
-            if (avatar.id.equals(id)) {
+            if (avatar.id == id) {
                 return true;
             }
         }
         return false;
-
     }
-    private char generarLetraMayuscula() { //pancho
-        char letra= (char)(Math. random()*26+97); //le suma la letra 'A'
+
+    private char generarLetraMayuscula() {
+        // ✅ devuelve A–Z correctamente
+        char letra = (char) (Math.random() * 26 + 65);
+        return letra;
     }
 
 }
