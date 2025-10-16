@@ -63,13 +63,13 @@ class Grupo {
     * Parámetro: jugador que se quiere evaluar.
     * Valor devuelto: true si es dueño de todas las casillas del grupo, false en otro caso.
      */
-    public boolean esDuenhoGrupo(Jugador jugador) {
+    public boolean esDuenoGrupo(Jugador jugador) {
         if (jugador == null || miembros.size() != numCasillas || numCasillas == 0) {
             return false;
         }
         for (Casilla c : miembros) {
-            Jugador d = c.getDuenho();
-            if (d == null || d != jugador) {//Si d es null, es la banca y si es distinto de jugador, es dstinto duenho
+            Jugador d = c.getDueno();
+            if (d == null || d != jugador) {//Si d es null, es la banca y si es distinto de jugador, es dstinto dueno
                 return false;
             }
         }

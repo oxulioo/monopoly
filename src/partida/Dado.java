@@ -2,10 +2,16 @@ package partida;
 
 
 public class Dado {
-    //El dado solo tiene un atributo en nuestro caso: su valor.
+
+    // region ==== ATRIBUTOS ====
+
     private int valor;
 
-    //Metodo para simular lanzamiento de un dado: devolverá un valor aleatorio entre 1 y 6.
+    // endregion
+
+    // region ==== MÉTODOS ====
+
+    //Función para simular lanzamiento de un dado: devolverá un valor aleatorio entre 1 y 6.
     public int hacerTirada() {
         this.valor = (int) (Math.random()*6) +1;
         return valor;
@@ -16,4 +22,7 @@ public class Dado {
         int dado2 = hacerTirada();
         return dado1+dado2;
     }
+
+    // endregion
+
 }

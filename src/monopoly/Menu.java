@@ -2,7 +2,6 @@ package monopoly;
 
 import java.util.ArrayList;
 import partida.*;
-import java.util.*;
 
 public class Menu {
 
@@ -489,7 +488,8 @@ public class Menu {
 
         // Mover al jugador 'suma' casillas (ajusta el método a vuestra API si se llama distinto)
         try {
-            tablero.moverJugador(actual, suma); //CREAR
+    //        actual.getAvatar().moverAvatar(tablero.(), suma);     creado por xulian, penso que ao ter que pasar un arraylist de casillas a cousa vai por aqui
+            avatares.moverAvatar(actual, suma); //CREAR
         } catch (Throwable e) {
             System.out.println("(Aviso) Falta implementar el movimiento en Tablero.moverJugador(Jugador,int).");
             return;
@@ -593,7 +593,7 @@ public class Menu {
 
         // 3) Comprobar propietario actual (debe ser la banca)
         Jugador propietario = null;
-        try { propietario = cas.getDuenho(); } catch (Throwable ignored) {}
+        try { propietario = cas.getDueno(); } catch (Throwable ignored) {}
         if (propietario != null && propietario != banca) {
             System.out.println("La propiedad '" + cas.getNombre() + "' no está en venta.");
             return;
@@ -620,7 +620,7 @@ public class Menu {
             }
         }
 
-        try { actual.anhadirPropiedad(cas); } catch (Throwable t) {
+        try { actual.añadirPropiedad(cas); } catch (Throwable t) {
             System.out.println("No se pudo asignar el propietario de la casilla.");
             return;
         }
@@ -682,7 +682,7 @@ public class Menu {
 
         boolean hay = false;
         for (Casilla c : lista) {
-            Jugador dueno = c.getDuenho();
+            Jugador dueno = c.getDueno();
             if (dueno == banca) {                // la banca es la dueña → está en venta
                 System.out.println(c.casEnVenta());
                 hay = true;
