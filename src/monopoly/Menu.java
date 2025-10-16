@@ -357,9 +357,10 @@ public class Menu {
             propiedadesStr = sb.toString();
         }
 
+
         // ¿En cárcel?
-        String carcelStr = "No";
-        try { if (j.estaEnCarcel()) carcelStr = "Sí"; } catch (Throwable ignored) {}
+        String carcelStr = j.isEnCarcel() ? "Sí" : "No";
+
 
         // Salida formateada (Parte 1: Hipotecas y Edificios se muestran como “-”)
         System.out.println("Jugador: " + nombre);

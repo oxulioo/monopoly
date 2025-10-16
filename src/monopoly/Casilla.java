@@ -1,6 +1,5 @@
 package monopoly;
 
-
 import partida.Avatar;
 import partida.Jugador;
 
@@ -120,6 +119,9 @@ public class Casilla {
      * Valor devuelto: true en caso de ser solvente (es decir, de cumplir las deudas), y false
      * en caso de no cumplirlas.*/
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+        if(actual==null) return false;
+
+        if(TSUERTE.equals(tipo)&&("Carcel"))
     }
 
     /*Método usado para comprar una casilla determinada. Parámetros:

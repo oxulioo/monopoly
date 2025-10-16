@@ -42,6 +42,9 @@ public class Jugador {
     public boolean isEnCarcel() {
         return enCarcel;
     }
+    public void entrarEnCarcel()   { enCarcel = true; }
+    public void salirCarcel()      { enCarcel = false; }
+
     public ArrayList<Casilla> getPropiedades() {
         return propiedades;
     }
@@ -90,10 +93,31 @@ public class Jugador {
     //Otros métodos:
     //Método para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
     public void anhadirPropiedad(Casilla casilla) {
+        if(casilla == null){
+            System.out.println("La casilla no existe");
+            return;
+        }
+        String tipo = casilla.getTipo();
+        if(tipo.equals("Impuesto") || tipo.equals("Suerte") || tipo.equals("Caja") || tipo.equals("IrACarcel") || tipo.equals("Carcel") || tipo.equals("Parking")){
+            System.out.println("La casilla no es una propiedad, por lo que no se puede añadir al jugador");
+            return;
+        }
+        if (casilla.getDuenho() != null && casilla.getDuenho() != this){
+            System.out.println("La casilla "+ casilla.getNombre() + " pertenece al jugador " + casilla.getDuenho().getNombre()+ ".");
+            return;
+        }
+        if(!propiedades.contains(casilla)){
+            propiedades.add(casilla);
+            casilla.setDuenho(this);
+            System.out.println(nombre + " ha adquirido la propiedad " + casilla.getNombre());
+        }else{
+            System.out.println("La casilla ya pertenece al jugador");
+        }
     }
 
     //Método para eliminar una propiedad del arraylist de propiedades de jugador.
     public void eliminarPropiedad(Casilla casilla) {
+
     }
 
     //Método para añadir fortuna a un jugador
@@ -122,7 +146,7 @@ public class Jugador {
     }
 
     public void comprarPropiedad(Casilla c){
-        if(getDuenho()!= null){
+        if(c.getDuenho()!= null){
             System.out.println("La propiedad ya tiene un dueño actualmente");
             return;
         }
