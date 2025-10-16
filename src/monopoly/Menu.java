@@ -1,7 +1,9 @@
 package monopoly;
 
 import java.util.ArrayList;
-import partida.*;
+import partida.Avatar;
+import partida.Jugador;
+import partida.Dado;
 
 public class Menu {
 
