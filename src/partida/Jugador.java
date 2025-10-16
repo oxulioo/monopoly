@@ -105,6 +105,7 @@ public class Jugador {
         this.avatar.setPosicion(inicio);
 
     }
+    // trabajamos con punteros para mejorar la eficiencia
 
     private boolean existeNombre(String nombre, ArrayList<Avatar> avCreados) {
         for (Avatar avatar : avCreados) {
@@ -114,8 +115,6 @@ public class Jugador {
         return false;
     }
 
-    //Otros métodos:
-    //Método para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
     public void anadirPropiedad(Casilla casilla) {
         if (casilla == null) {
             System.out.println("La casilla no existe");
@@ -192,7 +191,6 @@ public class Jugador {
             System.out.println("No tiene dinero suficiente para comprar la propiedad " + c.getNombre());
         }
     }
-
 
     /*Método para establecer al jugador en la cárcel.
      * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/

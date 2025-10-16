@@ -6,12 +6,16 @@ import java.util.ArrayList;
 
 class Grupo {
 
-    //Atributos
+    // region ==== ATRIBUTOS ====
+
     private ArrayList<Casilla> miembros; //Casillas miembros del grupo.
     private String colorGrupo; //Color del grupo
     private int numCasillas; //Número de casillas del grupo.
 
-    //Constructor vacío.
+    // endregion
+
+    // region ==== CONSTRUCTORES ====
+
     public Grupo() {
         this.miembros=new ArrayList<>();
         this.colorGrupo="";
@@ -80,5 +84,6 @@ class Grupo {
         return colorGrupo;
     }
 
+    // endregion
 
 }

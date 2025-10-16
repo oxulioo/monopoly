@@ -5,6 +5,8 @@ import partida.*;
 
 public class Menu {
 
+    // region ==== ATRIBUTOS ====
+
     //Atributos
     private ArrayList<Jugador> jugadores; //Jugadores de la partida en orden de alta.
     private ArrayList<Avatar> avatares; //Avatares en la partida.
@@ -16,10 +18,12 @@ public class Menu {
     private Jugador banca; //El jugador banca.
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
-
     private int doblesConsecutivos = 0; // para contar dobles en el mismo turno
 
-    // === Arranque ===
+    // endregion
+
+    // region ==== MÉTODOS ====
+
     public Menu() {
         iniciarPartida();
     }
@@ -197,8 +201,6 @@ public class Menu {
         System.out.println("Tiene el turno: " + actual.getNombre());
     }
 
-
-
     private void ejecutarFichero(String ruta) {
         try (java.util.Scanner sc = new java.util.Scanner(new java.io.File(ruta))) {
             while (sc.hasNextLine()) {
@@ -290,9 +292,6 @@ public class Menu {
             System.out.println();
         }
     }
-
-
-
 
     /*Método que realiza las acciones asociadas al comando 'describir jugador'.
      * Parámetro: comando introducido
@@ -746,6 +745,8 @@ public class Menu {
         Jugador actual = jugadores.get(turno);
         System.out.println("Nuevo turno para: " + actual.getNombre());
     }
+
+    // endregion
 
 }
 

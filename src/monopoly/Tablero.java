@@ -12,11 +12,16 @@ import java.util.HashMap;
 */
 
 public class Tablero {
-    //Atributos.
+
+    // region ==== ATRIBUTOS ====
+
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
     private Jugador banca; //Un jugador que será la banca.
 
+    // endregion
+
+    // region ==== CONSTRUCTORES ====
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
     public Tablero(Jugador banca) {
         this.banca=banca;
@@ -32,7 +37,10 @@ public class Tablero {
         generarGrupos();
     }
 
-    
+    // endregion
+
+    // region ==== MÉTODOS ====
+
     //Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).
     private void generarCasillas() {
         this.insertarLadoSur();
@@ -195,4 +203,7 @@ public class Tablero {
         }
         return null;
     }
+
+    // endregion
+
 }

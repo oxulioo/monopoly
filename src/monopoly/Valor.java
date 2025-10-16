@@ -9,8 +9,6 @@ public class Valor {
     public static final float SUMA_VUELTA = 1301328.584f; // Cantidad que recibe un jugador al pasar pos la Salida
     */
     public final class Valor {
-    private Valor() {
-    }
 
     public static final float FORTUNA_INICIAL = 15000000f;
     public static final float SUMA_VUELTA = 2000000f;
@@ -19,7 +17,8 @@ public class Valor {
 
     public static final float FACTOR_SERVICIO = 50000f;
     public static final float ALQUILER_TRANSPORTE = 250000f;
-    public static final float FORTUNA_BANCA = Float.MAX_VALUE; //Dado que la fortuna de la banca es ilimitada, le doy como valor el mayor número que cabe en un float con signo en Java.
+    public static final float FORTUNA_BANCA = Float.MAX_VALUE;
+    //Dado que la fortuna de la banca es ilimitada, le doy como valor el mayor número que cabe en un float con signo en Java.
 
 
     //Colores del texto:
