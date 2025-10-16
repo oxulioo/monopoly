@@ -27,16 +27,15 @@ public class Menu {
     //imprimir tablero
 
 
-
     // Método para inciar una partida: crea los jugadores y avatares.
     private void iniciarPartida() {
         // Estructuras y estado base
-        jugadores    = new ArrayList<>();
-        avatares     = new ArrayList<>();
-        turno        = 0;
+        jugadores = new ArrayList<>();
+        avatares = new ArrayList<>();
+        turno = 0;
         lanzamientos = 0;
-        tirado       = false;
-        solvente     = true;
+        tirado = false;
+        solvente = true;
 
         // Dados
         dado1 = new Dado();
@@ -51,8 +50,8 @@ public class Menu {
     }
 
     /*Método que interpreta el comando introducido y toma la accion correspondiente.
-    * Parámetro: cadena de caracteres (el comando).
-    */
+     * Parámetro: cadena de caracteres (el comando).
+     */
     private void analizarComando(String comando) {
         if (comando == null) return;
         if (comando.isEmpty()) return;
@@ -72,7 +71,7 @@ public class Menu {
                 return;
             }
             String nombre = resto.substring(0, idx);          // tal cual (puede tener espacios)
-            String tipo   = resto.substring(idx + 1);          // tal cual (sin validar)
+            String tipo = resto.substring(idx + 1);          // tal cual (sin validar)
             crearJugador(nombre, tipo);
             return;
         }
@@ -192,7 +191,6 @@ public class Menu {
     }
 
 
-
     private void ejecutarFichero(String ruta) {
         try (java.util.Scanner sc = new java.util.Scanner(new java.io.File(ruta))) {
             while (sc.hasNextLine()) {
@@ -235,7 +233,10 @@ public class Menu {
 
         // 4) Mensaje + “repintar” tablero
         System.out.println("Creado jugador '" + nombre + "' con avatar '" + tipoAvatar + "' en Salida.");
-        try { System.out.println(tablero); } catch (Throwable ignored) {}
+        try {
+            System.out.println(tablero);
+        } catch (Throwable ignored) {
+        }
     }
 
     // Método que realiza las acciones asociadas al comando 'listar jugadores'.
@@ -254,7 +255,7 @@ public class Menu {
             Avatar a = j.getAvatar();
             if (a != null) {
                 String tipo = a.getTipo();
-                String id   = a.getID();
+                String id = a.getID();
                 avatarStr = (id != null && !id.isEmpty()) ? (tipo + " (" + id + ")") : tipo;
             }
 
@@ -286,10 +287,8 @@ public class Menu {
     }
 
 
-
-
     /*Método que realiza las acciones asociadas al comando 'describir jugador'.
-    * Parámetro: comando introducido
+     * Parámetro: comando introducido
      */
     // Imprime toda la info del jugador pedido en Parte 1
     private void descJugador(String nombreBuscado) {
@@ -306,7 +305,8 @@ public class Menu {
         Jugador j = null;
         for (Jugador x : jugadores) {
             if (x.getNombre().equals(nombreBuscado)) {
-                j = x; break;
+                j = x;
+                break;
             }
         }
         if (j == null) {
@@ -322,7 +322,7 @@ public class Menu {
         Avatar a = j.getAvatar();
         if (a != null) {
             String tipo = a.getTipo();
-            String id   = a.getID();
+            String id = a.getID();
             avatarStr = (id != null && !id.isEmpty()) ? (tipo + " (" + id + ")") : tipo;
         }
 
@@ -334,7 +334,10 @@ public class Menu {
         Casilla pos = null;
         if (a != null) pos = a.getPosicion();
         if (pos == null) {
-            try { pos = j.getPosicion(); } catch (Throwable ignored) {}
+            try {
+                pos = j.getPosicion();
+            } catch (Throwable ignored) {
+            }
         }
         if (pos != null) posicionStr = pos.getNombre();
 
@@ -352,7 +355,10 @@ public class Menu {
 
         // ¿En cárcel?
         String carcelStr = "No";
-        try { if (j.estaEnCarcel()) carcelStr = "Sí"; } catch (Throwable ignored) {}
+        try {
+            if (j.estaEnCarcel()) carcelStr = "Sí";
+        } catch (Throwable ignored) {
+        }
 
         // Salida formateada (Parte 1: Hipotecas y Edificios se muestran como “-”)
         System.out.println("Jugador: " + nombre);
@@ -368,8 +374,8 @@ public class Menu {
 
 
     /*Método que realiza las acciones asociadas al comando 'describir avatar'.
-    * Parámetro: id del avatar a describir.
-    */
+     * Parámetro: id del avatar a describir.
+     */
     private void descAvatar(String ID) {
         if (ID == null || ID.isEmpty()) {
             System.out.println("Uso: describir avatar <ID>");
@@ -382,7 +388,13 @@ public class Menu {
 
         Avatar encontrado = null;
         for (Avatar a : avatares) {
-            try { if (a.getID().equals(ID)) { encontrado = a; break; } } catch (Throwable ignored) {}
+            try {
+                if (a.getID().equals(ID)) {
+                    encontrado = a;
+                    break;
+                }
+            } catch (Throwable ignored) {
+            }
         }
         if (encontrado == null) {
             System.out.println("No existe el avatar con ID: " + ID);
@@ -390,10 +402,17 @@ public class Menu {
         }
 
         String tipo = "-";
-        try { tipo = encontrado.getTipo(); } catch (Throwable ignored) {}
+        try {
+            tipo = encontrado.getTipo();
+        } catch (Throwable ignored) {
+        }
 
         String pos = "-";
-        try { Casilla c = encontrado.getPosicion(); if (c != null) pos = c.getNombre(); } catch (Throwable ignored) {}
+        try {
+            Casilla c = encontrado.getPosicion();
+            if (c != null) pos = c.getNombre();
+        } catch (Throwable ignored) {
+        }
 
         String jugadorNombre = "-";
         try {
@@ -402,7 +421,13 @@ public class Menu {
         } catch (Throwable ignored) {
             // fallback: buscar por referencia
             for (Jugador j : jugadores) {
-                try { if (j.getAvatar() == encontrado) { jugadorNombre = j.getNombre(); break; } } catch (Throwable ignored2) {}
+                try {
+                    if (j.getAvatar() == encontrado) {
+                        jugadorNombre = j.getNombre();
+                        break;
+                    }
+                } catch (Throwable ignored2) {
+                }
             }
         }
 
@@ -414,10 +439,9 @@ public class Menu {
     }
 
 
-
     /* Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
-    * Parámetros: nombre de la casilla a describir.
-    */
+     * Parámetros: nombre de la casilla a describir.
+     */
     private void descCasilla(String nombre) {
         if (nombre == null || nombre.isEmpty()) {
             System.out.println("Uso: describir <Casilla>");
@@ -428,7 +452,8 @@ public class Menu {
         Casilla c = null;
         try {
             c = tablero.encontrar_casilla(nombre);
-        } catch (Throwable ignore) {}
+        } catch (Throwable ignore) {
+        }
 
         if (c == null) {
             System.out.println("No se encontró la casilla: " + nombre);
@@ -440,8 +465,11 @@ public class Menu {
             System.out.println(c.infoCasilla());
         } catch (Throwable t) {
             // Si infoCasilla() aún no está lista, al menos muestra el nombre
-            try { System.out.println("Casilla: " + c.getNombre()); }
-            catch (Throwable ignore) { System.out.println(String.valueOf(c)); }
+            try {
+                System.out.println("Casilla: " + c.getNombre());
+            } catch (Throwable ignore) {
+                System.out.println(String.valueOf(c));
+            }
         }
     }
 
@@ -466,10 +494,16 @@ public class Menu {
             doblesConsecutivos++;
             if (doblesConsecutivos >= 3) {
                 System.out.println("¡Tres dobles seguidos! " + actual.getNombre() + " va a la cárcel.");
-                try { tablero.enviarACarcel(actual); } catch (Throwable ignore) {}
+                try {
+                    tablero.enviarACarcel(actual);
+                } catch (Throwable ignore) {
+                }
                 doblesConsecutivos = 0;
                 tirado = true;  // el turno termina al ir a cárcel
-                try { System.out.println(tablero); } catch (Throwable ignore) {}
+                try {
+                    System.out.println(tablero);
+                } catch (Throwable ignore) {
+                }
                 return;
             }
         } else {
@@ -486,10 +520,16 @@ public class Menu {
         }
 
         // Aplicar regla de la casilla donde cayó (si vuestro modelo lo tiene)
-        try { tablero.aplicarRegla(actual); } catch (Throwable ignore) {}
+        try {
+            tablero.aplicarRegla(actual);
+        } catch (Throwable ignore) {
+        }
 
         // Repintar tablero
-        try { System.out.println(tablero); } catch (Throwable ignore) {}
+        try {
+            System.out.println(tablero);
+        } catch (Throwable ignore) {
+        }
 
         // Si sacó dobles (y no eran 3), puede volver a lanzar en este turno
         if (esDoble) {
@@ -519,10 +559,16 @@ public class Menu {
             doblesConsecutivos++;
             if (doblesConsecutivos >= 3) {
                 System.out.println("¡Tres dobles seguidos! " + actual.getNombre() + " va a la cárcel.");
-                try { tablero.enviarACarcel(actual); } catch (Throwable ignore) {}
+                try {
+                    tablero.enviarACarcel(actual);
+                } catch (Throwable ignore) {
+                }
                 doblesConsecutivos = 0;
                 tirado = true;  // el turno termina al ir a cárcel
-                try { System.out.println(tablero); } catch (Throwable ignore) {}
+                try {
+                    System.out.println(tablero);
+                } catch (Throwable ignore) {
+                }
                 return;
             }
         } else {
@@ -539,10 +585,16 @@ public class Menu {
         }
 
         // Aplicar regla de la casilla donde cayó (si está implementado en Tablero)
-        try { tablero.aplicarRegla(actual); } catch (Throwable ignore) {}
+        try {
+            tablero.aplicarRegla(actual);
+        } catch (Throwable ignore) {
+        }
 
         // Repintar tablero
-        try { System.out.println(tablero); } catch (Throwable ignore) {}
+        try {
+            System.out.println(tablero);
+        } catch (Throwable ignore) {
+        }
 
         // Si sacó dobles (y no eran 3), puede volver a lanzar
         if (esDoble) {
@@ -553,7 +605,7 @@ public class Menu {
 
 
     /*Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
-    * Parámetro: cadena de caracteres con el nombre de la casilla.
+     * Parámetro: cadena de caracteres con el nombre de la casilla.
      */
     // comprar <Propiedad>
     private void comprar(String nombre) {
@@ -567,7 +619,11 @@ public class Menu {
 
         // 1) Buscar la casilla por nombre
         Casilla cas = null;
-        try { cas = tablero.encontrar_casilla(nombre); } catch (Throwable t) { cas = null; }
+        try {
+            cas = tablero.encontrar_casilla(nombre);
+        } catch (Throwable t) {
+            cas = null;
+        }
         if (cas == null) {
             System.out.println("No existe la casilla: " + nombre);
             return;
@@ -575,7 +631,11 @@ public class Menu {
 
         // 2) Comprobar que el avatar del jugador está exactamente en esa casilla
         Casilla pos;
-        try { pos = actual.getAvatar().getPosicion(); } catch (Throwable t) { pos = null; }
+        try {
+            pos = actual.getAvatar().getPosicion();
+        } catch (Throwable t) {
+            pos = null;
+        }
         if (pos == null || pos != cas) {
             System.out.println("No puedes comprar '" + cas.getNombre() + "': tu avatar no está en esa casilla.");
             return;
@@ -583,7 +643,10 @@ public class Menu {
 
         // 3) Comprobar propietario actual (debe ser la banca)
         Jugador propietario = null;
-        try { propietario = cas.getPropietario(); } catch (Throwable ignored) {}
+        try {
+            propietario = cas.getPropietario();
+        } catch (Throwable ignored) {
+        }
         if (propietario != null && propietario != banca) {
             System.out.println("La propiedad '" + cas.getNombre() + "' no está en venta.");
             return;
@@ -591,36 +654,50 @@ public class Menu {
 
         // 4) Precio y dinero disponible
         double precio;
-        try { precio = cas.getPrecio(); } catch (Throwable t) {
+        try {
+            precio = cas.getPrecio();
+        } catch (Throwable t) {
             System.out.println("No se pudo determinar el precio de '" + cas.getNombre() + "'.");
             return;
         }
         double saldo = actual.getFortuna();
         if (saldo < precio) {
-            System.out.println("No tienes suficiente dinero para comprar '" + cas.getNombre() + "'. Precio: " + (long)precio);
+            System.out.println("No tienes suficiente dinero para comprar '" + cas.getNombre() + "'. Precio: " + (long) precio);
             return;
         }
 
         // 5) Pagar a la banca y transferir la propiedad
-        try { actual.pagar((int)precio, banca); } catch (Throwable t) {
+        try {
+            actual.pagar((int) precio, banca);
+        } catch (Throwable t) {
             // si pagar usa double en tu modelo:
-            try { actual.pagar((int)Math.round(precio), banca); } catch (Throwable t2) {
+            try {
+                actual.pagar((int) Math.round(precio), banca);
+            } catch (Throwable t2) {
                 System.out.println("No se pudo registrar el pago de la compra.");
                 return;
             }
         }
 
-        try { cas.setPropietario(actual); } catch (Throwable t) {
+        try {
+            cas.setPropietario(actual);
+        } catch (Throwable t) {
             System.out.println("No se pudo asignar el propietario de la casilla.");
             return;
         }
 
         // (opcional) si el jugador lleva lista de propiedades:
-        try { actual.anadirPropiedad(cas); } catch (Throwable ignored) {}
+        try {
+            actual.anadirPropiedad(cas);
+        } catch (Throwable ignored) {
+        }
 
         // 6) Mensajes y repintado
-        System.out.println(actual.getNombre() + " compra '" + cas.getNombre() + "' por " + (long)precio + ".");
-        try { System.out.println(tablero); } catch (Throwable ignored) {}
+        System.out.println(actual.getNombre() + " compra '" + cas.getNombre() + "' por " + (long) precio + ".");
+        try {
+            System.out.println(tablero);
+        } catch (Throwable ignored) {
+        }
     }
 
 
@@ -656,7 +733,10 @@ public class Menu {
 
         // 4) Mensaje + repintado del tablero (si toString() está implementado)
         System.out.println(actual.getNombre() + " paga " + COSTE_SALIR_CARCEL + " y sale de la cárcel.");
-        try { System.out.println(tablero); } catch (Throwable ignored) {}
+        try {
+            System.out.println(tablero);
+        } catch (Throwable ignored) {
+        }
     }
 
 
@@ -700,15 +780,31 @@ public class Menu {
             String pos = "-";
             String jugadorNombre = "-";
 
-            try { id = a.getID(); } catch (Throwable ignored) {}
-            try { tipo = a.getTipo(); } catch (Throwable ignored) {}
-            try { Casilla c = a.getPosicion(); if (c != null) pos = c.getNombre(); } catch (Throwable ignored) {}
+            try {
+                id = a.getID();
+            } catch (Throwable ignored) {
+            }
+            try {
+                tipo = a.getTipo();
+            } catch (Throwable ignored) {
+            }
+            try {
+                Casilla c = a.getPosicion();
+                if (c != null) pos = c.getNombre();
+            } catch (Throwable ignored) {
+            }
             try {
                 Jugador j = a.getJugador();
                 if (j != null) jugadorNombre = j.getNombre();
             } catch (Throwable ignored) {
                 for (Jugador j : jugadores) {
-                    try { if (j.getAvatar() == a) { jugadorNombre = j.getNombre(); break; } } catch (Throwable ignored2) {}
+                    try {
+                        if (j.getAvatar() == a) {
+                            jugadorNombre = j.getNombre();
+                            break;
+                        }
+                    } catch (Throwable ignored2) {
+                    }
                 }
             }
 
@@ -740,15 +836,14 @@ public class Menu {
         System.out.println("Nuevo turno para: " + actual.getNombre());
     }
 
-}
 
-
-// Imprime el tablero (usa toString() del Tablero)
-private void verTablero() {
-    if (tablero == null) {
-        System.out.println("No hay tablero cargado.");
-        return;
+    // Imprime el tablero (usa toString() del Tablero)
+    private void verTablero() {
+        if (tablero == null) {
+            System.out.println("No hay tablero cargado.");
+            return;
+        }
+        System.out.println(tablero);
     }
-    System.out.println(tablero);
 }
 
