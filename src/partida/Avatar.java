@@ -2,10 +2,12 @@ package partida;
 
 import monopoly.*;
 
+import monopoly.Casilla;
+
 import java.util.ArrayList;
 
-
-//A continuación, tenemos otros métodos útiles para el desarrollo del juego.
+public class Avatar {
+    //A continuación, tenemos otros métodos útiles para el desarrollo del juego.
     /*Método que permite mover a un avatar a una casilla concreta. Parámetros:
     * - Un array con las casillas del tablero. Se trata de un arrayList de arrayList de casillas (uno por lado).
     * - Un entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).

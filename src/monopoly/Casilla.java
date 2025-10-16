@@ -1,6 +1,9 @@
 package monopoly;
 
-import partida.*;
+
+import partida.Avatar;
+import partida.Jugador;
+
 import java.util.ArrayList;
 
 

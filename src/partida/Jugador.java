@@ -1,13 +1,10 @@
 package partida;
 
-import java.util.ArrayList;
-
 import monopoly.*;
+import java.util.ArrayList;
 
 
 public class Jugador {
-
-    //Atributos:
     private String nombre; //Nombre del jugador
     private Avatar avatar; //Avatar que tiene en la partida.
     private float fortuna; //Dinero que posee.
@@ -29,51 +26,41 @@ public class Jugador {
         this.propiedades = new ArrayList<>();
     }
 
-    // getters y setters basicos
-
+    // Getters y setters
     public String getNombre() {
         return nombre;
     }
-
     public Avatar getAvatar(){
         return avatar;
     }
-
     public float getFortuna() {
         return fortuna;
     }
-
     public void setFortuna(float f){
         this.fortuna = f;
     }
-
     public boolean isEnCarcel() {
         return enCarcel;
     }
-
     public ArrayList<Casilla> getPropiedades() {
         return propiedades;
     }
-
     public void addPropiedad(Casilla c){
         propiedades.add(c);
     }
-}
 
+        /*Constructor principal. Requiere parámetros:
+         * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
+         * avatares creados (usado para dos propósitos: evitar que dos jugadores tengan el mismo nombre y
+         * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
+         */
 
-/*Constructor principal. Requiere parámetros:
-    * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
-    * avatares creados (usado para dos propósitos: evitar que dos jugadores tengan el mismo nombre y
-    * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
-     */
     public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
         //verificar que el nombre no exista en el array de avatares creados
         if(existeNombre(nombre, avCreados)){
             System.out.println("Jugador existe");
             return; //se debería lanzar una Excepción
         }
-        //verificar que dos jugadores no tengan en el mismo tipo de avatar
-        //se logra al crear el nuevo avatar
         Avatar avatar= new avatar (); //pasamos this como jugador
 
         this.nombre = nombre;
@@ -90,8 +77,8 @@ public class Jugador {
         // Colocamos el avatar en la casilla inicial (Salida)
         //this.avatar.setPosicion(inicio);
 
-
     }
+
     private boolean existeNombre(String nombre, ArrayList<Avatar> avCreadps){
         for (Avatar avatar : avCreados){
             if (avatar.getJugador().getNombre().equals(nombre))
@@ -99,7 +86,6 @@ public class Jugador {
         }
         return false;
     }
-
 
     //Otros métodos:
     //Método para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
@@ -150,14 +136,26 @@ public class Jugador {
     }
 
 
-    /*Método para establecer al jugador en la cárcel. 
-    * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
+    /*Método para establecer al jugador en la cárcel.
+     * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
         this.enCarcel = true;
         this.tiradasCarcel = 0;
     }
 
-    public void pagarAlquiler(Casilla c){}
+    public void pagarAlquiler(Casilla c){
+        Jugador dueno = c.getDuenho();
+        if(dueno != null && dueno != this){
+            float alquiler = c.getValor();
+            this.pagarAlquiler(c);
+            dueno.sumarFortuna(alquiler);
+            System.out.println(this.nombre + " ha pagado " + alquiler + " € a " + dueno.getNombre());
+        }
+    }
 
-
+    public void pagarImpuesto(float valor){
+        this.pagarImpuesto(valor);
+        System.out.println(nombre + " paga un impuesto de " + valor + "€");
+    }
+}
 
