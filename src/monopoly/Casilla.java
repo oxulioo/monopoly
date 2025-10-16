@@ -16,7 +16,7 @@ public class Casilla {
     private int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
     private Jugador duenho; //Dueño de la casilla (por defecto sería la banca).
     private Grupo grupo; //Grupo al que pertenece la casilla (si es solar).
-    private float impuesto; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
+    private float alquiler; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
     private float hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
 
@@ -53,7 +53,7 @@ public class Casilla {
         this.valor = Math.max(0f, valor);//En caso en que se de un valor negativo, se toma el 0 para evitar errores
         this.duenho = duenho;
         //Inicializo los demás valores para que no dé error después
-        this.impuesto = 0;
+        this.alquiler = 0;
         this.hipoteca = 0;
         this.grupo = null;
         this.avatares = new ArrayList<>();
@@ -62,13 +62,13 @@ public class Casilla {
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
      * Parámetros: nombre, posición en el tablero, impuesto establecido y dueño.
      */
-    public Casilla(String nombre, int posicion, float impuesto, Jugador duenho) {
+    public Casilla(String nombre, int posicion, float alquiler, Jugador duenho) {
         if (posicion < 1 || posicion > 40) {
             System.out.println("La posición debe estar entre 1 y 40");//No hay más de 40 casillas, trato el caso en el que se introduzca un valor no válido
         }
         this.nombre = nombre;
         this.posicion = posicion;
-        this.impuesto = Math.max(0f, impuesto);//En caso de valores negativos, se toma el 0
+        this.alquiler = Math.max(0f, alquiler);//En caso de valores negativos, se toma el 0
         this.duenho = duenho;
         this.tipo = TIMPUESTO;
         //Inicializo el resto de valores
@@ -95,7 +95,7 @@ public class Casilla {
         this.duenho = duenho;
 
         this.valor = 0;
-        this.impuesto = 0;
+        this.alquiler = 0;
         this.hipoteca = 0;
         this.grupo = null;
         this.avatares = new ArrayList<>();
@@ -121,13 +121,82 @@ public class Casilla {
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         if(actual==null) return false;
 
-        if(TSUERTE.equals(tipo)&&("Carcel"))
+        if(TSUERTE.equals(tipo)||TCOMUNIDAD.equals(tipo)||(TESPECIAL.equals(tipo)&&("Cárcel".equalsIgnoreCase(nombre)||"Salida".equalsIgnoreCase(nombre)))){
+            return true;
+        }
+
+        if(TESPECIAL.equals(tipo)&&"IrACarcel".equalsIgnoreCase(nombre)){
+            actual.encarcelar();
+            return true;
+        }
+
+        if(TESPECIAL.equals(tipo)&&"Parking".equalsIgnoreCase(nombre)){
+            if(this.valor>0){
+                actual.cobrar(this.valor);
+                this.valor=0;
+            }
+            return true;
+        }
+        if(TIMPUESTO.equals(tipo)){
+            float cantidad=(this.alquiler>0)?this.alquiler:Valor.IMPUESTO;
+            return actual.pagar(cantidad);
+        }
+        if(TTRANSPORTE.equals(tipo)){
+            if(this.duenho!=null&&!this.duenho.equals(actual)){
+                float aPagar=Valor.ALQUILER_TRANSPORTE;
+                boolean respuesta=actual.pagar(aPagar);
+                if(respuesta) this.duenho.cobrar(aPagar);
+                return respuesta;
+            }
+            return true;
+        }
+        if(TSERVICIOS.equals(tipo)){
+            if(this.duenho!=null&&!this.duenho.equals(actual)){
+                float aPagar=4f*tirada*Valor.FACTOR_SERVICIO;
+                boolean respuesta=actual.pagar(aPagar);
+                if(respuesta) this.duenho.cobrar(aPagar);
+                return respuesta;
+            }
+            return true;
+        }
+        
+        if(TSOLAR.equals(tipo)){
+            if(this.duenho!=null&&!this.duenho.equals(actual)){
+                float aPagar=(this.alquiler>0)?this.alquiler:0;
+                if(this.grupo!=null){
+                    try{
+                        if(this.grupo.esDuenhoGrupo(this.duenho)){
+                            aPagar*=2;
+                        }
+                    }catch (Exception ignored){
+
+                    }
+                }
+                boolean respuesta=actual.pagar(aPagar);
+                if(respuesta) this.duenho.cobrar(aPagar);
+                return respuesta;
+            }
+            return true;
+        }
+        return true;
     }
 
     /*Método usado para comprar una casilla determinada. Parámetros:
      * - Jugador que solicita la compra de la casilla.
      * - Banca del monopoly (es el dueño de las casillas no compradas aún).*/
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
+
+
+        boolean comprable=TSOLAR.equals(tipo)||TSERVICIOS.equals(tipo)||TTRANSPORTE.equals(tipo);
+        if(!comprable) return;
+
+        if(this.duenho!=null) return;
+
+        float precio=Math.max(0f,this.valor);
+        if(!solicitante.pagar(precio)) return;
+
+        this.duenho=solicitante;
+        solicitante.anhadirPropiedad(this);
     }
 
     /*Método para añadir valor a una casilla. Utilidad:
@@ -153,7 +222,7 @@ public class Casilla {
         }else if(TSERVICIOS.equals(tipo)||TTRANSPORTE.equals(tipo)){
             s+=" | Valor: "+this.valor;
         }else if(TIMPUESTO.equals(tipo)){
-            s+=" | Impuesto: "+this.impuesto;
+            s+=" | Alquiler: "+this.alquiler;
         }else if(TESPECIAL.equals(tipo)&&"Parking".equals(nombre)){
             s+= " | Bote: "+this.valor;
         }
@@ -200,12 +269,12 @@ public class Casilla {
         this.valor = v;
     }
 
-    public float getImpuesto() {
-        return impuesto;
+    public float getAlquiler() {
+        return alquiler;
     }
 
-    public void setImpuesto(float imp) {
-        this.impuesto = imp;
+    public void setAlquiler(float imp) {
+        this.alquiler = imp;
     }
 
     public float getHipoteca() {

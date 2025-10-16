@@ -13,21 +13,83 @@ public class Avatar {
     * - Un entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).
     * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siemrpe es positivo.
      */
+
+    // ==== ATRIBUTOS ====
+    private char id;
+    private String tipo;
+    private Casilla lugar;
+    private Jugador jugador;
+    private int nDobles;
+
+    // ==== CONSTRUCTOR ====
+    public Avatar(char id, String tipo, Casilla posicion, Jugador jugador) {
+        this.id = id;
+        this.tipo = tipo;
+        this.lugar = posicion;
+        this.jugador = jugador;
+        this.nDobles = 0;
+    }
+
+    // ==== GETTERS Y SETTERS ====
+
+    public char getID() {
+        return id;
+    }
+    public String getTipo() {
+        return tipo;
+    }
+    public Casilla getPosicion() {
+        return lugar;
+    }
+    public Jugador getJugador() {
+        return jugador;
+    }
+    public int getnDobles() {
+        return nDobles;
+    }
+    public void setnDobles(int nDobles) {
+        this.nDobles = nDobles;
+    }
+    public void setPosicion(Casilla posicion) {
+        this.lugar = posicion;
+    }
+
+
+
     public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) { //pancho
         int totalPosiciones = 0;
-        for (ArrayList<Casilla> fila: casillas){
-        totalPosiciones += fila.size();
+        for (ArrayList<Casilla> fila: casillas) {
+            totalPosiciones += fila.size();
         }
-        int posicionActual= this.lugar.getPosicion();
-        int nuevaPosicion = (posicionActual + valorTirada)%totalPosiciones;
-        for (int i=0; i<totalPosiciones; i++){
-            ArrayList<Casilla> fila = casillas.get(i);
-            for (int j=0; j< fila.size(); j++){
-                Casilla casilla = fila.get(j);
-                if  (casilla.getPosicion() == nuevaPosicion){
-                //muevo el avatar a esta casilla
+
+        int posActual= this.lugar.getPosicion();
+        int nuevaPosicion = (posActual + valorTirada) % totalPosiciones;
+
+        if(posActual + valorTirada >= totalPosiciones){
+            jugador.sumarFortuna(2000000);
+            jugador.setVueltas(jugador.getVueltas()+1);
+            System.out.println("El jugador " + jugador.getNombre() + " pasa por salida y recibe 2.000.000€.");
+        }
+
+        Casilla nuevaCasilla = null;
+        for (ArrayList<Casilla> fila: casillas) {
+            for (Casilla casilla: fila) {
+                if (casilla.getPosicion() == nuevaPosicion) {
+                    nuevaCasilla = casilla;
+                    break;
                 }
             }
+            if(nuevaCasilla != null){
+                break;
+            }
+        }
+        if(nuevaCasilla != null) {
+            Casilla antiguaCasilla = this.lugar;
+            this.lugar = nuevaCasilla;
+
+            System.out.println("El avatar " + this.id + " avanza " + valorTirada + " casillas, llegando a la casilla " + nuevaCasilla.getNombre() + ".");
+        }else {
+            System.out.println("No se encuentra la casilla pedida");
         }
     }
 
@@ -36,15 +98,15 @@ public class Avatar {
     * - Un arraylist de los avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
      */
     private void generarId(ArrayList<Avatar> avCreados) { //pancho
-        String id="";
+        char id;
         do{
-            id= ""+ generarLetraMayuscula()
-        } while (existeId (avCreados, id));
+            id = generarLetraMayuscula();
+        } while (existeId (avCreados, String.valueOf(id)));
         this.id = id;
         avCreados.add(this);
     }
 
-    private boolean existeId(ArrayList<Avatar> avCreados, String id){ //pancho
+    private boolean existeId(ArrayList<Avatar> avCreados, char id){ //pancho
         for (Avatar avatar : avCreados) {
             if (avatar.id.equals(id)) {
                 return true;
@@ -57,9 +119,5 @@ public class Avatar {
         char letra= (char)(Math. random()*26+97); //le suma la letra 'A'
     }
 
-    //Método para obtener el jugador al que pertenece el avatar
-    public Jugador getJugador(){
-        return jugador;
-    }
 }
 

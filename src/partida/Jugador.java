@@ -44,12 +44,14 @@ public class Jugador {
     }
     public void entrarEnCarcel()   { enCarcel = true; }
     public void salirCarcel()      { enCarcel = false; }
+    public int getVueltas(){
+        return vueltas;
+    }
+    public void setVueltas(int v){
+    }
 
     public ArrayList<Casilla> getPropiedades() {
         return propiedades;
-    }
-    public void addPropiedad(Casilla c){
-        propiedades.add(c);
     }
 
         /*Constructor principal. Requiere parámetros:
@@ -68,7 +70,6 @@ public class Jugador {
 
         this.nombre = nombre;
         this.fortuna = 15000000; // Todos los jugadores empiezan con 15M
-        this.gastos = 0;
         this.enCarcel = false;
         this.tiradasCarcel = 0;
         this.vueltas = 0;
@@ -117,7 +118,16 @@ public class Jugador {
 
     //Método para eliminar una propiedad del arraylist de propiedades de jugador.
     public void eliminarPropiedad(Casilla casilla) {
-
+        if(casilla == null){
+            System.out.println("La casilla no existe");
+            return;
+        }
+        if(!propiedades.contains(casilla)){
+            System.out.println("La casilla no pertenece al jugador");
+            return;
+        }
+        propiedades.remove(casilla);
+        casilla.setDuenho(null);
     }
 
     //Método para añadir fortuna a un jugador
@@ -129,7 +139,6 @@ public class Jugador {
     //Método para sumar gastos a un jugador.
     //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
     public void sumarGastos(float valor) {
-        this.gastos += valor;
         this.fortuna -= valor;
         if (this.fortuna < 0) {
             this.declararBancarrota();
@@ -153,11 +162,12 @@ public class Jugador {
         if(this.fortuna>=c.getValor()){
             this.fortuna-=c.getValor();
             c.setDuenho(this);
-            this.addPropiedad(c);
+            this.propiedades.add(c);
         }else{
             System.out.println("No tiene dinero suficiente para comprar la propiedad "+ c.getNombre());
         }
     }
+
 
 
     /*Método para establecer al jugador en la cárcel.
@@ -178,8 +188,23 @@ public class Jugador {
     }
 
     public void pagarImpuesto(float valor){
-        this.pagarImpuesto(valor);
-        System.out.println(nombre + " paga un impuesto de " + valor + "€");
+        if(valor <= 0){
+            System.out.println("Precio del impuesto no válido");
+            return;
+        }
+        if(this.fortuna >= valor) {
+            this.fortuna -= valor;
+            this.sumarGastos(valor);
+            System.out.println(nombre + " paga un impuesto de " + valor + "€");
+            return;
+        }else{
+            System.out.println(nombre + " no tiene dinero suficiente para pagar el impuesto");
+            this.declararBancarrota();
+            return;
+        }
     }
+
+
+
 }
 

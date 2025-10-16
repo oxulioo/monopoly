@@ -28,6 +28,7 @@ public class Tablero {
         this.grupos=new HashMap<>();
 
         generarCasillas();
+        precargarAlquileres();
         generarGrupos();
     }
 
