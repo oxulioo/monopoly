@@ -19,7 +19,7 @@ public class Valor {
     public static final float ALQUILER_TRANSPORTE = 250000f;
     public static final float FORTUNA_BANCA = Float.MAX_VALUE;
     //Dado que la fortuna de la banca es ilimitada, le doy como valor el mayor número que cabe en un float con signo en Java.
-
+    public static final float PRECIO_SERVICIO_TRANSPORTE = 500000f; //Precio de compra de dichas casillas
 
     //Colores del texto:
     public static final String RESET = "\u001B[0m";

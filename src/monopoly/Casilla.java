@@ -144,7 +144,7 @@ public class Casilla {
      */
     public Casilla(String nombre, String tipo, int posicion, Jugador dueno) {
 
-        if (!(TSUERTE.equals(tipo) || TCOMUNIDAD.equals(tipo) || TESPECIAL.equals(tipo))) {
+        if (!(TSUERTE.equals(tipo) || TCOMUNIDAD.equals(tipo) || TESPECIAL.equals(tipo))) {//Si no es una de las casillas mencionadas, da error
             System.out.println("Tipo erróneo, debe ser 'Suerte', 'Comunidad' o 'Especial'");
         }
         if (posicion < 1 || posicion > 40) {
@@ -185,16 +185,17 @@ public class Casilla {
      * en caso de no cumplirlas.*/
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         if(actual==null) return false;
-
+        //En el caso de que el jugador esté en una casilla de las mencionadas (de momento no se aplica pagos en suerte y comunidad) el jugador de primeras no tiene que pagar nada
         if(TSUERTE.equals(tipo)||TCOMUNIDAD.equals(tipo)||(TESPECIAL.equals(tipo)&&("Cárcel".equalsIgnoreCase(nombre)||"Salida".equalsIgnoreCase(nombre)))){
             return true;
         }
-
+        //Si caes en la casilla IrACarcel, vas directo a la carcel con el método encarcelar
         if(TESPECIAL.equals(tipo)&&"IrACarcel".equalsIgnoreCase(nombre)){
             actual.encarcelar(this);
             return true;
         }
-
+        //Si la casilla a la que caes es el parking, te llevas la fortuna acumulada en la casilla
+        //Si la fortuna es >0, llamas al método sumarFortuna, y se restaura a 0 el bote del parking
         if(TESPECIAL.equals(tipo)&&"Parking".equalsIgnoreCase(nombre)){
             if(this.valor>0){
                 actual.sumarFortuna(this.valor);
@@ -202,11 +203,15 @@ public class Casilla {
             }
             return true;
         }
+        //Si caes en una casilla de impuesto, se cobra al jugador
         if(TIMPUESTO.equals(tipo)){
             float cantidad=(this.alquiler>0)?this.alquiler:Valor.IMPUESTO_FIJO;
             actual.pagarImpuesto(cantidad);
             return true;
         }
+        //Si caes en una casilla de tipo transporte, y tiene dueño y no es el jugador que está en la casilla,
+        //como en la primera entrega no se tienen en cuenta el número de casillas de transportes, entonces
+        //se calcula la cantidad a pagar (Valor.ALQUILER_TRANSPORTE), se comprueba si puede pagar y se da el dinero al dueño
         if(TTRANSPORTE.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)){
                 float aPagar=Valor.ALQUILER_TRANSPORTE;
@@ -216,6 +221,8 @@ public class Casilla {
             }
             return true;
         }
+        //Si caes en una casilla de tipo servicio con dueño, que no eres tú, entonces calculas la cantidad a pagar,
+        //compruebas que tiene suficiente dinero y pagas, dándole al dueño lo que le corresponde
         if(TSERVICIOS.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)){
                 float aPagar=4f*tirada*Valor.FACTOR_SERVICIO;
@@ -225,7 +232,8 @@ public class Casilla {
             }
             return true;
         }
-        
+        //Si caes en un solar con dueño que no eres tú, (...) pagar, si al que tienes que pagar tiene todas
+        //las casillas del grupo (color), entonces pagas el doble
         if(TSOLAR.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)){
                 float aPagar=(this.alquiler>0)?this.alquiler:0;
@@ -252,15 +260,15 @@ public class Casilla {
      * - Banca del monopoly (es el dueño de las casillas no compradas aún).*/
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
 
-
+        //Comprobamos si la casilla es comprable (pertenece a un tipo que se puede comprar)
         boolean comprable=TSOLAR.equals(tipo)||TSERVICIOS.equals(tipo)||TTRANSPORTE.equals(tipo);
         if(!comprable) return;
-
+        //Si la casilla ya tiene dueño, no se puede comprar
         if(this.dueno!=null) return;
-
+        //Se toma el valor y se comprueba que el que quiere comprar tiene dinero suficiente
         float precio=Math.max(0f,this.valor);
         if(!solicitante.sumarGastos(precio)) return;
-
+        //Se añade la propiedad al solicitante y este se convierte en su propietario (dueño)
         this.dueno=solicitante;
         solicitante.anadirPropiedad(this);
     }

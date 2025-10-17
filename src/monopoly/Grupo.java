@@ -71,6 +71,7 @@ class Grupo {
         if (jugador == null || miembros.size() != numCasillas || numCasillas == 0) {
             return false;
         }
+        //Recorro todas las casillas
         for (Casilla c : miembros) {
             Jugador d = c.getDueno();
             if (d == null || d != jugador) {//Si d es null, es la banca y si es distinto de jugador, es dstinto dueno

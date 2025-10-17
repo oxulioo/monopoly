@@ -48,6 +48,78 @@ public class Tablero {
         this.insertarLadoNorte();
         this.insertarLadoEste();
     }
+    //Método para cargar inicialmente los valores de los alquileres según el Apéndice
+    private void precargarAlquileres() {
+        // Recorremos todas las casillas de los 4 lados
+        for (ArrayList<Casilla> lado:posiciones) {
+            for (Casilla c:lado) {
+                if (c==null) continue;
+
+                String tipo=c.getTipo();
+                String nombre=c.getNombre();
+
+                //Valores exactos del alquiler +hipoteca(50% del precio)
+                if (Casilla.TSOLAR.equals(tipo)) {
+                    float alquiler = 0f;
+                    switch (nombre) {
+                        // Marrón
+                        case "Solar1":  alquiler =  20000f;  break;
+                        case "Solar2":  alquiler =  40000f;  break;
+                        // Cián
+                        case "Solar3":  alquiler =  60000f;  break;
+                        case "Solar4":  alquiler =  60000f;  break;
+                        case "Solar5":  alquiler =  80000f;  break;
+                        // Rosa
+                        case "Solar6":  alquiler = 100000f;  break;
+                        case "Solar7":  alquiler = 100000f;  break;
+                        case "Solar8":  alquiler = 120000f;  break;
+                        // Naranja
+                        case "Solar9":  alquiler = 140000f;  break;
+                        case "Solar10": alquiler = 140000f;  break;
+                        case "Solar11": alquiler = 160000f;  break;
+                        // Rojo
+                        case "Solar12": alquiler = 180000f;  break;
+                        case "Solar13": alquiler = 180000f;  break;
+                        case "Solar14": alquiler = 200000f;  break;
+                        // Amarillo
+                        case "Solar15": alquiler = 220000f;  break;
+                        case "Solar16": alquiler = 220000f;  break;
+                        case "Solar17": alquiler = 240000f;  break;
+                        // Verde
+                        case "Solar18": alquiler = 260000f;  break;
+                        case "Solar19": alquiler = 260000f;  break;
+                        case "Solar20": alquiler = 280000f;  break;
+                        // Azul
+                        case "Solar21": alquiler = 350000f;  break;
+                        case "Solar22": alquiler = 500000f;  break;
+                        default:        alquiler = 0f;       break;// por si añadís más adelante
+                    }
+                    c.setAlquiler(alquiler);                       // Alquiler base exacto (sin edificios)
+                    c.setHipoteca(Math.max(0f, c.getValor() / 2f));// Hipoteca = 50% del precio (Apéndice I)
+                }
+
+                // === TRANSPORTE: precio de compra 500.000; alquiler fijo 250.000 en Parte 1 ===
+                else if (Casilla.TTRANSPORTE.equals(tipo)) {
+                    // El constructor ya puso 500.000, por si acaso aseguramos:
+                    if (c.getValor() <= 0) c.setValor(500000f);
+                    c.setAlquiler(Valor.ALQUILER_TRANSPORTE);      // 250.000
+                    c.setHipoteca(0f);                              // No hipotecable en esta parte
+                }
+
+                // === SERVICIOS: precio de compra 500.000; alquiler se calcula con la tirada ===
+                else if (Casilla.TSERVICIOS.equals(tipo)) {
+                    if (c.getValor() <= 0) c.setValor(500000f);
+                    c.setAlquiler(0f);                              // Se calcula: 4 * tirada * FACTOR_SERVICIO
+                    c.setHipoteca(0f);                              // No hipotecable en esta parte
+                }
+
+                // === IMPUESTOS / ESPECIALES / SUERTE / COMUNIDAD ===
+                // Impuestos ya traen la "cantidad a pagar" en el campo 'alquiler' desde el constructor.
+                // Parking acumula bote en 'valor' cuando alguien paga impuestos/carta; aquí no tocamos nada.
+            }
+        }
+    }
+
     //Esta la escribo yo, no estaba en el esqueleto, MIRAR BIEN
     private void generarGrupos(){
         //Marrón
@@ -194,6 +266,7 @@ public class Tablero {
         if(nombre==null){
             return null;
         }
+        //Recorro el ArrayList completo para encontrar la casilla
         for(ArrayList<Casilla>lado:posiciones){
             for(Casilla c:lado){
                 if(c!=null && nombre.equals(c.getNombre())){
@@ -202,6 +275,21 @@ public class Tablero {
             }
         }
         return null;
+    }
+
+    //A partir de aquí lo añado para ayudar al menu (se puede quitar si no sirve)
+    // Devuelve las 4 listas (Sur, Oeste, Norte, Este)
+    public ArrayList<ArrayList<Casilla>> getPosiciones() {
+        return posiciones;
+    }
+
+    // Devuelve las 40 casillas en una sola lista (útil para "listar en venta")
+    public ArrayList<Casilla> getTodasLasCasillas() {
+        ArrayList<Casilla> todas = new ArrayList<>(40);
+        for (ArrayList<Casilla> lado : posiciones) {
+            todas.addAll(lado);
+        }
+        return todas;
     }
 
     // endregion
