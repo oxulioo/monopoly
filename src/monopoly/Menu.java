@@ -485,17 +485,31 @@ public class Menu {
             tirado = true; // si no es doble, este turno ya no puede volver a tirar
         }
 
-        // Mover al jugador 'suma' casillas (ajusta el método a vuestra API si se llama distinto)
+        // Mover al jugador 'suma' casillas usando su Avatar
         try {
-    //        actual.getAvatar().moverAvatar(tablero.(), suma);     creado por xulian, penso que ao ter que pasar un arraylist de casillas a cousa vai por aqui
-            avatares.moverAvatar(actual, suma); //CREAR
+            Avatar a = actual.getAvatar();
+            a.moverAvatar(tablero.getPosiciones(), suma);
+
+            // Casilla actual tras mover
+            Casilla c = a.getPosicion();
+
+            // Si cae en "IrCarcel", lo mandamos a la cárcel y terminamos
+            if (c != null && "IrCarcel".equalsIgnoreCase(c.getNombre())) {
+                System.out.println("¡Ir a Cárcel! " + actual.getNombre() + " va a la cárcel.");
+                enviarACarcel(actual);
+                try { System.out.println(tablero); } catch (Throwable ignore) {}
+                return;
+            }
+
+            // Evaluar efectos de la casilla (pagos, etc.)
+            if (c != null) {
+                c.evaluarCasilla(actual, banca, suma);
+            }
         } catch (Throwable e) {
-            System.out.println("(Aviso) Falta implementar el movimiento en Tablero.moverJugador(Jugador,int).");
+            System.out.println("(Aviso) Falta implementar correctamente el movimiento del Avatar.");
             return;
         }
 
-        // Aplicar regla de la casilla donde cayó (si vuestro modelo lo tiene)
-        try { tablero.aplicarRegla(actual); } catch (Throwable ignore) {} //MIRAR
 
         // Repintar tablero
         try { System.out.println(tablero); } catch (Throwable ignore) {}
@@ -528,7 +542,7 @@ public class Menu {
             doblesConsecutivos++;
             if (doblesConsecutivos >= 3) {
                 System.out.println("¡Tres dobles seguidos! " + actual.getNombre() + " va a la cárcel.");
-                try { tablero.enviarACarcel(actual); } catch (Throwable ignore) {}
+                enviarACarcel(actual);//Cambiado
                 doblesConsecutivos = 0;
                 tirado = true;  // el turno termina al ir a cárcel
                 try { System.out.println(tablero); } catch (Throwable ignore) {}
@@ -539,16 +553,31 @@ public class Menu {
             tirado = true; // si no es doble, ya no puede volver a tirar este turno
         }
 
-        // Mover al jugador 'suma' casillas
+        // Mover al jugador 'suma' casillas usando su Avatar
         try {
-            tablero.moverJugador(actual, suma);
+            Avatar a = actual.getAvatar();
+            a.moverAvatar(tablero.getPosiciones(), suma);
+
+            // Casilla actual tras mover
+            Casilla c = a.getPosicion();
+
+            // Si cae en "IrCarcel", lo mandamos a la cárcel y terminamos
+            if (c != null && "IrCarcel".equalsIgnoreCase(c.getNombre())) {
+                System.out.println("¡Ir a Cárcel! " + actual.getNombre() + " va a la cárcel.");
+                enviarACarcel(actual);
+                try { System.out.println(tablero); } catch (Throwable ignore) {}
+                return;
+            }
+
+            // Evaluar efectos de la casilla (pagos, etc.)
+            if (c != null) {
+                c.evaluarCasilla(actual, banca, suma);
+            }
         } catch (Throwable e) {
-            System.out.println("(Aviso) Falta implementar el movimiento en Tablero.moverJugador(Jugador,int).");
+            System.out.println("(Aviso) Falta implementar correctamente el movimiento del Avatar.");
             return;
         }
 
-        // Aplicar regla de la casilla donde cayó (si está implementado en Tablero)
-        try { tablero.aplicarRegla(actual); } catch (Throwable ignore) {}
 
         // Repintar tablero
         try { System.out.println(tablero); } catch (Throwable ignore) {}
@@ -593,7 +622,7 @@ public class Menu {
         // 3) Comprobar propietario actual (debe ser la banca)
         Jugador propietario = null;
         try { propietario = cas.getDueno(); } catch (Throwable ignored) {}
-        if (propietario != null && propietario != banca) {
+        if (propietario != null) {//KNOWEATS, HE QUITADO EL &&propietario!=banca
             System.out.println("La propiedad '" + cas.getNombre() + "' no está en venta.");
             return;
         }
@@ -609,7 +638,7 @@ public class Menu {
             System.out.println("No tienes suficiente dinero para comprar '" + cas.getNombre() + "'. Precio: " + (long)precio);
             return;
         }
-
+        /*KNOWEATS, HE CAMBIADO TODO ESTE BLOQUE POR UNA LLAMADA
         // 5) Pagar a la banca y transferir la propiedad
         try { actual.sumarGastos((int)precio); } catch (Throwable t) {
             // si pagar usa double en tu modelo:
@@ -623,6 +652,8 @@ public class Menu {
             System.out.println("No se pudo asignar el propietario de la casilla.");
             return;
         }
+        */
+        cas.comprarCasilla(actual, banca);
 
         // Mensajes y repintado
         System.out.println(actual.getNombre() + " compra '" + cas.getNombre() + "' por " + (long)precio + ".");
@@ -673,7 +704,7 @@ public class Menu {
             System.out.println("No hay tablero cargado.");
             return;
         }
-        java.util.List<Casilla> lista = tablero.getCasillas(); ///////MIRAR
+        java.util.List<Casilla> lista = tablero.getTodasLasCasillas(); ///////MIRAR---->KNOWEATS TE CREE EN TABLERO.JAVA UN MÉTODO ESPECÍFICO PARA QUE TE VAYA BIEN ESTA LÍNEA
         if (lista == null || lista.isEmpty()) {
             System.out.println("No hay casillas en el tablero.");
             return;
@@ -682,7 +713,8 @@ public class Menu {
         boolean hay = false;
         for (Casilla c : lista) {
             Jugador dueno = c.getDueno();
-            if (dueno == banca) {                // la banca es la dueña → está en venta
+            //KNOEATS, HE CAMBIADO (dueno==banca) por (dueno==null) en este if
+            if (dueno == null) {                // la banca es la dueña → está en venta
                 System.out.println(c.casEnVenta());
                 hay = true;
             }
@@ -701,7 +733,7 @@ public class Menu {
             return;
         }
         for (Avatar a : avatares) {
-            char id= "\0" ;   //MIARARARARARARARTARARA
+            char id= '\0' ;   //MIARARARARARARARTARARA--->NOA TE LO CAMBIO, ES '\0', NO "\0" (JAVAX :))
             String tipo = "-";
             String pos = "-";
             String jugadorNombre = "-";
@@ -746,10 +778,164 @@ public class Menu {
         System.out.println("Nuevo turno para: " + actual.getNombre());
     }
 
+
+
+
+
+    //AÑADO ESTE HELPER PARA QUE ARRIBA NO DE ERROR
+    // === Helper para enviar un jugador a la cárcel ===
+    private void enviarACarcel(Jugador j) {
+        if (j == null || tablero == null) return;
+        Casilla carcel = tablero.encontrar_casilla("Cárcel");
+        if (carcel == null) carcel = tablero.encontrar_casilla("Carcel"); // por si no hay tilde
+        j.encarcelar(carcel);
+        try {
+            Avatar a = j.getAvatar();
+            if (a != null) a.setPosicion(carcel);
+        } catch (Throwable ignored) {}
+    }
+
+    //ESTO ÚLTIMO LO AÑADO PARA QUE SE EJECUTE BIEN EL MENÚ
+    // Lector de comandos por consola
+    public void run() {
+        java.util.Scanner sc = new java.util.Scanner(System.in);
+        System.out.println("Monopoly listo. Escribe comandos. (\"salir\" para terminar)");
+        System.out.println("Ejemplos: ver tablero | crear jugador Ana coche | lanzar dados | comprar Solar1");
+
+        while (true) {
+            System.out.print("> ");
+            if (!sc.hasNextLine()) break;
+            String linea = sc.nextLine().trim();
+            if (linea.isEmpty()) continue;
+            if (linea.equalsIgnoreCase("salir")) {
+                System.out.println("¡Hasta luego!");
+                break;
+            }
+            try {
+                analizarComando(linea);
+            } catch (Exception e) {
+                System.out.println("Error procesando comando: " + e.getMessage());
+            }
+        }
+    }
+
     // endregion
 
 }
 
 
 
+/*KNOWEATS, CAMBIÉ EN LANZAR DADOS UN TROZO, JUSTO DESPUÉS DE GESTIONAR LA PARTE DE DOBLES
+AÚN ASÍ, POR SI ACASO, AQUÍ ESTÁ LO QUE PUSISTE TU COMPLETO (NO CAMBIÉ MUCHA PARTE PERO ES PARA ASEGURAR
+QUE NO SE PIERDE)
 
+
+    private void lanzarDados() {
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores. Crea uno con: crear jugador <Nombre> <tipoAvatar>");
+            return;
+        }
+        Jugador actual = jugadores.get(turno);
+
+        // Tiramos los dos dados usando hacerTirada() para conocer cada valor
+        int d1 = dado1.hacerTirada();
+        int d2 = dado2.hacerTirada();
+        int suma = d1 + d2;
+        boolean esDoble = (d1 == d2);
+
+        System.out.println("Dados: " + d1 + " + " + d2 + " = " + suma + (esDoble ? " (dobles)" : ""));
+
+        // Gestionar dobles y 3 dobles seguidos -> cárcel
+        if (esDoble) {
+            doblesConsecutivos++;
+            if (doblesConsecutivos >= 3) {
+                System.out.println("¡Tres dobles seguidos! " + actual.getNombre() + " va a la cárcel.");
+                enviarACarcel(actual);   // MIRAR
+                doblesConsecutivos = 0;
+                tirado = true;                 // el turno termina al ir a la cárcel
+                try { System.out.println(tablero); } catch (Throwable ignore) {}
+                return;
+
+            }
+        } else {
+            doblesConsecutivos = 0;
+            tirado = true; // si no es doble, este turno ya no puede volver a tirar
+        }
+
+        // Mover al jugador 'suma' casillas (ajusta el método a vuestra API si se llama distinto)
+        try {
+    //        actual.getAvatar().moverAvatar(tablero.(), suma);     creado por xulian, penso que ao ter que pasar un arraylist de casillas a cousa vai por aqui
+            avatares.moverAvatar(actual, suma); //CREAR
+        } catch (Throwable e) {
+            System.out.println("(Aviso) Falta implementar el movimiento en Tablero.moverJugador(Jugador,int).");
+            return;
+        }
+
+        // Aplicar regla de la casilla donde cayó (si vuestro modelo lo tiene)
+        try { tablero.aplicarRegla(actual); } catch (Throwable ignore) {} //MIRAR
+
+        // Repintar tablero
+        try { System.out.println(tablero); } catch (Throwable ignore) {}
+
+        // Si sacó dobles (y no eran 3), puede volver a lanzar en este turno
+        if (esDoble) {
+            System.out.println(actual.getNombre() + " ha sacado dobles y puede volver a lanzar.");
+            tirado = false; // permitir otra tirada
+        }
+
+    }
+ */
+
+/*AL IGUAL QUE ANTES, MODIFIQUÉ POCO LANZARDADOSFORZADO, PEGO LO QUE TENÍAS ANTES POR SI ACASO
+
+    private void lanzarDadosForzado(int d1, int d2) {
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores. Crea uno con: crear jugador <Nombre> <tipoAvatar>");
+            return;
+        }
+        if (turno < 0) turno = 0;
+        if (turno >= jugadores.size()) turno = turno % jugadores.size();
+        Jugador actual = jugadores.get(turno);
+
+        int suma = d1 + d2;
+        boolean esDoble = (d1 == d2);
+
+        System.out.println("Dados (forzado): " + d1 + " + " + d2 + " = " + suma + (esDoble ? " (dobles)" : ""));
+
+        // Gestionar dobles y 3 dobles seguidos -> cárcel
+        if (esDoble) {
+            doblesConsecutivos++;
+            if (doblesConsecutivos >= 3) {
+                System.out.println("¡Tres dobles seguidos! " + actual.getNombre() + " va a la cárcel.");
+                try { tablero.enviarACarcel(actual); } catch (Throwable ignore) {}
+                doblesConsecutivos = 0;
+                tirado = true;  // el turno termina al ir a cárcel
+                try { System.out.println(tablero); } catch (Throwable ignore) {}
+                return;
+            }
+        } else {
+            doblesConsecutivos = 0;
+            tirado = true; // si no es doble, ya no puede volver a tirar este turno
+        }
+
+        // Mover al jugador 'suma' casillas
+        try {
+            tablero.moverJugador(actual, suma);
+        } catch (Throwable e) {
+            System.out.println("(Aviso) Falta implementar el movimiento en Tablero.moverJugador(Jugador,int).");
+            return;
+        }
+
+        // Aplicar regla de la casilla donde cayó (si está implementado en Tablero)
+        try { tablero.aplicarRegla(actual); } catch (Throwable ignore) {}
+
+        // Repintar tablero
+        try { System.out.println(tablero); } catch (Throwable ignore) {}
+
+        // Si sacó dobles (y no eran 3), puede volver a lanzar
+        if (esDoble) {
+            System.out.println(actual.getNombre() + " ha sacado dobles y puede volver a lanzar.");
+            tirado = false; // permitir otra tirada en este turno
+        }
+    }
+ */

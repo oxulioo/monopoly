@@ -68,6 +68,7 @@ public class Jugador {
     }
 
     public void setVueltas(int v) {
+        this.vueltas=v;//Añadí esta línea
     }
 
     // endregion
@@ -200,35 +201,64 @@ public class Jugador {
     }
 
     public void pagarAlquiler(Casilla c) {
+        if (c == null) return;
         Jugador dueno = c.getDueno();
         if (dueno != null && dueno != this) {
-            float alquiler = c.getValor();
-            this.pagarAlquiler(c);
-            dueno.sumarFortuna(alquiler);
-            System.out.println(this.nombre + " ha pagado " + alquiler + " € a " + dueno.getNombre());
+            float alquiler = c.getAlquiler();        // lo correcto es el alquiler
+            boolean ok = this.sumarGastos(alquiler); // resta solo una vez
+            if (ok) {
+                dueno.sumarFortuna(alquiler);
+                System.out.println(this.nombre + " ha pagado " + (long)alquiler + " € a " + dueno.getNombre());
+            } else {
+                System.out.println(this.nombre + " no puede pagar el alquiler de " + (long)alquiler + " €.");
+            }
         }
     }
-
     public void pagarImpuesto(float valor) {
         if (valor <= 0) {
             System.out.println("Precio del impuesto no válido");
             return;
         }
-        if (this.fortuna >= valor) {
-            this.fortuna -= valor;
-            this.sumarGastos(valor);
-            System.out.println(nombre + " paga un impuesto de " + valor + "€");
-            return;
+        boolean ok = this.sumarGastos(valor); // NO restar dos veces
+        if (ok) {
+            System.out.println(nombre + " paga un impuesto de " + (long)valor + "€");
         } else {
             System.out.println(nombre + " no tiene dinero suficiente para pagar el impuesto");
-            this.declararBancarrota();
-            return;
+            // declararBancarrota() ya se llamó desde sumarGastos
         }
     }
 
     // endregion
 
 }
+/*XULIÁN, HE CAMBIADO ESTAS DOS FUNCIONES Y AÑADÍ LO QUE PONE LA LÍNEA 71 (this.vueltas=v;//Añadí esta línea)
+ESTO QUE SIGUE ES COMO LO TENÍAS ANTES
+public void pagarAlquiler(Casilla c) {
+    Jugador dueno = c.getDueno();
+    if (dueno != null && dueno != this) {
+        float alquiler = c.getValor();
+        this.pagarAlquiler(c);
+        dueno.sumarFortuna(alquiler);
+        System.out.println(this.nombre + " ha pagado " + alquiler + " € a " + dueno.getNombre());
+    }
+}
 
+public void pagarImpuesto(float valor) {
+    if (valor <= 0) {
+        System.out.println("Precio del impuesto no válido");
+        return;
+    }
+    if (this.fortuna >= valor) {
+        this.fortuna -= valor;
+        this.sumarGastos(valor);
+        System.out.println(nombre + " paga un impuesto de " + valor + "€");
+        return;
+    } else {
+        System.out.println(nombre + " no tiene dinero suficiente para pagar el impuesto");
+        this.declararBancarrota();
+        return;
+    }
+}
 
+*/
 

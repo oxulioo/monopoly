@@ -189,8 +189,8 @@ public class Casilla {
         if(TSUERTE.equals(tipo)||TCOMUNIDAD.equals(tipo)||(TESPECIAL.equals(tipo)&&("Cárcel".equalsIgnoreCase(nombre)||"Salida".equalsIgnoreCase(nombre)))){
             return true;
         }
-        //Si caes en la casilla IrACarcel, vas directo a la carcel con el método encarcelar
-        if(TESPECIAL.equals(tipo)&&"IrACarcel".equalsIgnoreCase(nombre)){
+        //Si caes en la casilla IrCarcel, vas directo a la carcel con el método encarcelar
+        if(TESPECIAL.equals(tipo)&&"IrCarcel".equalsIgnoreCase(nombre)){
             actual.encarcelar(this);
             return true;
         }
@@ -297,7 +297,7 @@ public class Casilla {
             s+=" | Valor: "+this.valor;
         }else if(TIMPUESTO.equals(tipo)){
             s+=" | Alquiler: "+this.alquiler;
-        }else if(TESPECIAL.equals(tipo)&&"Parking".equals(nombre)){
+        }else if(TESPECIAL.equals(tipo)&&"Parking".equalsIgnoreCase(nombre)){
             s+= " | Bote: "+this.valor;
         }
 

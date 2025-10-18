@@ -8,7 +8,9 @@ public class Valor {
     public static final float FORTUNA_INICIAL = 9543076.28f; // Cantidad que recibe cada jugador al comenzar la partida
     public static final float SUMA_VUELTA = 1301328.584f; // Cantidad que recibe un jugador al pasar pos la Salida
     */
-    public final class Valor {
+public final class Valor {
+
+    private Valor(){}//Esto evita que se use new Valor()
 
     public static final float FORTUNA_INICIAL = 15000000f;
     public static final float SUMA_VUELTA = 2000000f;

@@ -56,8 +56,22 @@ public class Avatar {
     public void setnDobles(int nDobles) {
         this.nDobles = nDobles;
     }
-    public void setPosicion(Casilla posicion) {
+    /*public void setPosicion(Casilla posicion) {
         this.lugar = posicion;
+    }
+    */
+    //XULIAN, HE CAMBIADO SETPOSICION PORQUE NO SE MOVIA BIEN EL AVATAR
+    public void setPosicion(Casilla posicion) {
+        // quita de la casilla antigua
+        if (this.lugar != null) {
+            try { this.lugar.eliminarAvatar(this); } catch (Throwable ignored) {}
+        }
+        // asigna la nueva
+        this.lugar = posicion;
+        // añade a la casilla nueva
+        if (posicion != null) {
+            try { posicion.anhadirAvatar(this); } catch (Throwable ignored) {}
+        }
     }
 
     // endregion
@@ -65,24 +79,33 @@ public class Avatar {
     // region ==== MÉTODOS ====
 
     public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) { //pancho
+
+        //Comprobación previa
+        if(casillas==null||this.lugar==null){
+            System.out.println("No se puede mover el avatar, el tablero o la posición es nulo");
+            return;
+        }
+
         int totalPosiciones = 0;
         for (ArrayList<Casilla> fila: casillas) {
             totalPosiciones += fila.size();
         }
+        if(totalPosiciones==0) return;
 
-        int posActual= this.lugar.getPosicion();
-        int nuevaPosicion = (posActual + valorTirada) % totalPosiciones;
 
-        if(posActual + valorTirada >= totalPosiciones){
-            jugador.sumarFortuna(2000000);
+        int posActual= this.lugar.getPosicion()-1;
+        int nuevaPosicion = (posActual + Math.max(0,valorTirada)) % totalPosiciones;//Evito que se realicen tiradas negativas con Math.max
+
+        if(posActual + Math.max(0,valorTirada) >= totalPosiciones){
+            jugador.sumarFortuna(Valor.SUMA_VUELTA);//Uso la constante definida para la vuelta
             jugador.setVueltas(jugador.getVueltas()+1);
             System.out.println("El jugador " + jugador.getNombre() + " pasa por salida y recibe 2.000.000€.");
         }
-
+        int nuevaPosicionActual=nuevaPosicion+1;
         Casilla nuevaCasilla = null;
         for (ArrayList<Casilla> fila: casillas) {
             for (Casilla casilla: fila) {
-                if (casilla.getPosicion() == nuevaPosicion) {
+                if (casilla!=null && casilla.getPosicion() == nuevaPosicionActual){ //Compruebo que la casilla no es null tampoco
                     nuevaCasilla = casilla;
                     break;
                 }
@@ -92,9 +115,11 @@ public class Avatar {
             }
         }
         if(nuevaCasilla != null) {
-            Casilla antiguaCasilla = this.lugar;
-            this.lugar = nuevaCasilla;
-
+            //Omito lo siguiente: Casilla antiguaCasilla = this.lugar;
+            //Actualizo la lista de avatares (para imprimir en el tablero)
+            this.lugar.eliminarAvatar(this);
+            nuevaCasilla.anhadirAvatar(this);
+            setPosicion(nuevaCasilla);
             System.out.println("El avatar " + this.id + " avanza " + valorTirada + " casillas, llegando a la casilla " + nuevaCasilla.getNombre() + ".");
         }else {
             System.out.println("No se encuentra la casilla pedida");
@@ -132,3 +157,43 @@ public class Avatar {
 
 }
 
+/*ESTO ES LO QUE TENÍAS ANTES XULIAN
+public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) { //pancho
+
+
+        int totalPosiciones = 0;
+        for (ArrayList<Casilla> fila: casillas) {
+            totalPosiciones += fila.size();
+        }
+
+        int posActual= this.lugar.getPosicion();
+        int nuevaPosicion = (posActual + valorTirada) % totalPosiciones;
+
+        if(posActual + valorTirada >= totalPosiciones){
+            jugador.sumarFortuna(2000000);
+            jugador.setVueltas(jugador.getVueltas()+1);
+            System.out.println("El jugador " + jugador.getNombre() + " pasa por salida y recibe 2.000.000€.");
+        }
+
+        Casilla nuevaCasilla = null;
+        for (ArrayList<Casilla> fila: casillas) {
+            for (Casilla casilla: fila) {
+                if (casilla.getPosicion() == nuevaPosicion) {
+                    nuevaCasilla = casilla;
+                    break;
+                }
+            }
+            if(nuevaCasilla != null){
+                break;
+            }
+        }
+        if(nuevaCasilla != null) {
+            Casilla antiguaCasilla = this.lugar;
+            this.lugar = nuevaCasilla;
+
+            System.out.println("El avatar " + this.id + " avanza " + valorTirada + " casillas, llegando a la casilla " + nuevaCasilla.getNombre() + ".");
+        }else {
+            System.out.println("No se encuentra la casilla pedida");
+        }
+    }
+ */

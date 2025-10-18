@@ -249,17 +249,44 @@ public class Tablero {
     //Para imprimir el tablero, modificamos el método toString().
     @Override
     public String toString() {
-        String[] lados={"Sur", "Oeste", "Norte", "Este"};
-        StringBuilder sb=new StringBuilder();
-        for(int i=0;i<posiciones.size();i++){
+        String[] lados = {"Sur", "Oeste", "Norte", "Este"};
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < posiciones.size(); i++) {
             sb.append("== Lado ").append(lados[i]).append(" ==\n");
-            for(Casilla c: posiciones.get(i)){
-                sb.append(String.format("%02d %s [%s]%n", c.getPosicion(), c.getNombre(), c.getTipo()));
+            for (Casilla c : posiciones.get(i)) {
+                // color por tipo
+                String color = Valor.WHITE;
+                if (Casilla.TSOLAR.equals(c.getTipo()))          color = Valor.YELLOW;
+                else if (Casilla.TESPECIAL.equals(c.getTipo()))  color = Valor.CYAN;
+                else if (Casilla.TTRANSPORTE.equals(c.getTipo()))color = Valor.BLUE;
+                else if (Casilla.TSERVICIOS.equals(c.getTipo())) color = Valor.PURPLE;
+                else if (Casilla.TIMPUESTO.equals(c.getTipo()))  color = Valor.RED;
+                else if (Casilla.TSUERTE.equals(c.getTipo()))    color = Valor.GREEN;
+                else if (Casilla.TCOMUNIDAD.equals(c.getTipo())) color = Valor.WHITE;
+
+                // avatares en la casilla: &A&B...
+                String avStr = "";
+                try {
+                    java.util.ArrayList<partida.Avatar> avs = c.getAvatares();
+                    if (avs != null && !avs.isEmpty()) {
+                        StringBuilder sa = new StringBuilder();
+                        for (partida.Avatar a : avs) {
+                            sa.append('&').append(a.getID());
+                        }
+                        avStr = " " + sa;
+                    }
+                } catch (Throwable ignored) {}
+
+                sb.append(color)
+                        .append(String.format("%02d %s%s [%s]%n",
+                                c.getPosicion(), c.getNombre(), avStr, c.getTipo()))
+                        .append(Valor.RESET);
             }
             sb.append("\n");
         }
         return sb.toString();
     }
+
     
     //Método usado para buscar la casilla con el nombre pasado como argumento:
     public Casilla encontrar_casilla(String nombre){
