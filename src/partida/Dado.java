@@ -16,6 +16,7 @@ public class Dado {
         this.valor = (int) (Math.random()*6) +1;
         return valor;
     }
+
     //Lanzamos 2 dados y sumamos sus valores.
     public int lanzarDados(){
         int dado1 = hacerTirada();

@@ -9,11 +9,12 @@ import java.util.ArrayList;
 public class Casilla {
 
     // region ==== ATRIBUTOS ====
+
     //Primero pongo los privados (da igual)
     private String nombre; //Nombre de la casilla
     private String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte y Impuesto).
     private float valor; //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
-    private int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
+    private final int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
     private Jugador dueno; //Dueño de la casilla (por defecto sería la banca).
     private Grupo grupo; //Grupo al que pertenece la casilla (si es solar).
     private float alquiler; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
@@ -37,47 +38,36 @@ public class Casilla {
     public String getNombre() {
         return nombre;
     }
-
     public String getTipo() {
         return tipo;
     }
-
     public int getPosicion() {
         return posicion;
     }
-
     public float getValor() {
         return valor;
     }
-
     public void setValor(float v) {
         this.valor = v;
     }
-
     public float getAlquiler() {
         return alquiler;
     }
-
     public void setAlquiler(float imp) {
         this.alquiler = imp;
     }
-
     public float getHipoteca() {
         return hipoteca;
     }
-
     public void setHipoteca(float hip) {
         this.hipoteca = hip;
     }
-
     public Jugador getDueno() {
         return dueno;
     }
-
     public void setDueno(Jugador d) {
         this.dueno = d;
     }
-
     public Grupo getGrupo(){
         return grupo;
     }
@@ -92,8 +82,6 @@ public class Casilla {
 
     // region ==== CONSTRUCTORES ====
     //Constructores:
-    public Casilla() {
-    }//Parámetros vacíos
 
     /*Constructor para casillas tipo Solar, Servicios o Transporte:
      * Parámetros: nombre casilla, tipo (debe ser solar, serv. o transporte), posición en el tablero, valor y dueño.
@@ -142,7 +130,7 @@ public class Casilla {
     /*Constructor utilizado para crear las otras casillas (Suerte, Caja de comunidad y Especiales):
      * Parámetros: nombre, tipo de la casilla (será uno de los que queda), posición en el tablero y dueño.
      */
-    public Casilla(String nombre, String tipo, int posicion, Jugador dueno) {
+    public Casilla(String nombre, String tipo, int posicion) {
 
         if (!(TSUERTE.equals(tipo) || TCOMUNIDAD.equals(tipo) || TESPECIAL.equals(tipo))) {//Si no es una de las casillas mencionadas, da error
             System.out.println("Tipo erróneo, debe ser 'Suerte', 'Comunidad' o 'Especial'");
@@ -153,7 +141,6 @@ public class Casilla {
         this.nombre = nombre;
         this.tipo = tipo;
         this.posicion = posicion;
-        this.dueno = dueno;
 
         this.valor = 0;
         this.alquiler = 0;
@@ -162,6 +149,8 @@ public class Casilla {
         this.avatares = new ArrayList<>();
 
     }
+
+
 
     // endregion
 

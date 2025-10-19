@@ -45,6 +45,10 @@ class Grupo {
         anhadirCasilla(cas3);
     }
 
+    // endregion
+
+    // region ==== MÉTODOS ====
+
     /* Método que añade una casilla al array de casillas miembro de un grupo.
     * Parámetro: casilla que se quiere añadir.
      */
@@ -80,6 +84,7 @@ class Grupo {
         }
         return true;
     }
+
     //Añado un getter del color
     public String getColorGrupo(){
         return colorGrupo;
