@@ -130,7 +130,7 @@ public class Casilla {
     /*Constructor utilizado para crear las otras casillas (Suerte, Caja de comunidad y Especiales):
      * Parámetros: nombre, tipo de la casilla (será uno de los que queda), posición en el tablero y dueño.
      */
-    public Casilla(String nombre, String tipo, int posicion) {
+    public Casilla(String nombre, int posicion, String tipo) {
 
         if (!(TSUERTE.equals(tipo) || TCOMUNIDAD.equals(tipo) || TESPECIAL.equals(tipo))) {//Si no es una de las casillas mencionadas, da error
             System.out.println("Tipo erróneo, debe ser 'Suerte', 'Comunidad' o 'Especial'");

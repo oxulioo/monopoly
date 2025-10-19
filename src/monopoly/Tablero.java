@@ -189,9 +189,9 @@ public class Tablero {
     //Método para insertar las casillas del lado norte.
     private void insertarLadoNorte() {
         ArrayList<Casilla>norte=posiciones.get(2);
-        norte.add(new Casilla("Parking", Casilla.TESPECIAL, 21, null));
+        norte.add(new Casilla("Parking", 21, null));
         norte.add(new Casilla("Solar12", Casilla.TSOLAR, 22, 2200000, null));
-        norte.add(new Casilla("Suerte", Casilla.TSUERTE, 23, null));
+        norte.add(new Casilla("Suerte", 23, null));
         norte.add(new Casilla("Solar13", Casilla.TSOLAR, 24, 2200000, null));
         norte.add(new Casilla("Solar14", Casilla.TSOLAR, 25, 2400000, null));
         norte.add(new Casilla("Trans3", Casilla.TTRANSPORTE, 26, 500000, null));
@@ -204,14 +204,14 @@ public class Tablero {
     //Método para insertar las casillas del lado sur.
     private void insertarLadoSur() {
         ArrayList<Casilla>sur=posiciones.get(0);
-        sur.add(new  Casilla("Salida", Casilla.TESPECIAL, 1, null));
+        sur.add(new  Casilla("Salida", 1, null));
         sur.add(new Casilla("Solar1", Casilla.TSOLAR, 2, 600000, null));
-        sur.add(new Casilla("Caja", Casilla.TCOMUNIDAD, 3, null));
+        sur.add(new Casilla("Caja", 3, null));
         sur.add(new Casilla("Solar2", Casilla.TSOLAR, 4, 600000, null));
         sur.add(new Casilla("Imp1", 5, 2000000, null));
         sur.add(new Casilla("Trans1", Casilla.TTRANSPORTE, 6, 500000, null));
         sur.add(new Casilla("Solar3", Casilla.TSOLAR, 7, 1000000, null));
-        sur.add(new Casilla("Suerte", Casilla.TSUERTE, 8, null));
+        sur.add(new Casilla("Suerte", 8, null));
         sur.add(new Casilla("Solar4", Casilla.TSOLAR, 9, 1000000, null));
         sur.add(new Casilla("Solar5", Casilla.TSOLAR, 10, 1200000, null));
     }
@@ -219,14 +219,14 @@ public class Tablero {
     //Método que inserta casillas del lado oeste.
     private void insertarLadoOeste() {
         ArrayList<Casilla>oeste=posiciones.get(1);
-        oeste.add(new Casilla("Cárcel", Casilla.TESPECIAL, 11, null));
+        oeste.add(new Casilla("Cárcel", 11, null));
         oeste.add(new Casilla("Solar6", Casilla.TSOLAR, 12, 1400000, null));
         oeste.add(new Casilla("Serv1", Casilla.TSERVICIOS, 13, 500000,null));
         oeste.add(new Casilla("Solar7", Casilla.TSOLAR, 14, 1400000, null));
         oeste.add(new Casilla("Solar8", Casilla.TSOLAR, 15, 1600000, null));
         oeste.add(new Casilla("Trans2", Casilla.TTRANSPORTE, 16, 500000, null));
         oeste.add(new Casilla("Solar9", Casilla.TSOLAR, 17, 1800000, null));
-        oeste.add(new Casilla("Caja", Casilla.TCOMUNIDAD, 18, null));
+        oeste.add(new Casilla("Caja", 18, null));
         oeste.add(new Casilla("Solar10", Casilla.TSOLAR, 19, 1800000, null));
         oeste.add(new Casilla("Solar11", Casilla.TSOLAR, 20, 2200000, null));
     }
@@ -234,13 +234,13 @@ public class Tablero {
     //Método que inserta las casillas del lado este.
     private void insertarLadoEste() {
         ArrayList<Casilla>este=posiciones.get(3);
-        este.add(new Casilla("IrCarcel", Casilla.TESPECIAL, 31, null));
+        este.add(new Casilla("IrCarcel", 31, null));
         este.add(new Casilla("Solar18", Casilla.TSOLAR, 32, 3000000, null));
         este.add(new Casilla("Solar19", Casilla.TSOLAR, 33, 3000000, null));
-        este.add(new Casilla("Caja", Casilla.TCOMUNIDAD, 34, null));
+        este.add(new Casilla("Caja", 34, null));
         este.add(new Casilla("Solar20", Casilla.TSOLAR, 35, 3200000, null));
         este.add(new Casilla("Trans4", Casilla.TTRANSPORTE, 36, 500000, null));
-        este.add(new Casilla("Suerte", Casilla.TSUERTE, 37, null));
+        este.add(new Casilla("Suerte", 37, null));
         este.add(new Casilla("Solar21", Casilla.TSOLAR, 38, 3500000, null));
         este.add(new Casilla("Imp2", 39, 2000000, null));
         este.add(new Casilla("Solar22", Casilla.TSOLAR, 40, 4000000, null));
