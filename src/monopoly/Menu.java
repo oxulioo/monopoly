@@ -34,7 +34,7 @@ public class Menu {
             System.out.println("No hay tablero cargado.");
             return;
         }
-        System.out.println(tablero);
+        System.out.print(tablero);
     }
 
 
@@ -339,7 +339,7 @@ public class Menu {
         Casilla pos = null;
         if (a != null) pos = a.getPosicion();
         if (pos == null) {
-            try { pos = a.getPosicion(); } catch (Throwable ignored) {} /////MIRAR
+            try { pos = a.getPosicion(); } catch (Throwable ignored) {}
         }
         if (pos != null) posicionStr = pos.getNombre();
 
@@ -359,7 +359,7 @@ public class Menu {
 
         // ¿En cárcel? (versión 'Sí/No')
         String carcelStr = j.isEnCarcel() ? "Sí" : "No";
-        System.out.println("  En cárcel: " + carcelStr);
+
 
 
 
@@ -704,7 +704,7 @@ public class Menu {
             System.out.println("No hay tablero cargado.");
             return;
         }
-        java.util.List<Casilla> lista = tablero.getTodasLasCasillas(); ///////MIRAR---->KNOWEATS TE CREE EN TABLERO.JAVA UN MÉTODO ESPECÍFICO PARA QUE TE VAYA BIEN ESTA LÍNEA
+        java.util.List<Casilla> lista = tablero.getTodasLasCasillas();
         if (lista == null || lista.isEmpty()) {
             System.out.println("No hay casillas en el tablero.");
             return;

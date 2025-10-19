@@ -29,6 +29,7 @@ public class Avatar {
     public Avatar(String tipo, Casilla posicion, Jugador jugador, ArrayList<Avatar> avcreados) {
         this.tipo = tipo;
         this.lugar = posicion;
+        try { if (posicion != null) posicion.anhadirAvatar(this); } catch (Throwable ignored) {}
         this.jugador = jugador;
         this.nDobles = 0;
         this.generarId(avcreados);
@@ -62,17 +63,19 @@ public class Avatar {
     */
     //XULIAN, HE CAMBIADO SETPOSICION PORQUE NO SE MOVIA BIEN EL AVATAR
     public void setPosicion(Casilla posicion) {
-        // quita de la casilla antigua
-        if (this.lugar != null) {
-            try { this.lugar.eliminarAvatar(this); } catch (Throwable ignored) {}
-        }
-        // asigna la nueva
+        if (this.lugar == posicion) return; // nada que hacer
+        // quitar de la casilla anterior
+        try {
+            if (this.lugar != null) this.lugar.eliminarAvatar(this);
+        } catch (Throwable ignored) {}
+        // poner nueva
         this.lugar = posicion;
-        // añade a la casilla nueva
-        if (posicion != null) {
-            try { posicion.anhadirAvatar(this); } catch (Throwable ignored) {}
-        }
+        // añadir a la casilla nueva (una sola vez)
+        try {
+            if (this.lugar != null) this.lugar.anhadirAvatar(this);
+        } catch (Throwable ignored) {}
     }
+
 
     // endregion
 

@@ -10,7 +10,7 @@ public class Jugador {
 
     private String nombre; //Nombre del jugador
     private Avatar avatar; //Avatar que tiene en la partida.
-    private float fortuna; //Dinero que posee.
+    private int fortuna; //Dinero que posee.
     private boolean enCarcel; //Será true si el jugador está en la carcel
     private int tiradasCarcel; //Cuando está en la carcel, contará las tiradas sin éxito que ha hecho allí para intentar salir (se usa para limitar el número de intentos).
     private int vueltas; //Cuenta las vueltas dadas al tablero.
@@ -24,7 +24,7 @@ public class Jugador {
     public Jugador() {
         this.nombre = "Banca";
         this.avatar = null; // La banca no se representa en el tablero con avatar
-        this.fortuna = Float.MAX_VALUE; // Dinero "infinito"
+        this.fortuna = Integer.MAX_VALUE; // Dinero "infinito"
         this.enCarcel = false;
         this.tiradasCarcel = 0;
         this.vueltas = 0;
@@ -43,11 +43,11 @@ public class Jugador {
         return avatar;
     }
 
-    public float getFortuna() {
+    public int getFortuna() {
         return fortuna;
     }
 
-    public void setFortuna(float f) {
+    public void setFortuna(int f) {
         this.fortuna = f;
     }
 
@@ -155,13 +155,13 @@ public class Jugador {
 
     //Método para añadir fortuna a un jugador
     //Como parámetro se pide el valor a añadir. Si hay que restar fortuna, se pasaría un valor negativo.
-    public void sumarFortuna(float valor) {
+    public void sumarFortuna(int valor) {
         this.fortuna += valor;
     }
 
     //Método para sumar gastos a un jugador.
     //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
-    public boolean sumarGastos(float valor) {
+    public boolean sumarGastos(int valor) {
         this.fortuna -= valor;
         if (this.fortuna < 0) {
             this.declararBancarrota();
@@ -170,7 +170,7 @@ public class Jugador {
         return true;
     }
 
-    public void recibirDinero(float valor) {
+    public void recibirDinero(int valor) {
         this.fortuna += valor;
     }
 
@@ -204,7 +204,7 @@ public class Jugador {
         if (c == null) return;
         Jugador dueno = c.getDueno();
         if (dueno != null && dueno != this) {
-            float alquiler = c.getAlquiler();        // lo correcto es el alquiler
+            int alquiler = c.getAlquiler();        // lo correcto es el alquiler
             boolean ok = this.sumarGastos(alquiler); // resta solo una vez
             if (ok) {
                 dueno.sumarFortuna(alquiler);
@@ -214,7 +214,7 @@ public class Jugador {
             }
         }
     }
-    public void pagarImpuesto(float valor) {
+    public void pagarImpuesto(int valor) {
         if (valor <= 0) {
             System.out.println("Precio del impuesto no válido");
             return;

@@ -13,12 +13,12 @@ public class Casilla {
     //Primero pongo los privados (da igual)
     private String nombre; //Nombre de la casilla
     private String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte y Impuesto).
-    private float valor; //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
+    private int valor; //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
     private final int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
     private Jugador dueno; //Dueño de la casilla (por defecto sería la banca).
     private Grupo grupo; //Grupo al que pertenece la casilla (si es solar).
-    private float alquiler; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
-    private float hipoteca; //Valor otorgado por hipotecar una casilla
+    private int alquiler; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
+    private int hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
 
     //Diferentes tipos de casilla, podría utilizar un tipo enumerado, pero como más adelante se modificará la práctica, trabajo con string
@@ -44,22 +44,22 @@ public class Casilla {
     public int getPosicion() {
         return posicion;
     }
-    public float getValor() {
+    public int getValor() {
         return valor;
     }
-    public void setValor(float v) {
+    public void setValor(int v) {
         this.valor = v;
     }
-    public float getAlquiler() {
+    public int getAlquiler() {
         return alquiler;
     }
-    public void setAlquiler(float imp) {
+    public void setAlquiler(int imp) {
         this.alquiler = imp;
     }
-    public float getHipoteca() {
+    public int getHipoteca() {
         return hipoteca;
     }
-    public void setHipoteca(float hip) {
+    public void setHipoteca(int hip) {
         this.hipoteca = hip;
     }
     public Jugador getDueno() {
@@ -86,7 +86,7 @@ public class Casilla {
     /*Constructor para casillas tipo Solar, Servicios o Transporte:
      * Parámetros: nombre casilla, tipo (debe ser solar, serv. o transporte), posición en el tablero, valor y dueño.
      */
-    public Casilla(String nombre, String tipo, int posicion, float valor, Jugador dueno) {
+    public Casilla(String nombre, String tipo, int posicion, int valor, Jugador dueno) {
         if (!(TSOLAR.equals(tipo) || TSERVICIOS.equals(tipo) || TTRANSPORTE.equals(tipo))) {//Si no es ninguno de los tipos mencionados, da error
             System.out.println("Tipo erróneo, debe ser 'Solar', 'Servicios' o 'Transporte'");
             //Comprobar si está bien creado el jugador, y sino no lo inserto en el arrayList
@@ -99,7 +99,7 @@ public class Casilla {
         this.nombre = nombre;
         this.tipo = tipo;
         this.posicion = posicion;
-        this.valor = Math.max(0f, valor);//En caso en que se de un valor negativo, se toma el 0 para evitar errores
+        this.valor = Math.max(0, valor);//En caso en que se de un valor negativo, se toma el 0 para evitar errores
         this.dueno = dueno;
         //Inicializo los demás valores para que no dé error después
         this.alquiler = 0;
@@ -111,13 +111,13 @@ public class Casilla {
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
      * Parámetros: nombre, posición en el tablero, impuesto establecido y dueño.
      */
-    public Casilla(String nombre, int posicion, float alquiler, Jugador dueno) {
+    public Casilla(String nombre, int posicion, int alquiler, Jugador dueno) {
         if (posicion < 1 || posicion > 40) {
             System.out.println("La posición debe estar entre 1 y 40");//No hay más de 40 casillas, trato el caso en el que se introduzca un valor no válido
         }
         this.nombre = nombre;
         this.posicion = posicion;
-        this.alquiler = Math.max(0f, alquiler);//En caso de valores negativos, se toma el 0
+        this.alquiler = Math.max(0, alquiler);//En caso de valores negativos, se toma el 0
         this.dueno = dueno;
         this.tipo = TIMPUESTO;
         //Inicializo el resto de valores
@@ -194,7 +194,7 @@ public class Casilla {
         }
         //Si caes en una casilla de impuesto, se cobra al jugador
         if(TIMPUESTO.equals(tipo)){
-            float cantidad=(this.alquiler>0)?this.alquiler:Valor.IMPUESTO_FIJO;
+            int cantidad=(this.alquiler>0)?this.alquiler:Valor.IMPUESTO_FIJO;
             actual.pagarImpuesto(cantidad);
             return true;
         }
@@ -203,7 +203,7 @@ public class Casilla {
         //se calcula la cantidad a pagar (Valor.ALQUILER_TRANSPORTE), se comprueba si puede pagar y se da el dinero al dueño
         if(TTRANSPORTE.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)){
-                float aPagar=Valor.ALQUILER_TRANSPORTE;
+                int aPagar=Valor.ALQUILER_TRANSPORTE;
                 boolean respuesta=actual.sumarGastos(aPagar);
                 if(respuesta) this.dueno.sumarFortuna(aPagar);
                 return respuesta;
@@ -214,7 +214,7 @@ public class Casilla {
         //compruebas que tiene suficiente dinero y pagas, dándole al dueño lo que le corresponde
         if(TSERVICIOS.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)){
-                float aPagar=4f*tirada*Valor.FACTOR_SERVICIO;
+                int aPagar=4*tirada*Valor.FACTOR_SERVICIO;
                 boolean respuesta=actual.sumarGastos(aPagar);
                 if(respuesta) this.dueno.sumarFortuna(aPagar);
                 return respuesta;
@@ -225,7 +225,7 @@ public class Casilla {
         //las casillas del grupo (color), entonces pagas el doble
         if(TSOLAR.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)){
-                float aPagar=(this.alquiler>0)?this.alquiler:0;
+                int aPagar=(this.alquiler>0)?this.alquiler:0;
                 if(this.grupo!=null){
                     try{
                         if(this.grupo.esDuenoGrupo(this.dueno)){
@@ -255,7 +255,7 @@ public class Casilla {
         //Si la casilla ya tiene dueño, no se puede comprar
         if(this.dueno!=null) return;
         //Se toma el valor y se comprueba que el que quiere comprar tiene dinero suficiente
-        float precio=Math.max(0f,this.valor);
+        int precio=Math.max(0,this.valor);
         if(!solicitante.sumarGastos(precio)) return;
         //Se añade la propiedad al solicitante y este se convierte en su propietario (dueño)
         this.dueno=solicitante;
@@ -266,50 +266,151 @@ public class Casilla {
      * - Sumar valor a la casilla de parking.
      * - Sumar valor a las casillas de solar al no comprarlas tras cuatro vueltas de todos los jugadores.
      * Este método toma como argumento la cantidad a añadir del valor de la casilla.*/
-    public void sumarValor(float suma) {
+    public void sumarValor(int suma) {
         this.valor += suma; //verificar mayor quw 0
     }
 
     /*Método para mostrar información sobre una casilla.
      * Devuelve una cadena con información específica de cada tipo de casilla.*/
     public String infoCasilla() {
-        String nombre = (this.nombre == null) ? "" : this.nombre;
-        String tipo = (this.tipo == null) ? "" : this.tipo;
-        String dueno = (this.dueno == null) ? "Banca" : this.dueno.getNombre();
+        String nombre = (this.nombre == null) ? "" : this.nombre.trim();
+        String tipoRaw = (this.tipo == null) ? "" : this.tipo.trim();
+        String propietario = (this.dueno == null) ? "Banca" : this.dueno.getNombre();
 
-        String s="Casilla: " + nombre + " | Tipo: " + tipo + " | Posición: " + this.posicion + " | Dueño: " + dueno;
+        String tlc = tipoRaw.toLowerCase();
+        String nlc = nombre.toLowerCase();
 
-        if(TSOLAR.equals(tipo)){
-            String color= (this.grupo!=null)?this.grupo.getColorGrupo(): "-";
-            s+=" | Grupo: " + color+ " | Valor: " +this.valor;
-        }else if(TSERVICIOS.equals(tipo)||TTRANSPORTE.equals(tipo)){
-            s+=" | Valor: "+this.valor;
-        }else if(TIMPUESTO.equals(tipo)){
-            s+=" | Alquiler: "+this.alquiler;
-        }else if(TESPECIAL.equals(tipo)&&"Parking".equalsIgnoreCase(nombre)){
-            s+= " | Bote: "+this.valor;
+        if ("solar".equals(tlc)) {
+            String grupoStr = (this.grupo != null) ? this.grupo.getColorGrupo() : "-";
+            return "{\n"
+                    + "tipo: solar,\n"
+                    + "grupo: " + grupoStr + ",\n"
+                    + "propietario: " + propietario + ",\n"
+                    + "valor: " + this.valor + ",\n"
+                    + "alquiler: " + this.alquiler + ",\n"
+                    + "valor hotel: 0,\n"
+                    + "valor casa: 0,\n"
+                    + "valor piscina: 0,\n"
+                    + "valor pista de deporte: 0,\n"
+                    + "alquiler casa: 0,\n"
+                    + "alquiler hotel: 0,\n"
+                    + "alquiler piscina: 0,\n"
+                    + "alquiler pista de deporte: 0\n"
+                    + "}";
         }
 
-        return s;
+        if ("impuesto".equals(tlc)) {
+            int apagar = (this.alquiler > 0) ? this.alquiler : this.valor;
+            return "{\n"
+                    + "tipo: impuesto,\n"
+                    + "apagar: " + apagar + "\n"
+                    + "}";
+        }
+
+        if ("especial".equals(tlc) || "parking".equals(nlc) || "salida".equals(nlc) || "cárcel".equals(nlc) || "carcel".equals(nlc) || "ircarcel".equals(nlc)) {
+            if ("parking".equals(nlc)) {
+                StringBuilder jugadores = new StringBuilder();
+                if (this.avatares != null && !this.avatares.isEmpty()) {
+                    for (int i = 0; i < this.avatares.size(); i++) {
+                        Jugador j = this.avatares.get(i).getJugador();
+                        String nom = (j == null) ? "-" : j.getNombre();
+                        if (i > 0) jugadores.append(", ");
+                        jugadores.append(nom);
+                    }
+                }
+                return "{\n"
+                        + "bote: " + this.valor + ",\n"
+                        + "jugadores: [" + jugadores + "]\n"
+                        + "}";
+            }
+
+            if ("cárcel".equals(nlc) || "carcel".equals(nlc)) {
+                int salir;
+                try { salir = Valor.PRECIO_SALIR_CARCEL; } catch (Throwable t) { salir = 500000; }
+
+                StringBuilder jugadores = new StringBuilder();
+                if (this.avatares != null && !this.avatares.isEmpty()) {
+                    for (int i = 0; i < this.avatares.size(); i++) {
+                        Jugador j = this.avatares.get(i).getJugador();
+                        String nom = (j == null) ? "-" : j.getNombre();
+                        if (i > 0) jugadores.append(" ");
+                        jugadores.append("[").append(nom).append("]");
+                    }
+                } else {
+                    jugadores.append("[]");
+                }
+
+                return "{\n"
+                        + "salir: " + salir + ",\n"
+                        + "jugadores: " + jugadores + "\n"
+                        + "}";
+            }
+
+            if ("salida".equals(nlc)) {
+                return "{\n"
+                        + "tipo: salida\n"
+                        + "}";
+            }
+
+            return "{\n"
+                    + "tipo: especial,\n"
+                    + "nombre: " + (nombre.isEmpty() ? "-" : nombre) + "\n"
+                    + "}";
+        }
+
+        if ("suerte".equals(tlc)) {
+            return "{\n"
+                    + "tipo: suerte\n"
+                    + "}";
+        }
+
+        if ("comunidad".equals(tlc)) {
+            return "{\n"
+                    + "tipo: comunidad\n"
+                    + "}";
+        }
+
+        if ("servicios".equals(tlc) || "servicio".equals(tlc) || "transporte".equals(tlc)) {
+            return "{\n"
+                    + "tipo: " + tlc + ",\n"
+                    + "valor: " + this.valor + "\n"
+                    + "}";
+        }
+
+        return "{\n"
+                + "tipo: " + (tlc.isEmpty() ? "-" : tlc) + "\n"
+                + "}";
     }
+
+
+
+
+
+
 
     /* Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
     public String casEnVenta() {
         boolean comprable = TSOLAR.equals(tipo) || TSERVICIOS.equals(tipo) || TTRANSPORTE.equals(tipo);
-        //En la Parte 1, solo son comprables estos 3 tipos de casillas
         if (!comprable) {
-            return String.format("La casilla %s del tipo %s no es comprable", nombre, tipo);
+            return String.format("La casilla %s no es comprable", nombre);
         }
-        boolean enVenta = (this.dueno == null); //|| ("Banca"); lo quito porque BANCA=>dueno==null (la banca no tiene dueno)
-
+        boolean enVenta = (this.dueno == null);
         if (!enVenta) {
-            return String.format("La casilla %s de tipo %s no está en venta", nombre, tipo);
+            String grupoStr = (this.grupo == null) ? "-" : this.grupo.getColorGrupo();
+            return String.format("La casilla %s de tipo %s y grupo %s no está en venta", nombre, tipo, grupoStr);
         }
 
-        return String.format("La casilla %s de tipo %s está en venta con precio: %f", nombre, tipo, valor);
+        String grupoStr = (this.grupo == null) ? "-" : this.grupo.getColorGrupo();
+        if (this.grupo == null) {
+            return String.format("La casilla %s de tipo %s está en venta con precio: %d", nombre, tipo, valor);
+        }
+
+        return String.format("La casilla %s de tipo %s y grupo %s está en venta con precio: %d",
+                nombre, tipo, grupoStr, valor);
     }
+
 
     // endregion
 

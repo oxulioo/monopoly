@@ -60,57 +60,56 @@ public class Tablero {
 
                 //Valores exactos del alquiler +hipoteca(50% del precio)
                 if (Casilla.TSOLAR.equals(tipo)) {
-                    float alquiler = 0f;
+                    int alquiler = 0;
                     switch (nombre) {
                         // Marrón
-                        case "Solar1":  alquiler =  20000f;  break;
-                        case "Solar2":  alquiler =  40000f;  break;
+                        case "Solar1":  alquiler =  20000;  break;
+                        case "Solar2":  alquiler =  40000;  break;
                         // Cián
-                        case "Solar3":  alquiler =  60000f;  break;
-                        case "Solar4":  alquiler =  60000f;  break;
-                        case "Solar5":  alquiler =  80000f;  break;
+                        case "Solar3":  alquiler =  60000;  break;
+                        case "Solar4":  alquiler =  60000;  break;
+                        case "Solar5":  alquiler =  80000;  break;
                         // Rosa
-                        case "Solar6":  alquiler = 100000f;  break;
-                        case "Solar7":  alquiler = 100000f;  break;
-                        case "Solar8":  alquiler = 120000f;  break;
+                        case "Solar6":  alquiler = 100000;  break;
+                        case "Solar7":  alquiler = 100000;  break;
+                        case "Solar8":  alquiler = 120000;  break;
                         // Naranja
-                        case "Solar9":  alquiler = 140000f;  break;
-                        case "Solar10": alquiler = 140000f;  break;
-                        case "Solar11": alquiler = 160000f;  break;
+                        case "Solar9":  alquiler = 140000;  break;
+                        case "Solar10": alquiler = 140000;  break;
+                        case "Solar11": alquiler = 160000;  break;
                         // Rojo
-                        case "Solar12": alquiler = 180000f;  break;
-                        case "Solar13": alquiler = 180000f;  break;
-                        case "Solar14": alquiler = 200000f;  break;
+                        case "Solar12": alquiler = 180000;  break;
+                        case "Solar13": alquiler = 180000;  break;
+                        case "Solar14": alquiler = 200000;  break;
                         // Amarillo
-                        case "Solar15": alquiler = 220000f;  break;
-                        case "Solar16": alquiler = 220000f;  break;
-                        case "Solar17": alquiler = 240000f;  break;
+                        case "Solar15": alquiler = 220000;  break;
+                        case "Solar16": alquiler = 220000;  break;
+                        case "Solar17": alquiler = 240000;  break;
                         // Verde
-                        case "Solar18": alquiler = 260000f;  break;
-                        case "Solar19": alquiler = 260000f;  break;
-                        case "Solar20": alquiler = 280000f;  break;
+                        case "Solar18": alquiler = 260000;  break;
+                        case "Solar19": alquiler = 260000;  break;
+                        case "Solar20": alquiler = 280000;  break;
                         // Azul
-                        case "Solar21": alquiler = 350000f;  break;
-                        case "Solar22": alquiler = 500000f;  break;
-                        default:        alquiler = 0f;       break;// por si añadís más adelante
+                        case "Solar21": alquiler = 350000;  break;
+                        case "Solar22": alquiler = 500000;  break;
                     }
                     c.setAlquiler(alquiler);                       // Alquiler base exacto (sin edificios)
-                    c.setHipoteca(Math.max(0f, c.getValor() / 2f));// Hipoteca = 50% del precio (Apéndice I)
+                    c.setHipoteca((int) Math.max(0, c.getValor() / 2));// Hipoteca = 50% del precio (Apéndice I)
                 }
 
                 // === TRANSPORTE: precio de compra 500.000; alquiler fijo 250.000 en Parte 1 ===
                 else if (Casilla.TTRANSPORTE.equals(tipo)) {
                     // El constructor ya puso 500.000, por si acaso aseguramos:
-                    if (c.getValor() <= 0) c.setValor(500000f);
-                    c.setAlquiler(Valor.ALQUILER_TRANSPORTE);      // 250.000
-                    c.setHipoteca(0f);                              // No hipotecable en esta parte
+                    if (c.getValor() <= 0) c.setValor(500000);
+                    c.setAlquiler((int) Valor.ALQUILER_TRANSPORTE);      // 250.000
+                    c.setHipoteca((int) 0);                              // No hipotecable en esta parte
                 }
 
                 // === SERVICIOS: precio de compra 500.000; alquiler se calcula con la tirada ===
                 else if (Casilla.TSERVICIOS.equals(tipo)) {
-                    if (c.getValor() <= 0) c.setValor(500000f);
-                    c.setAlquiler(0f);                              // Se calcula: 4 * tirada * FACTOR_SERVICIO
-                    c.setHipoteca(0f);                              // No hipotecable en esta parte
+                    if (c.getValor() <= 0) c.setValor(500000);
+                    c.setAlquiler(0);                              // Se calcula: 4 * tirada * FACTOR_SERVICIO
+                    c.setHipoteca(0);                              // No hipotecable en esta parte
                 }
 
                 // === IMPUESTOS / ESPECIALES / SUERTE / COMUNIDAD ===
@@ -185,10 +184,10 @@ public class Tablero {
             grupos.put("Azul",azul);
         }
     }
-    
+
     //Método para insertar las casillas del lado norte.
     private void insertarLadoNorte() {
-        ArrayList<Casilla>norte=posiciones.get(2);
+        ArrayList<Casilla> norte = posiciones.get(2);
         norte.add(new Casilla("Parking", 21, null));
         norte.add(new Casilla("Solar12", Casilla.TSOLAR, 22, 2200000, null));
         norte.add(new Casilla("Suerte", 23, null));
@@ -199,27 +198,28 @@ public class Tablero {
         norte.add(new Casilla("Solar16", Casilla.TSOLAR, 28, 2600000, null));
         norte.add(new Casilla("Serv2", Casilla.TSERVICIOS, 29, 500000, null));
         norte.add(new Casilla("Solar17", Casilla.TSOLAR, 30, 2800000, null));
+        norte.add(new Casilla("IrCarcel", 31, null));
     }
 
     //Método para insertar las casillas del lado sur.
     private void insertarLadoSur() {
         ArrayList<Casilla>sur=posiciones.get(0);
-        sur.add(new  Casilla("Salida", 1, null));
-        sur.add(new Casilla("Solar1", Casilla.TSOLAR, 2, 600000, null));
-        sur.add(new Casilla("Caja", 3, null));
-        sur.add(new Casilla("Solar2", Casilla.TSOLAR, 4, 600000, null));
-        sur.add(new Casilla("Imp1", 5, 2000000, null));
-        sur.add(new Casilla("Trans1", Casilla.TTRANSPORTE, 6, 500000, null));
-        sur.add(new Casilla("Solar3", Casilla.TSOLAR, 7, 1000000, null));
-        sur.add(new Casilla("Suerte", 8, null));
-        sur.add(new Casilla("Solar4", Casilla.TSOLAR, 9, 1000000, null));
+        sur.add(new Casilla("Cárcel", 11, null));
         sur.add(new Casilla("Solar5", Casilla.TSOLAR, 10, 1200000, null));
+        sur.add(new Casilla("Solar4", Casilla.TSOLAR, 9, 1000000, null));
+        sur.add(new Casilla("Suerte", 8, null));
+        sur.add(new Casilla("Solar3", Casilla.TSOLAR, 7, 1000000, null));
+        sur.add(new Casilla("Trans1", Casilla.TTRANSPORTE, 6, 500000, null));
+        sur.add(new Casilla("Imp1", 5, 2000000, null));
+        sur.add(new Casilla("Solar2", Casilla.TSOLAR, 4, 600000, null));
+        sur.add(new Casilla("Caja", 3, null));
+        sur.add(new Casilla("Solar1", Casilla.TSOLAR, 2, 600000, null));
+        sur.add(new Casilla("Salida", 1, null));
     }
 
     //Método que inserta casillas del lado oeste.
     private void insertarLadoOeste() {
         ArrayList<Casilla>oeste=posiciones.get(1);
-        oeste.add(new Casilla("Cárcel", 11, null));
         oeste.add(new Casilla("Solar6", Casilla.TSOLAR, 12, 1400000, null));
         oeste.add(new Casilla("Serv1", Casilla.TSERVICIOS, 13, 500000,null));
         oeste.add(new Casilla("Solar7", Casilla.TSOLAR, 14, 1400000, null));
@@ -234,7 +234,6 @@ public class Tablero {
     //Método que inserta las casillas del lado este.
     private void insertarLadoEste() {
         ArrayList<Casilla>este=posiciones.get(3);
-        este.add(new Casilla("IrCarcel", 31, null));
         este.add(new Casilla("Solar18", Casilla.TSOLAR, 32, 3000000, null));
         este.add(new Casilla("Solar19", Casilla.TSOLAR, 33, 3000000, null));
         este.add(new Casilla("Caja", 34, null));
@@ -247,47 +246,107 @@ public class Tablero {
     }
 
     //Para imprimir el tablero, modificamos el método toString().
-    @Override
+    //TENGO QUE IMPLEMENTARLO TODO
+
     public String toString() {
-        String[] lados = {"Sur", "Oeste", "Norte", "Este"};
+        final int CELL = 13;// ancho fijo de cada casilla
+        final int CELDAS_FILA = 11;
+        final int ANCHO_LINEA = (CELL + 1) * CELDAS_FILA + 1; // |xxxxx|...|  (10 celdas)
+
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < posiciones.size(); i++) {
-            sb.append("== Lado ").append(lados[i]).append(" ==\n");
-            for (Casilla c : posiciones.get(i)) {
-                // color por tipo
-                String color = Valor.WHITE;
-                if (Casilla.TSOLAR.equals(c.getTipo()))          color = Valor.YELLOW;
-                else if (Casilla.TESPECIAL.equals(c.getTipo()))  color = Valor.CYAN;
-                else if (Casilla.TTRANSPORTE.equals(c.getTipo()))color = Valor.BLUE;
-                else if (Casilla.TSERVICIOS.equals(c.getTipo())) color = Valor.PURPLE;
-                else if (Casilla.TIMPUESTO.equals(c.getTipo()))  color = Valor.RED;
-                else if (Casilla.TSUERTE.equals(c.getTipo()))    color = Valor.GREEN;
-                else if (Casilla.TCOMUNIDAD.equals(c.getTipo())) color = Valor.WHITE;
 
-                // avatares en la casilla: &A&B...
-                String avStr = "";
-                try {
-                    java.util.ArrayList<partida.Avatar> avs = c.getAvatares();
-                    if (avs != null && !avs.isEmpty()) {
-                        StringBuilder sa = new StringBuilder();
-                        for (partida.Avatar a : avs) {
-                            sa.append('&').append(a.getID());
-                        }
-                        avStr = " " + sa;
-                    }
-                } catch (Throwable ignored) {}
-
-                sb.append(color)
-                        .append(String.format("%02d %s%s [%s]%n",
-                                c.getPosicion(), c.getNombre(), avStr, c.getTipo()))
-                        .append(Valor.RESET);
-            }
-            sb.append("\n");
+        // Fila superior: pos 21..30
+        sb.append(lineaHorizontal(21, 31, CELL)).append('\n');
+        // 9 filas intermedias: izquierda 20..12 y derecha 31..39
+        final int anchoInterior = ANCHO_LINEA - 3 * (CELL) + 1; // interior entre barras laterales
+        for (int i = 0; i < 9; i++) {
+            int izq = 20 - i;    // 20→12
+            int der = 32 + i;    // 31→39
+            sb.append(celda(izq, CELL))
+                    .append(" ".repeat(anchoInterior))
+                    .append(celda(der, CELL))
+                    .append("\n");
         }
+
+        // Fila inferior: pos 1..10
+        sb.append(lineasur(1, 11, CELL)).append('\n');
+
+        // ─────────── suelo de la fila inferior
+//        sb.append(lineaTecho(CELL, CELDAS_FILA)).append('\n');
+
         return sb.toString();
     }
 
-    
+    /** Devuelve la casilla por posición absoluta (1..40). */
+    private Casilla porPos(int pos) {
+        for (ArrayList<Casilla> lado : posiciones)
+            for (Casilla c : lado)
+                if (c != null && c.getPosicion() == pos) return c;
+        return null;
+    }
+
+    /** Una celda "|<texto10>" con color (grupo para solares; tipo para el resto). */
+    private String celda(int pos, int CELL) {
+        Casilla c = porPos(pos);
+        String nom = (c == null || c.getNombre() == null) ? ("?" + pos) : c.getNombre();
+
+        // avatares: &A&B...
+        String av = "";
+        try {
+            ArrayList<partida.Avatar> avs = c.getAvatares();
+            if (avs != null && !avs.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (partida.Avatar a : avs) sb.append('&').append(a.getID());
+                av = " " + sb;
+            }
+        } catch (Throwable ignored) {}
+
+        String texto = nom + av;
+        if (texto.length() > CELL) texto = texto.substring(0, CELL);
+
+        // color
+        String color = Valor.WHITE;
+        if (c != null) {
+            if (Casilla.TSOLAR.equals(c.getTipo())) {
+                Grupo g = c.getGrupo();
+                if (g != null) {
+                    switch (g.getColorGrupo()) {
+                        case "Marron":   color = Valor.PURPLE;   break;
+                        case "Cian":     color = Valor.CYAN;    break;
+                        case "Rosa":     color = Valor.PURPLE;  break;
+                        case "Naranja":  color = Valor.YELLOW;  break;
+                        case "Rojo":     color = Valor.RED;     break;
+                        case "Amarillo": color = Valor.YELLOW;  break;
+                        case "Verde":    color = Valor.GREEN;   break;
+                        case "Azul":     color = Valor.BLUE;    break;
+                    }
+                }
+            } else if (Casilla.TSERVICIOS.equals(c.getTipo()))  color = Valor.PURPLE;
+            else if (Casilla.TTRANSPORTE.equals(c.getTipo())) color = Valor.BLUE;
+            else if (Casilla.TIMPUESTO.equals(c.getTipo()))    color = Valor.RED;
+            else if (Casilla.TESPECIAL.equals(c.getTipo()))    color = Valor.CYAN;
+            else if (Casilla.TSUERTE.equals(c.getTipo()))      color = Valor.GREEN;
+        }
+
+        return color + String.format("%-" + CELL + "s", texto) + Valor.RESET;
+    }
+
+    private String lineaHorizontal(int from, int to, int CELL) {
+        StringBuilder sb = new StringBuilder();
+        for (int p = from; p <= to; p++) sb.append(celda(p, CELL));
+        return sb.toString();
+    }
+
+    private String lineasur(int from, int to, int CELL) {
+        StringBuilder sb = new StringBuilder();
+        for (int p = from; p <= to; p++) sb.append(celda(p, CELL));
+        return sb.toString();
+    }
+
+// === HASTA aquí (fin de reemplazo) ===
+
+
+
     //Método usado para buscar la casilla con el nombre pasado como argumento:
     public Casilla encontrar_casilla(String nombre){
         if(nombre==null){
