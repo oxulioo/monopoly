@@ -267,8 +267,8 @@ public class Menu {
             }
 
             // fortuna con dos decimales
-            String fortunaStr = String.format("%.2f", j.getFortuna());
-
+            //String fortunaStr = String.format("%.2f", j.getFortuna());
+            String fortunaStr = String.format("%d",j.getFortuna());
             // propiedades: lista de nombres o "-"
             String propiedadesStr = "-";
             java.util.List<Casilla> props = j.getPropiedades();
@@ -332,8 +332,8 @@ public class Menu {
         }
 
         // Fortuna
-        String fortunaStr = String.format("%.2f", j.getFortuna());
-
+        //String fortunaStr = String.format("%.2f", j.getFortuna());
+        String fortunaStr = String.format("%d", j.getFortuna());
         // Posición actual (si vuestro modelo la expone)
         String posicionStr = "-";
         Casilla pos = null;

@@ -120,8 +120,6 @@ public class Avatar {
         if(nuevaCasilla != null) {
             //Omito lo siguiente: Casilla antiguaCasilla = this.lugar;
             //Actualizo la lista de avatares (para imprimir en el tablero)
-            this.lugar.eliminarAvatar(this);
-            nuevaCasilla.anhadirAvatar(this);
             setPosicion(nuevaCasilla);
             System.out.println("El avatar " + this.id + " avanza " + valorTirada + " casillas, llegando a la casilla " + nuevaCasilla.getNombre() + ".");
         }else {
