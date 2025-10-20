@@ -25,23 +25,13 @@ public final class Valor {
 
     //Colores del texto:
     public static final String RESET = "\u001B[0m";
-    public static final String BLACK = "\u001B[40m";
-    public static final String RED = "\u001B[41m";
-    public static final String GREEN = "\u001B[42m";
-    public static final String YELLOW = "\u001B[43m";
-    public static final String BLUE = "\u001B[44m";
-    public static final String PURPLE = "\u001B[45m";
-    public static final String CYAN = "\u001B[46m";
-    public static final String WHITE = "\u001B[47m";
+    public static final String BLACK = "\u001B[1;100m";
+    public static final String RED = "\u001B[1;101m";
+    public static final String GREEN = "\u001B[1;42m";
+    public static final String YELLOW = "\u001B[1;43m";
+    public static final String BLUE = "\u001B[1;44m";
+    public static final String PURPLE = "\u001B[1;45m";
+    public static final String CYAN = "\u001B[1;46m";
+    public static final String WHITE = "\u001B[1;47m";
 
-/*
-    public static final String On_Black="\[\033[40m\]";
-            On_Red="\[\033[41m\]"         # Red
-            On_Green="\[\033[42m\]"       # Green
-            On_Yellow="\[\033[43m\]"      # Yellow
-            On_Blue="\[\033[44m\]"        # Blue
-            On_Purple="\[\033[45m\]"      # Purple
-            On_Cyan="\[\033[46m\]"        # Cyan
-            On_White="\[\033[47m\]"       # White
-*/
 }
