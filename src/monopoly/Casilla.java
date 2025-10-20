@@ -282,20 +282,85 @@ public class Casilla {
 
         if ("solar".equals(tlc)) {
             String grupoStr = (this.grupo != null) ? this.grupo.getColorGrupo() : "-";
+
+            int vCasa=0, vHotel=0, vPiscina=0, vPista=0;
+            int aCasa=0, aHotel=0, aPiscina=0, aPista=0;
+
+            switch (nombre) {
+                // Marrón (Solar1–2)
+                case "Solar1":  vCasa=500000;  vHotel=500000;  vPiscina=100000;  vPista=200000;
+                    aCasa=400000;  aHotel=2500000; aPiscina=500000;  aPista=500000;  break;
+                case "Solar2":  vCasa=500000;  vHotel=500000;  vPiscina=100000;  vPista=200000;
+                    aCasa=800000;  aHotel=4500000; aPiscina=900000;  aPista=900000;  break;
+
+                // Cian (Solar3–5)
+                case "Solar3":  vCasa=500000;  vHotel=500000;  vPiscina=100000;  vPista=200000;
+                    aCasa=1000000; aHotel=5500000; aPiscina=1100000; aPista=1100000; break;
+                case "Solar4":  vCasa=500000;  vHotel=500000;  vPiscina=100000;  vPista=200000;
+                    aCasa=1000000; aHotel=5500000; aPiscina=1100000; aPista=1100000; break;
+                case "Solar5":  vCasa=500000;  vHotel=500000;  vPiscina=100000;  vPista=200000;
+                    aCasa=1250000; aHotel=6000000; aPiscina=1200000; aPista=1200000; break;
+
+                // Rosa (Solar6–8)
+                case "Solar6":  vCasa=1000000; vHotel=1000000; vPiscina=200000;  vPista=400000;
+                    aCasa=1500000; aHotel=7500000; aPiscina=1500000; aPista=1500000; break;
+                case "Solar7":  vCasa=1000000; vHotel=1000000; vPiscina=200000;  vPista=400000;
+                    aCasa=1500000; aHotel=7500000; aPiscina=1500000; aPista=1500000; break;
+                case "Solar8":  vCasa=1000000; vHotel=1000000; vPiscina=200000;  vPista=400000;
+                    aCasa=1750000; aHotel=9000000; aPiscina=1800000; aPista=1800000; break;
+
+                // Naranja (Solar9–11)
+                case "Solar9":  vCasa=1000000; vHotel=1000000; vPiscina=200000;  vPista=400000;
+                    aCasa=1850000; aHotel=9500000; aPiscina=1900000; aPista=1900000; break;
+                case "Solar10": vCasa=1000000; vHotel=1000000; vPiscina=200000;  vPista=400000;
+                    aCasa=1850000; aHotel=9500000; aPiscina=1900000; aPista=1900000; break;
+                case "Solar11": vCasa=1000000; vHotel=1000000; vPiscina=200000;  vPista=400000;
+                    aCasa=2000000; aHotel=10000000; aPiscina=2000000; aPista=2000000; break;
+
+                // Rojo (Solar12–14)
+                case "Solar12": vCasa=1500000; vHotel=1500000; vPiscina=300000;  vPista=600000;
+                    aCasa=2200000; aHotel=10500000; aPiscina=2100000; aPista=2100000; break;
+                case "Solar13": vCasa=1500000; vHotel=1500000; vPiscina=300000;  vPista=600000;
+                    aCasa=2200000; aHotel=10500000; aPiscina=2100000; aPista=2100000; break;
+                case "Solar14": vCasa=1500000; vHotel=1500000; vPiscina=300000;  vPista=600000;
+                    aCasa=2325000; aHotel=11000000; aPiscina=2200000; aPista=2200000; break;
+
+                // Amarillo (Solar15–17)
+                case "Solar15": vCasa=1500000; vHotel=1500000; vPiscina=300000;  vPista=600000;
+                    aCasa=2450000; aHotel=11500000; aPiscina=2300000; aPista=2300000; break;
+                case "Solar16": vCasa=1500000; vHotel=1500000; vPiscina=300000;  vPista=600000;
+                    aCasa=2450000; aHotel=11500000; aPiscina=2300000; aPista=2300000; break;
+                case "Solar17": vCasa=1500000; vHotel=1500000; vPiscina=300000;  vPista=600000;
+                    aCasa=2600000; aHotel=12000000; aPiscina=2400000; aPista=2400000; break;
+
+                // Verde (Solar18–20)
+                case "Solar18": vCasa=2000000; vHotel=2000000; vPiscina=400000;  vPista=800000;
+                    aCasa=2750000; aHotel=12750000; aPiscina=2550000; aPista=2550000; break;
+                case "Solar19": vCasa=2000000; vHotel=2000000; vPiscina=400000;  vPista=800000;
+                    aCasa=2750000; aHotel=12750000; aPiscina=2550000; aPista=2550000; break;
+                case "Solar20": vCasa=2000000; vHotel=2000000; vPiscina=400000;  vPista=800000;
+                    aCasa=3000000; aHotel=14000000; aPiscina=2800000; aPista=2800000; break;
+
+                // Azul (Solar21–22)
+                case "Solar21": vCasa=2000000; vHotel=2000000; vPiscina=400000;  vPista=800000;
+                    aCasa=3250000; aHotel=17000000; aPiscina=3400000; aPista=3400000; break;
+                case "Solar22": vCasa=2000000; vHotel=2000000; vPiscina=400000;  vPista=800000;
+                    aCasa=4250000; aHotel=20000000; aPiscina=4000000; aPista=4000000; break;
+            }
             return "{\n"
                     + "tipo: solar,\n"
                     + "grupo: " + grupoStr + ",\n"
                     + "propietario: " + propietario + ",\n"
                     + "valor: " + this.valor + ",\n"
                     + "alquiler: " + this.alquiler + ",\n"
-                    + "valor hotel: 0,\n"
-                    + "valor casa: 0,\n"
-                    + "valor piscina: 0,\n"
-                    + "valor pista de deporte: 0,\n"
-                    + "alquiler casa: 0,\n"
-                    + "alquiler hotel: 0,\n"
-                    + "alquiler piscina: 0,\n"
-                    + "alquiler pista de deporte: 0\n"
+                    + "valor hotel: " + vHotel + ",\n"
+                    + "valor casa: " + vCasa + ",\n"
+                    + "valor piscina: " + vPiscina + ",\n"
+                    + "valor pista de deporte: " + vPista + ",\n"
+                    + "alquiler casa: " + aCasa + ",\n"
+                    + "alquiler hotel: " + aHotel + ",\n"
+                    + "alquiler piscina: " + aPiscina + ",\n"
+                    + "alquiler pista de deporte: " + aPista + ",\n"
                     + "}";
         }
 
