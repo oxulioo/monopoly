@@ -17,6 +17,7 @@ public class Tablero {
 
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
+    //La clave es el color del grupo, y el valor es el grupo, que contiene todas las casillas de dicho color (recordar, la tabla HashMap guarda pares clave-valor)
     private Jugador banca; //Un jugador que será la banca.
 
     // endregion
@@ -30,8 +31,10 @@ public class Tablero {
         for (int i=0;i<4;i++){
             this.posiciones.add(new ArrayList<>());
         }
+        //Inicializo el HashMap
         this.grupos=new HashMap<>();
 
+        //Llamo a 3 metodos (implementados más adelante) para crear el tablero correctamente)
         generarCasillas();
         precargarAlquileres();
         generarGrupos();
@@ -43,6 +46,7 @@ public class Tablero {
 
     //Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).
     private void generarCasillas() {
+        //Llamo a 4 metodos (uno para cada lado del tablero) que generen las casillas
         this.insertarLadoSur();
         this.insertarLadoOeste();
         this.insertarLadoNorte();
@@ -93,34 +97,36 @@ public class Tablero {
                         case "Solar21": alquiler = 350000;  break;
                         case "Solar22": alquiler = 500000;  break;
                     }
-                    c.setAlquiler(alquiler);                       // Alquiler base exacto (sin edificios)
+                    c.setAlquiler(alquiler);//Introduzco el alquiler base (sin edificios), con el setter
                     c.setHipoteca((int) Math.max(0, c.getValor() / 2));// Hipoteca = 50% del precio (Apéndice I)
                 }
 
-                // === TRANSPORTE: precio de compra 500.000; alquiler fijo 250.000 en Parte 1 ===
+                //Si es TRANSPORTE, el precio de compra es 500.000 y el alquiler fijo es250.000 (PARTE1)
                 else if (Casilla.TTRANSPORTE.equals(tipo)) {
-                    // El constructor ya puso 500.000, por si acaso aseguramos:
+                    //El constructor ya puso 500.000, por si acaso compruebo
                     if (c.getValor() <= 0) c.setValor(500000);
-                    c.setAlquiler((int) Valor.ALQUILER_TRANSPORTE);      // 250.000
-                    c.setHipoteca((int) 0);                              // No hipotecable en esta parte
+                    c.setAlquiler((int) Valor.ALQUILER_TRANSPORTE);// 250.000
+                    c.setHipoteca((int) 0);// No hipotecable en esta parte, hay que cambiarlo (entiendo) en siguientes entregas
                 }
 
-                // === SERVICIOS: precio de compra 500.000; alquiler se calcula con la tirada ===
+                //Si es SERVICIO, el precio de compra es 500.000 y el alquiler se calcula con la tirada
                 else if (Casilla.TSERVICIOS.equals(tipo)) {
                     if (c.getValor() <= 0) c.setValor(500000);
-                    c.setAlquiler(0);                              // Se calcula: 4 * tirada * FACTOR_SERVICIO
-                    c.setHipoteca(0);                              // No hipotecable en esta parte
+                    c.setAlquiler(0);// Se calcula: 4 * tirada * FACTOR_SERVICIO
+                    c.setHipoteca(0);// No hipotecable en esta parte
                 }
 
-                // === IMPUESTOS / ESPECIALES / SUERTE / COMUNIDAD ===
-                // Impuestos ya traen la "cantidad a pagar" en el campo 'alquiler' desde el constructor.
-                // Parking acumula bote en 'valor' cuando alguien paga impuestos/carta; aquí no tocamos nada.
+                //En el caso de que sean IMPUESTOS/ESPECIALES/SUERTE/COMUNIDAD, se tiene que (no hace falta hacer nada):
+                //Los impuestos ya traen la "cantidad a pagar" en el campo 'alquiler' desde el constructor.
+                //El parking acumula bote en 'valor' cuando alguien paga impuestos.
             }
         }
     }
 
     //Esta la escribo yo, no estaba en el esqueleto, MIRAR BIEN
     private void generarGrupos(){
+        //Busco la casilla, compruebo que no sean null y la añado al grupo
+
         //Marrón
         Casilla s1=encontrar_casilla("Solar1");
         Casilla s2=encontrar_casilla("Solar2");
@@ -187,8 +193,15 @@ public class Tablero {
 
     //Método para insertar las casillas del lado norte.
     private void insertarLadoNorte() {
+        //Le asigno la posición al array (hay 4)
         ArrayList<Casilla> norte = posiciones.get(2);
-        norte.add(new Casilla("Parking", 21, Casilla.TESPECIAL));
+
+        //Dado que el parking tiene que actualizar el bote y no tengo un metodo que acepte el tablero como parámetro (no está en el esqueleto); uso una variable estática y actualizo la casilla
+        Casilla parking = new Casilla("Parking",21, Casilla.TESPECIAL);
+        norte.add(parking);
+        Casilla.setParkingReferencia(parking);
+        //norte.add(new Casilla("Parking", 21, Casilla.TESPECIAL)); //Esta es la línea que estaba antes de ver el problema del parking
+        //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
         norte.add(new Casilla("Solar12", Casilla.TSOLAR, 22, 2200000, null));
         norte.add(new Casilla("Suerte", 23, Casilla.TSUERTE));
         norte.add(new Casilla("Solar13", Casilla.TSOLAR, 24, 2200000, null));
@@ -203,7 +216,9 @@ public class Tablero {
 
     //Método para insertar las casillas del lado sur.
     private void insertarLadoSur() {
+        //Le asigno la posición al array (hay 4)
         ArrayList<Casilla>sur=posiciones.get(0);
+        //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
         sur.add(new Casilla("Cárcel", 11, Casilla.TESPECIAL));
         sur.add(new Casilla("Solar5", Casilla.TSOLAR, 10, 1200000, null));
         sur.add(new Casilla("Solar4", Casilla.TSOLAR, 9, 1000000, null));
@@ -219,7 +234,9 @@ public class Tablero {
 
     //Método que inserta casillas del lado oeste.
     private void insertarLadoOeste() {
+        //Le asigno la posición al array (hay 4)
         ArrayList<Casilla>oeste=posiciones.get(1);
+        //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
         oeste.add(new Casilla("Solar6", Casilla.TSOLAR, 12, 1400000, null));
         oeste.add(new Casilla("Serv1", Casilla.TSERVICIOS, 13, 500000,null));
         oeste.add(new Casilla("Solar7", Casilla.TSOLAR, 14, 1400000, null));
@@ -233,7 +250,9 @@ public class Tablero {
 
     //Método que inserta las casillas del lado este.
     private void insertarLadoEste() {
+        //Le asigno la posición al array (hay 4)
         ArrayList<Casilla>este=posiciones.get(3);
+        //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
         este.add(new Casilla("Solar18", Casilla.TSOLAR, 32, 3000000, null));
         este.add(new Casilla("Solar19", Casilla.TSOLAR, 33, 3000000, null));
         este.add(new Casilla("Caja", 34, Casilla.TCOMUNIDAD));
@@ -246,8 +265,6 @@ public class Tablero {
     }
 
     //Para imprimir el tablero, modificamos el método toString().
-    //TENGO QUE IMPLEMENTARLO TODO
-
     public String toString() {
         final int CELL = 13;// ancho fijo de cada casilla
         final int CELDAS_FILA = 11;
@@ -353,6 +370,7 @@ public class Tablero {
 
     //Método usado para buscar la casilla con el nombre pasado como argumento:
     public Casilla encontrar_casilla(String nombre){
+        //Si el nombre es nulo, no se encuentra
         if(nombre==null){
             return null;
         }
@@ -360,10 +378,12 @@ public class Tablero {
         for(ArrayList<Casilla>lado:posiciones){
             for(Casilla c:lado){
                 if(c!=null && nombre.equals(c.getNombre())){
+                    //Si encuentro una casilla c no nula cuyo nombre coincide con el parámetro de entrada, devuelvo dicha casilla
                     return c;
                 }
             }
         }
+        //En otro caso, no se encuentra
         return null;
     }
 
@@ -372,6 +392,7 @@ public class Tablero {
     public ArrayList<ArrayList<Casilla>> getPosiciones() {
         return posiciones;
     }
+    //Ojo, no me sirve el getter getPosicion() porque este solo toma una posición, y necesito el array (más posiciones, para una fila/columna)
 
     // Devuelve las 40 casillas en una sola lista (útil para "listar en venta")
     public ArrayList<Casilla> getTodasLasCasillas() {
@@ -381,6 +402,7 @@ public class Tablero {
         }
         return todas;
     }
+    //Aquí tampoco me sirve getPosicion() ni getPosiciones(), porque necesito TODAS las 40 posiciones
 
     // endregion
 
