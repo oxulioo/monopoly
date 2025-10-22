@@ -108,7 +108,7 @@ public class Casilla {
         this.hipoteca = 0;
         this.grupo = null;
         this.avatares = new ArrayList<>();
-        //fixme2
+
         //se la damos a la banca
         Jugador banca = MonopolyETSE.menu.getBanca();
         this.dueno = banca;
@@ -152,7 +152,7 @@ public class Casilla {
         //Inicializo el resto de valores que no han sido introducidos como parámetros
         this.grupo = null;
         this.avatares = new ArrayList<>();
-        //fixme2
+
         this.dueno=null;
 
     }
@@ -192,7 +192,7 @@ public class Casilla {
         }
         //Si la casilla a la que caes es el parking, te llevas la fortuna acumulada en la casilla
         //Si la fortuna es >0, llamas al método sumarFortuna, y se restaura a 0 el bote del parking
-        //FIXME: SUMAR BIEN Y SACAR BIEN EL BOTE DEL PARKING
+
         if(TESPECIAL.equals(tipo)&&"Parking".equalsIgnoreCase(nombre)){
             if(this.valor>0){
                 actual.sumarFortuna(this.valor);
@@ -200,7 +200,7 @@ public class Casilla {
             }
             return true;
         }
-        // FIXME: EXPLICAR ESTO QUE TIENE UN INTERROGANTE
+
         //Si caes en una casilla de impuesto, se cobra al jugador
         if(TIMPUESTO.equals(tipo)){
             int cantidad=(this.valor>0)?this.valor:Valor.IMPUESTO_FIJO;
@@ -213,10 +213,10 @@ public class Casilla {
         //Si caes en una casilla de tipo transporte, y tiene dueño y no es el jugador que está en la casilla,
         //como en la primera entrega no se tienen en cuenta el número de casillas de transportes, entonces
         //se calcula la cantidad a pagar (Valor.ALQUILER_TRANSPORTE), se comprueba si puede pagar y se da el dinero al dueño
-        // FIXME: que cojones es respuesta
+
 
         if(TTRANSPORTE.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){ //FIXME:BANCA
+            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){
 
                 actual.pagarAlquiler(this, 1);
                 return actual.getFortuna()>=0;
@@ -226,7 +226,7 @@ public class Casilla {
         //Si caes en una casilla de tipo servicio con dueño, que no eres tú, entonces calculas la cantidad a pagar,
         //compruebas que tiene suficiente dinero y pagas, dándole al dueño lo que le corresponde
 
-        // FIXME: QUE ALGN EXPLIQUE AQUI
+
 
         if(TSERVICIOS.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){
@@ -241,7 +241,7 @@ public class Casilla {
         // FIX
 
         if(TSOLAR.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){ //FIXME:añadir que no sea de la banca
+            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){
                 actual.pagarAlquiler(this, 1);
                 if(this.grupo.esDuenoGrupo(this.dueno)){
                     actual.pagarAlquiler(this, 2);
@@ -279,7 +279,7 @@ public class Casilla {
     public void sumarValor(int suma) {
         this.valor += suma; //verificar mayor que 0
     }
-// FIXME: QUE COÑO ES TIPORAW Y PARA QUE SE USA TRIM
+
     /*Método para mostrar información sobre una casilla.
      * Devuelve una cadena con información específica de cada tipo de casilla.*/
     public String infoCasilla() {
@@ -375,7 +375,7 @@ public class Casilla {
                     + "}";
         }
         //Si es casilla de impuesto, imprime lo siguiente
-        // FIXEM
+
         if ("impuesto".equals(tlc)) {
             int aPagar = (this.alquiler > 0) ? this.alquiler : this.valor;
             return "{\n"
@@ -463,24 +463,10 @@ public class Casilla {
 
 
 
-
-
-
-
-
-    //ESTO NO ESTA fixme2
-
-
-
-
-
-
-
-
     /* Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
-    //Esta no la usamos, pero queda aquí por si hace falta
+
     public String casEnVenta() {
         //Compruebo si es un solar, servicio o transporte (el resto NO SON COMPRABLES)
 
@@ -488,8 +474,8 @@ public class Casilla {
         if (!comprable) {
             return String.format("La casilla %s no es comprable", nombre);
         }
-        boolean enVenta = (this.dueno == null);//FIXME: LA PUTA BANCA
-        //Si tiene dueño (dueno!=null), entonces no está en venta
+        boolean enVenta = (this.dueno == null);
+
         if (!enVenta) {
             String grupoStr = (this.grupo == null) ? "-" : this.grupo.getColorGrupo();
             return String.format("La casilla %s de tipo %s y grupo %s no está en venta", nombre, tipo, grupoStr);

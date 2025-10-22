@@ -84,7 +84,7 @@ class Grupo {
         for (Casilla c : miembros) {
             //Tomo al dueño de la casilla (si es que existe)
             Jugador d = c.getDueno();
-            if (d == null || d != jugador) {//FIXME: Si d es null, es la banca y si es distinto de jugador, es distinto dueno
+            if (d == null || d != jugador) {
                 return false;
             }
         }

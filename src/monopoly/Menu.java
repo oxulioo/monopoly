@@ -43,7 +43,7 @@ public class Menu {
 
 
     // Método para inciar una partida: crea los jugadores y avatares.
-    ///////////////// es privada
+
     public void iniciarPartida() {
         // Estructuras y estado base
         jugadores    = new ArrayList<>();
@@ -60,7 +60,7 @@ public class Menu {
 
 
         // Tablero: la banca empieza como propietaria de todo
-        // (El propio constructor de Tablero debe asignar la propiedad inicial a banca)
+
         tablero = new Tablero(banca);
     }
 
@@ -85,8 +85,8 @@ public class Menu {
                 System.out.println("Uso: crear jugador <Nombre> <tipoAvatar>");
                 return;
             }
-            String nombre = resto.substring(0, idx);          // tal cual (puede tener espacios)
-            String tipo   = resto.substring(idx + 1);          // tal cual (sin validar)
+            String nombre = resto.substring(0, idx);
+            String tipo   = resto.substring(idx + 1);
             crearJugador(nombre, tipo);
             return;
         }
@@ -185,7 +185,7 @@ public class Menu {
             return;
         }
 
-        // 14) ver tablero
+        //  ver tablero
         if (comando.equals("ver tablero")) {
             verTablero();
             return;
@@ -204,7 +204,7 @@ public class Menu {
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
 
         Jugador actual = jugadores.get(turno);
-        // asumimos que Jugador tiene getNombre()
+
         System.out.println("Tiene el turno: " + actual.getNombre());
     }
 
@@ -219,7 +219,7 @@ public class Menu {
         }
     }
 
-    // Crea Jugador+Avatar en "Salida" y repinta el tablero (sin validación, sin trim)
+    // Crea Jugador+Avatar en "Salida" y repinta el tablero
     private void crearJugador(String nombre, String tipoAvatar) {
         // 1) Buscar casilla de inicio ("Salida")
         Casilla salida = null;
@@ -235,7 +235,7 @@ public class Menu {
         }
 
         // 2) Crear jugador (asumimos que el constructor genera el Avatar con ID aleatorio)
-        //    Firma esperada en vuestro modelo: Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados)
+
         Jugador j;
         try {
             j = new Jugador(nombre, tipoAvatar, salida, avatares);
@@ -312,7 +312,7 @@ public class Menu {
             return;
         }
 
-        // Buscar por nombre exacto (tal cual)
+        // Buscar por nombre exacto
         Jugador j = null;
         for (Jugador x : jugadores) {
             if (x.getNombre().equals(nombreBuscado)) {
@@ -337,9 +337,9 @@ public class Menu {
         }
 
         // Fortuna
-        //String fortunaStr = String.format("%.2f", j.getFortuna());
+
         String fortunaStr = String.format("%d", j.getFortuna());
-        // Posición actual (si vuestro modelo la expone)
+        //Posicion actual
         String posicionStr = "-";
         Casilla pos = null;
         if (a != null) pos = a.getPosicion();
@@ -362,13 +362,13 @@ public class Menu {
 
 
 
-        // ¿En cárcel? (versión 'Sí/No')
+        // ¿En cárcel? ( 'Sí/No')
         String carcelStr = j.isEnCarcel() ? "Sí" : "No";
 
 
 
 
-        // Salida formateada (Parte 1: Hipotecas y Edificios se muestran como “-”)
+        // Salida formateada (Hipotecas y Edificios se muestran como “-”)
         System.out.println("Jugador: " + nombre);
         System.out.println("  Avatar: " + avatarStr);
         System.out.println("  Fortuna: " + fortunaStr);
@@ -436,7 +436,7 @@ public class Menu {
             return;
         }
 
-        // Buscar la casilla en el tablero (ajusta el método si en tu Tablero se llama distinto)
+        // Buscar la casilla en el tablero
         Casilla c = null;
         try {
             c = tablero.encontrar_casilla(nombre);
@@ -451,7 +451,7 @@ public class Menu {
         try {
             System.out.println(c.infoCasilla());
         } catch (Throwable t) {
-            // Si infoCasilla() aún no está lista, al menos muestra el nombre
+
             try { System.out.println("Casilla: " + c.getNombre()); }
             catch (Throwable ignore) { System.out.println(String.valueOf(c)); }
         }
@@ -697,7 +697,7 @@ public class Menu {
         // 3) Comprobar propietario actual (debe ser la banca)
         Jugador propietario = null;
         try { propietario = cas.getDueno(); } catch (Throwable ignored) {}
-        if (propietario != null && propietario != banca) {//KNOWEATS, HE QUITADO EL &&propietario!=banca
+        if (propietario != null && propietario != banca) {
             System.out.println("La propiedad '" + cas.getNombre() + "' no está en venta.");
             return;
         }
@@ -756,29 +756,7 @@ public class Menu {
         System.out.println(actual.getNombre() + " paga " + COSTE_SALIR_CARCEL + " y sale de la cárcel.");
         try { System.out.println(tablero); } catch (Throwable ignored) {}
     }
-/*
-    private void listarVenta(){
-        ArrayList<Casilla> stock = banca.getPropiedades();
-        ArrayList<Casilla> enVenta = new ArrayList<>();
 
-        for (Casilla c : stock) {
-            if (Casilla.TSOLAR.equals(c.getTipo())
-                    || Casilla.TTRANSPORTE.equals(c.getTipo())
-                    || Casilla.TSERVICIOS.equals(c.getTipo())) {
-                enVenta.add(c);
-            }
-        }
-        if (enVenta.isEmpty()) {
-            System.out.println("No hay propiedades en venta.");
-            return;
-        }
-        for (int i=0;i<enVenta.size();i++){
-            Casilla c = enVenta.get(i);
-            System.out.println(c.infoCasilla());
-            if (i < enVenta.size()-1) System.out.println(",\n");
-        }
-    }
-*/
 
     private void listarVenta() {
         ArrayList<Casilla> enVenta = new ArrayList<>();
@@ -804,14 +782,14 @@ public class Menu {
     }
 
     // Método que realiza las acciones asociadas al comando 'listar avatares'.
-    // lista todos los avatares (tolerante si faltan getters)
+
     private void listarAvatares() {
         if (avatares == null || avatares.isEmpty()) {
             System.out.println("No hay avatares en la partida.");
             return;
         }
         for (Avatar a : avatares) {
-            char id= '\0' ;   //MIARARARARARARARTARARA--->NOA TE LO CAMBIO, ES '\0', NO "\0" (JAVAX :))
+            char id= '\0' ;
             String tipo = "-";
             String pos = "-";
             String jugadorNombre = "-";
@@ -849,7 +827,7 @@ public class Menu {
         // reset de estado del turno
         doblesConsecutivos = 0;
         tirado = false;                // listo para que el nuevo jugador pueda lanzar
-        // si tienes 'lanzamientos', podrías hacer: lanzamientos = 0;
+
 
         // mensaje
         Jugador actual = jugadores.get(turno);
@@ -860,7 +838,7 @@ public class Menu {
 
 
 
-    //AÑADO ESTE HELPER PARA QUE ARRIBA NO DE ERROR
+
     // === Helper para enviar un jugador a la cárcel ===
     private void enviarACarcel(Jugador j) {
         if (j == null || tablero == null) return;
@@ -873,7 +851,7 @@ public class Menu {
         } catch (Throwable ignored) {}
     }
 
-    //ESTO ÚLTIMO LO AÑADO PARA QUE SE EJECUTE BIEN EL MENÚ
+
     // Lector de comandos por consola
     public void run() {
         java.util.Scanner sc = new java.util.Scanner(System.in);

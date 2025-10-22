@@ -18,7 +18,7 @@ public class Tablero {
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
     //La clave es el color del grupo, y el valor es el grupo, que contiene todas las casillas de dicho color (recordar, la tabla HashMap guarda pares clave-valor)
-    private Jugador banca; //Un jugador que será la banca.FIXME:PUBLICO
+    private Jugador banca; //Un jugador que será la banca.
 
     // endregion
 
@@ -121,23 +121,9 @@ public class Tablero {
         }
 
     }
-//fixme2 asignarABanca()
-    /*
 
-// Asigna a la banca toda casilla comprable
-    private void asignarABanca(Casilla c) {
-        if (c == null) return;
-        String t = c.getTipo();
-        boolean comprable = Casilla.TSOLAR.equals(t) || Casilla.TSERVICIOS.equals(t) || Casilla.TTRANSPORTE.equals(t);
-        if (!comprable) return;
 
-        c.setDueno(banca);
-        if (!banca.getPropiedades().contains(c)) {
-            banca.getPropiedades().add(c);
-        }
-    }
 
-     */
     //Esta la escribo yo, no estaba en el esqueleto, MIRAR BIEN
     private void generarGrupos(){
         //Busco la casilla, compruebo que no sean null y la añado al grupo
@@ -226,7 +212,7 @@ public class Tablero {
         norte.add(new Casilla("Serv2", Casilla.TSERVICIOS, 29, 500000, banca));
         norte.add(new Casilla("Solar17", Casilla.TSOLAR, 30, 2800000, banca));
         norte.add(new Casilla("IrCarcel", 31, Casilla.TESPECIAL));
-    } // FIXME: TODO MAL. EL DUEÑO TIENE QUE SER LA BANCA
+    }
 
     //Método para insertar las casillas del lado sur.
     private void insertarLadoSur() {
@@ -279,10 +265,11 @@ public class Tablero {
     }
 
     //Para imprimir el tablero, modificamos el método toString().
+    //devolver una representación en texto legible de un objeto
     public String toString() {
         final int CELL = 15;// ancho fijo de cada casilla
-        final int CELDAS_FILA = 11;
-        final int ANCHO_LINEA = (CELL + 1) * CELDAS_FILA + 1;
+        final int CELDAS_FILA = 11;  // número de casillas por fila (10 casillas + 1 esquina)
+        final int ANCHO_LINEA = (CELL + 1) * CELDAS_FILA + 1; // ancho total de la fila
 
         StringBuilder sb = new StringBuilder();
 
@@ -290,23 +277,23 @@ public class Tablero {
         sb.append(lineaHorizontal(21, 31, CELL)).append('\n');
         final int anchoInterior = ANCHO_LINEA - 3 * (CELL) + 3; // interior entre barras laterales
         for (int i = 0; i < 9; i++) {
-            int izq = 20 - i;    // 20→12
-            int der = 32 + i;    // 31→39
-            sb.append(celda(izq, CELL))
-                    .append(" ".repeat(anchoInterior))
-                    .append(celda(der, CELL))
-                    .append("\n");
+            int izq = 20 - i;    //casillas verticales del lado izquierdo 20→12
+            int der = 32 + i;    // casillas verticales del lado izquierdo 31→39
+            sb.append(celda(izq, CELL)) //casilla izquierda
+                    .append(" ".repeat(anchoInterior)) //espacio interior
+                    .append(celda(der, CELL)) //casilla derecha
+                    .append("\n"); //salto de linea
         }
 
-        // Fila inferior: pos 1..10
+        // Fila inferior: pos 11 a 1
         sb.append(lineasur(11, 1, CELL)).append('\n');
 
 
 
-        return sb.toString();
+        return sb.toString(); // devuelve el tablero como un String
     }
 
-    /** Devuelve la casilla por posición absoluta (1..40). */
+    /** Devuelve la casilla por posición absoluta (1..40). Recorre todas las casillas y devuelve la primera posición que coincide */
     private Casilla porPos(int pos) {
         for (ArrayList<Casilla> lado : posiciones)
             for (Casilla c : lado)
@@ -314,17 +301,18 @@ public class Tablero {
         return null;
     }
 
-    // FIXME
-    /** Una celda "|<texto10>" con color (grupo para solares; tipo para el resto). */
+
     private String celda(int pos, int CELL) {
         Casilla c = porPos(pos);
+        //Si la casilla no existe o no tiene nombre, muestra “? y su posicion”.
+        //Si sí existe, usa su nombre.
         String nom = (c == null || c.getNombre() == null) ? ("?" + pos) : c.getNombre();
 
         // avatares: &A&B...
         String av = "";
         try {
-            ArrayList<partida.Avatar> avs = c.getAvatares();
-            if (avs != null && !avs.isEmpty()) {
+            ArrayList<partida.Avatar> avs = c.getAvatares(); //vamos a crear los avatares del tablero
+            if (avs != null && !avs.isEmpty()) { //muestra solo los avatares que tenga la casilla
                 StringBuilder sb = new StringBuilder();
                 for (partida.Avatar a : avs) sb.append('&').append(a.getID());
                 av = " " + sb;
@@ -332,6 +320,7 @@ public class Tablero {
         } catch (Throwable ignored) {}
 
         String texto = nom + av;
+        //Si el texto es demasiado largo, lo recorta para que quepa en el ancho de la celda.
         if (texto.length() > CELL) texto = texto.substring(0, CELL);
 
         // color
@@ -416,7 +405,7 @@ public class Tablero {
         }
         return todas;
     }
-    //Aquí tampoco me sirve getPosicion() ni getPosiciones(), porque necesito TODAS las 40 posiciones
+
 
     // endregion
 
