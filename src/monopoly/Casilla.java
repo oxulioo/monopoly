@@ -108,6 +108,7 @@ public class Casilla {
         this.hipoteca = 0;
         this.grupo = null;
         this.avatares = new ArrayList<>();
+        //fixme2
         //se la damos a la banca
         Jugador banca = MonopolyETSE.menu.getBanca();
         this.dueno = banca;
@@ -129,6 +130,9 @@ public class Casilla {
         this.valor = Math.abs(valor);
         this.grupo = null;
         this.avatares = new ArrayList<>();
+        //fixme2
+        this.dueno=null;
+
     }
 
     /*Constructor utilizado para crear las otras casillas (Suerte, Caja de comunidad y Especiales):
@@ -148,6 +152,8 @@ public class Casilla {
         //Inicializo el resto de valores que no han sido introducidos como parámetros
         this.grupo = null;
         this.avatares = new ArrayList<>();
+        //fixme2
+        this.dueno=null;
 
     }
 
@@ -173,7 +179,7 @@ public class Casilla {
      * - El valor de la tirada: para determinar impuesto a pagar en casillas de servicios.
      * Valor devuelto: true en caso de ser solvente (es decir, de cumplir las deudas), y false
      * en caso de no cumplirlas.*/
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+    public boolean evaluarCasilla(Jugador actual, Jugador banca, int suma) {
         if(actual==null) return false;
         //En el caso de que el jugador esté en una casilla de las mencionadas (de momento no se aplica pagos en suerte y comunidad) el jugador de primeras no tiene que pagar nada
         if(TSUERTE.equals(tipo)||TCOMUNIDAD.equals(tipo)||(TESPECIAL.equals(tipo)&&("Cárcel".equalsIgnoreCase(nombre)||"Salida".equalsIgnoreCase(nombre)))){
@@ -186,6 +192,7 @@ public class Casilla {
         }
         //Si la casilla a la que caes es el parking, te llevas la fortuna acumulada en la casilla
         //Si la fortuna es >0, llamas al método sumarFortuna, y se restaura a 0 el bote del parking
+        //FIXME: SUMAR BIEN Y SACAR BIEN EL BOTE DEL PARKING
         if(TESPECIAL.equals(tipo)&&"Parking".equalsIgnoreCase(nombre)){
             if(this.valor>0){
                 actual.sumarFortuna(this.valor);
@@ -209,12 +216,10 @@ public class Casilla {
         // FIXME: que cojones es respuesta
 
         if(TTRANSPORTE.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)){
-                int aPagar=Valor.ALQUILER_TRANSPORTE;
-                actual.pagarAlquiler(this);
-                boolean respuesta=actual.sumarGastos(aPagar);
-                if(respuesta) this.dueno.sumarFortuna(aPagar);
-                return respuesta;
+            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){ //FIXME:BANCA
+
+                actual.pagarAlquiler(this, 1);
+                return actual.getFortuna()>=0;
             }
             return true;
         }
@@ -224,34 +229,25 @@ public class Casilla {
         // FIXME: QUE ALGN EXPLIQUE AQUI
 
         if(TSERVICIOS.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)){
-                int aPagar=4*tirada*Valor.FACTOR_SERVICIO;
-                boolean respuesta=actual.sumarGastos(aPagar);
-                if(respuesta) this.dueno.sumarFortuna(aPagar);
-                return respuesta;
+            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){
+                int factor_pago = 4*suma;
+                actual.pagarAlquiler(this, factor_pago);
+                return actual.getFortuna()>=0;
             }
             return true;
         }
-        //Si caes en un solar con dueño que no eres tú, (...) pagar, si al que tienes que pagar tiene todas
-        //las casillas del grupo (color), entonces pagas el doble
+        //Si caes en un solar con dueño que no eres tú
 
         // FIX
 
         if(TSOLAR.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)){ //añadir que no sea de la banca
-                int aPagar=(this.alquiler>0)?this.alquiler:0;
-                if(this.grupo!=null){
-                    try{
-                        if(this.grupo.esDuenoGrupo(this.dueno)){
-                            aPagar*=2;
-                        }
-                    }catch (Exception ignored){
-
-                    }
+            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){ //FIXME:añadir que no sea de la banca
+                actual.pagarAlquiler(this, 1);
+                if(this.grupo.esDuenoGrupo(this.dueno)){
+                    actual.pagarAlquiler(this, 2);
                 }
-                boolean respuesta=actual.sumarGastos(aPagar);
-                if(respuesta) this.dueno.sumarFortuna(aPagar);
-                return respuesta;
+
+                return actual.getFortuna()>=0;
             }
             return true;
         }
@@ -267,7 +263,7 @@ public class Casilla {
         boolean comprable=TSOLAR.equals(tipo)||TSERVICIOS.equals(tipo)||TTRANSPORTE.equals(tipo);
         if(!comprable) return;
         //Si la casilla ya tiene dueño, no se puede comprar
-        if(this.dueno!=null) return; //cambie otra cosa aqui
+        if(this.dueno!=null && (banca==null || this.dueno!=banca)) return; //cambie otra cosa aqui
         //Se toma el valor y se comprueba que el que quiere comprar tiene dinero suficiente
         int precio=Math.max(0,this.valor);
         if(!solicitante.sumarGastos(precio)) return;
@@ -362,6 +358,7 @@ public class Casilla {
                     aCasa=4250000; aHotel=20000000; aPiscina=4000000; aPista=4000000; break;
             }
             return "{\n"
+                    + "nombre: " + nombre + ",\n"
                     + "tipo: solar,\n"
                     + "grupo: " + grupoStr + ",\n"
                     + "propietario: " + propietario + ",\n"
@@ -378,12 +375,12 @@ public class Casilla {
                     + "}";
         }
         //Si es casilla de impuesto, imprime lo siguiente
-        // FIXME: EL INTERROGANTE
+        // FIXEM
         if ("impuesto".equals(tlc)) {
-            int apagar = (this.alquiler > 0) ? this.alquiler : this.valor;
+            int aPagar = (this.alquiler > 0) ? this.alquiler : this.valor;
             return "{\n"
                     + "tipo: impuesto,\n"
-                    + "apagar: " + apagar + "\n"
+                    + "Tasa: " + aPagar + "\n"
                     + "}";
         }
 
@@ -408,9 +405,7 @@ public class Casilla {
             }
             //Si es casilla especial de tipo parking, imprime lo siguiente
             if ("cárcel".equals(nlc) || "carcel".equals(nlc)) {
-                int salir;
-                try { salir = Valor.PRECIO_SALIR_CARCEL; } catch (Throwable t) { salir = 500000; }
-
+                int salir = Valor.PRECIO_SALIR_CARCEL;
                 StringBuilder jugadores = new StringBuilder();
                 if (this.avatares != null && !this.avatares.isEmpty()) {
                     for (int i = 0; i < this.avatares.size(); i++) {
@@ -471,6 +466,17 @@ public class Casilla {
 
 
 
+
+
+    //ESTO NO ESTA fixme2
+
+
+
+
+
+
+
+
     /* Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
@@ -482,7 +488,7 @@ public class Casilla {
         if (!comprable) {
             return String.format("La casilla %s no es comprable", nombre);
         }
-        boolean enVenta = (this.dueno == null);//cambiar
+        boolean enVenta = (this.dueno == null);//FIXME: LA PUTA BANCA
         //Si tiene dueño (dueno!=null), entonces no está en venta
         if (!enVenta) {
             String grupoStr = (this.grupo == null) ? "-" : this.grupo.getColorGrupo();
@@ -498,20 +504,6 @@ public class Casilla {
                 nombre, tipo, grupoStr, valor);
     }
 
-    private int esDeLaBanca(Casilla cas, Jugador banca) {
-        if (cas == null) return 0;
-
-        Jugador propietario = null;
-        try { propietario = cas.getDueno(); } catch (Exception ignored) {}
-
-        if (propietario == null) return 1;       // sin dueño -> banca
-        if (propietario == banca) return 1;      // misma instancia de banca
-
-        String nombreProp = null;
-        try { nombreProp = propietario.getNombre(); } catch (Exception ignored) {}
-
-        return (nombreProp != null && nombreProp.equalsIgnoreCase("Banca")) ? 1 : 0;
-    }
 
     // endregion
 

@@ -18,7 +18,7 @@ public class Tablero {
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
     //La clave es el color del grupo, y el valor es el grupo, que contiene todas las casillas de dicho color (recordar, la tabla HashMap guarda pares clave-valor)
-    private Jugador banca; //Un jugador que será la banca.
+    private Jugador banca; //Un jugador que será la banca.FIXME:PUBLICO
 
     // endregion
 
@@ -98,21 +98,18 @@ public class Tablero {
                         case "Solar22": alquiler = 500000;  break;
                     }
                     c.setAlquiler(alquiler);//Introduzco el alquiler base (sin edificios), con el setter
-                    c.setHipoteca((int) Math.max(0, c.getValor() / 2));// Hipoteca = 50% del precio (Apéndice I)
+                    c.setHipoteca((int) Math.max(0, c.getValor() / 2));
                 }
 
-                //Si es TRANSPORTE, el precio de compra es 500.000 y el alquiler fijo es250.000 (PARTE1)
+                //Si es TRANSPORTE, el precio de compra es 500.000 y el alquiler fijo es250.000
                 else if (Casilla.TTRANSPORTE.equals(tipo)) {
-                    //El constructor ya puso 500.000, por si acaso compruebo
-                    if (c.getValor() <= 0) c.setValor(500000);
                     c.setAlquiler((int) Valor.ALQUILER_TRANSPORTE);// 250.000
                     c.setHipoteca((int) 0);// No hipotecable en esta parte, hay que cambiarlo (entiendo) en siguientes entregas
                 }
-// FIXME: CHATI ESTO DE AQUI??? TRANSPORTE NO HIPOTECABLE????
+
                 //Si es SERVICIO, el precio de compra es 500.000 y el alquiler se calcula con la tirada
                 else if (Casilla.TSERVICIOS.equals(tipo)) {
-                    if (c.getValor() <= 0) c.setValor(500000);
-                    c.setAlquiler(0);// Se calcula: 4 * tirada * FACTOR_SERVICIO
+                    c.setAlquiler(Valor.FACTOR_SERVICIO);// Se calcula: 4 * tirada * FACTOR_SERVICIO
                     c.setHipoteca(0);// No hipotecable en esta parte
                 }
 
@@ -120,9 +117,27 @@ public class Tablero {
                 //Los impuestos ya traen la "cantidad a pagar" en el campo 'alquiler' desde el constructor.
                 //El parking acumula bote en 'valor' cuando alguien paga impuestos.
             }
+
+        }
+
+    }
+//fixme2 asignarABanca()
+    /*
+
+// Asigna a la banca toda casilla comprable
+    private void asignarABanca(Casilla c) {
+        if (c == null) return;
+        String t = c.getTipo();
+        boolean comprable = Casilla.TSOLAR.equals(t) || Casilla.TSERVICIOS.equals(t) || Casilla.TTRANSPORTE.equals(t);
+        if (!comprable) return;
+
+        c.setDueno(banca);
+        if (!banca.getPropiedades().contains(c)) {
+            banca.getPropiedades().add(c);
         }
     }
 
+     */
     //Esta la escribo yo, no estaba en el esqueleto, MIRAR BIEN
     private void generarGrupos(){
         //Busco la casilla, compruebo que no sean null y la añado al grupo
@@ -201,15 +216,15 @@ public class Tablero {
         norte.add(parking);
         Casilla.setParkingReferencia(parking);
         //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
-        norte.add(new Casilla("Solar12", Casilla.TSOLAR, 22, 2200000, null));
+        norte.add(new Casilla("Solar12", Casilla.TSOLAR, 22, 2200000, banca));
         norte.add(new Casilla("Suerte", 23, Casilla.TSUERTE));
-        norte.add(new Casilla("Solar13", Casilla.TSOLAR, 24, 2200000, null));
-        norte.add(new Casilla("Solar14", Casilla.TSOLAR, 25, 2400000, null));
-        norte.add(new Casilla("Trans3", Casilla.TTRANSPORTE, 26, 500000, null));
-        norte.add(new Casilla("Solar15", Casilla.TSOLAR, 27, 2600000, null));
-        norte.add(new Casilla("Solar16", Casilla.TSOLAR, 28, 2600000, null));
-        norte.add(new Casilla("Serv2", Casilla.TSERVICIOS, 29, 500000, null));
-        norte.add(new Casilla("Solar17", Casilla.TSOLAR, 30, 2800000, null));
+        norte.add(new Casilla("Solar13", Casilla.TSOLAR, 24, 2200000, banca));
+        norte.add(new Casilla("Solar14", Casilla.TSOLAR, 25, 2400000, banca));
+        norte.add(new Casilla("Trans3", Casilla.TTRANSPORTE, 26, 500000, banca));
+        norte.add(new Casilla("Solar15", Casilla.TSOLAR, 27, 2600000, banca));
+        norte.add(new Casilla("Solar16", Casilla.TSOLAR, 28, 2600000, banca));
+        norte.add(new Casilla("Serv2", Casilla.TSERVICIOS, 29, 500000, banca));
+        norte.add(new Casilla("Solar17", Casilla.TSOLAR, 30, 2800000, banca));
         norte.add(new Casilla("IrCarcel", 31, Casilla.TESPECIAL));
     } // FIXME: TODO MAL. EL DUEÑO TIENE QUE SER LA BANCA
 
@@ -219,15 +234,15 @@ public class Tablero {
         ArrayList<Casilla>sur=posiciones.get(0);
         //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
         sur.add(new Casilla("Cárcel", 11, Casilla.TESPECIAL));
-        sur.add(new Casilla("Solar5", Casilla.TSOLAR, 10, 1200000, null));
-        sur.add(new Casilla("Solar4", Casilla.TSOLAR, 9, 1000000, null));
+        sur.add(new Casilla("Solar5", Casilla.TSOLAR, 10, 1200000, banca));
+        sur.add(new Casilla("Solar4", Casilla.TSOLAR, 9, 1000000, banca));
         sur.add(new Casilla("Suerte", 8, Casilla.TSUERTE));
-        sur.add(new Casilla("Solar3", Casilla.TSOLAR, 7, 1000000, null));
-        sur.add(new Casilla("Trans1", Casilla.TTRANSPORTE, 6, 500000, null));
+        sur.add(new Casilla("Solar3", Casilla.TSOLAR, 7, 1000000, banca));
+        sur.add(new Casilla("Trans1", Casilla.TTRANSPORTE, 6, 500000, banca));
         sur.add(new Casilla("Imp1", 5, 2000000));
-        sur.add(new Casilla("Solar2", Casilla.TSOLAR, 4, 600000, null));
+        sur.add(new Casilla("Solar2", Casilla.TSOLAR, 4, 600000, banca));
         sur.add(new Casilla("Caja", 3, Casilla.TCOMUNIDAD));
-        sur.add(new Casilla("Solar1", Casilla.TSOLAR, 2, 600000, null));
+        sur.add(new Casilla("Solar1", Casilla.TSOLAR, 2, 600000, banca));
         sur.add(new Casilla("Salida", 1, Casilla.TESPECIAL));
     }
 
@@ -236,15 +251,15 @@ public class Tablero {
         //Le asigno la posición al array (hay 4)
         ArrayList<Casilla>oeste=posiciones.get(1);
         //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
-        oeste.add(new Casilla("Solar6", Casilla.TSOLAR, 12, 1400000, null));
-        oeste.add(new Casilla("Serv1", Casilla.TSERVICIOS, 13, 500000,null));
-        oeste.add(new Casilla("Solar7", Casilla.TSOLAR, 14, 1400000, null));
-        oeste.add(new Casilla("Solar8", Casilla.TSOLAR, 15, 1600000, null));
-        oeste.add(new Casilla("Trans2", Casilla.TTRANSPORTE, 16, 500000, null));
-        oeste.add(new Casilla("Solar9", Casilla.TSOLAR, 17, 1800000, null));
+        oeste.add(new Casilla("Solar6", Casilla.TSOLAR, 12, 1400000, banca));
+        oeste.add(new Casilla("Serv1", Casilla.TSERVICIOS, 13, 500000,banca));
+        oeste.add(new Casilla("Solar7", Casilla.TSOLAR, 14, 1400000, banca));
+        oeste.add(new Casilla("Solar8", Casilla.TSOLAR, 15, 1600000, banca));
+        oeste.add(new Casilla("Trans2", Casilla.TTRANSPORTE, 16, 500000, banca));
+        oeste.add(new Casilla("Solar9", Casilla.TSOLAR, 17, 1800000, banca));
         oeste.add(new Casilla("Caja", 18, Casilla.TCOMUNIDAD));
-        oeste.add(new Casilla("Solar10", Casilla.TSOLAR, 19, 1800000, null));
-        oeste.add(new Casilla("Solar11", Casilla.TSOLAR, 20, 2200000, null));
+        oeste.add(new Casilla("Solar10", Casilla.TSOLAR, 19, 1800000, banca));
+        oeste.add(new Casilla("Solar11", Casilla.TSOLAR, 20, 2200000, banca));
     }
 
     //Método que inserta las casillas del lado este.
@@ -252,15 +267,15 @@ public class Tablero {
         //Le asigno la posición al array (hay 4)
         ArrayList<Casilla>este=posiciones.get(3);
         //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
-        este.add(new Casilla("Solar18", Casilla.TSOLAR, 32, 3000000, null));
-        este.add(new Casilla("Solar19", Casilla.TSOLAR, 33, 3000000, null));
+        este.add(new Casilla("Solar18", Casilla.TSOLAR, 32, 3000000, banca));
+        este.add(new Casilla("Solar19", Casilla.TSOLAR, 33, 3000000, banca));
         este.add(new Casilla("Caja", 34, Casilla.TCOMUNIDAD));
-        este.add(new Casilla("Solar20", Casilla.TSOLAR, 35, 3200000, null));
-        este.add(new Casilla("Trans4", Casilla.TTRANSPORTE, 36, 500000, null));
+        este.add(new Casilla("Solar20", Casilla.TSOLAR, 35, 3200000, banca));
+        este.add(new Casilla("Trans4", Casilla.TTRANSPORTE, 36, 500000, banca));
         este.add(new Casilla("Suerte", 37, Casilla.TSUERTE));
-        este.add(new Casilla("Solar21", Casilla.TSOLAR, 38, 3500000, null));
+        este.add(new Casilla("Solar21", Casilla.TSOLAR, 38, 3500000, banca));
         este.add(new Casilla("Imp2", 39, 2000000));
-        este.add(new Casilla("Solar22", Casilla.TSOLAR, 40, 4000000, null));
+        este.add(new Casilla("Solar22", Casilla.TSOLAR, 40, 4000000, banca));
     }
 
     //Para imprimir el tablero, modificamos el método toString().
@@ -299,6 +314,7 @@ public class Tablero {
         return null;
     }
 
+    // FIXME
     /** Una celda "|<texto10>" con color (grupo para solares; tipo para el resto). */
     private String celda(int pos, int CELL) {
         Casilla c = porPos(pos);

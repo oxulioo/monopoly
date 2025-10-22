@@ -1,0 +1,24 @@
+crear jugador Pedro pelota
+crear jugador Maria coche
+listar jugadores
+jugador
+lanzar dados 3+3
+comprar Solar4
+lanzar dados 1+1
+comprar Solar4
+listar enventa
+describir jugador Pedro
+lanzar dados 1+1
+acabar turno
+jugador
+lanzar dados 4+4
+describir jugador Maria
+comprar Solar4
+lanzar dados 1+1
+salir cárcel
+lanzar dados 1+2
+acabar turno
+salir cárcel
+describir Solar4
+lanzar dados
+ver tablero

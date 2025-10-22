@@ -35,50 +35,25 @@ public class Jugador {
 
     // region ==== SETTERS Y GETTERS ====
 
-    public String getNombre() {
-        return nombre;
+    public String getNombre() {return nombre;}
+    public Avatar getAvatar() {return avatar;}
+    public int getFortuna() {return fortuna;}
+    public boolean isEnCarcel() {return enCarcel;}
+    public void salirCarcel() {enCarcel = false;}
+    public int getVueltas() {return vueltas;}
+    public void setVueltas(int v) {this.vueltas=v;}
+    public ArrayList<Casilla> getPropiedades() {
+        if (propiedades==null) propiedades=new ArrayList<>();
+        return propiedades;
     }
-
-    public Avatar getAvatar() {
-        return avatar;
-    }
-
-    public int getFortuna() {
-        return fortuna;
-    }
-
-    public void setFortuna(int f) {
-        this.fortuna = f;
-    }
-
-    public boolean isEnCarcel() {
-        return enCarcel;
-    }
-
-    public void entrarEnCarcel() {
-        enCarcel = true;
-    }
-
-    public void salirCarcel() {
-        enCarcel = false;
-    }
-
-    public int getVueltas() {
-        return vueltas;
-    }
-
-    public void setVueltas(int v) {
-        this.vueltas=v;//Añadí esta línea
-    }
+    public int getTiradasCarcel() {return tiradasCarcel;}
+    public void setTiradasCarcel(int t) {this.tiradasCarcel=t;}
 
     // endregion
 
     // region ==== MÉTODOS ====
 
-    public ArrayList<Casilla> getPropiedades() {
-        if (propiedades==null) propiedades=new ArrayList<>();
-        return propiedades;
-    }
+
 
     /*Constructor principal. Requiere parámetros:
      * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
@@ -86,11 +61,11 @@ public class Jugador {
      * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
      */
 
-    public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
+    public Jugador(String nombre, String tipoAvatar, Casilla casilla, ArrayList<Avatar> avCreados) {
         //verificar que el nombre no exista en el array de avatares creados
         if (existeNombre(nombre, avCreados)) {
             System.out.println("Jugador existe");
-            return; //se debería lanzar una Excepción
+            return;
         }
 
         this.nombre = nombre;
@@ -101,14 +76,14 @@ public class Jugador {
         this.propiedades = new ArrayList<>();
 
         // Creamos el avatar (pasamos tipo y lista de avatares ya creados para asegurar unicidad)
-        this.avatar = new Avatar(tipoAvatar, inicio, this, avCreados);
+        this.avatar = new Avatar(tipoAvatar, casilla, this, avCreados);
 
         // Colocamos el avatar en la casilla inicial (Salida)
-        this.avatar.setPosicion(inicio);
+        this.avatar.setPosicion(casilla);
 
     }
-    // trabajamos con punteros para mejorar la eficiencia
 
+    //Funcion que verifica si ya existe un nombre en el array de avatares creados.
     private boolean existeNombre(String nombre, ArrayList<Avatar> avCreados) {
         for (Avatar avatar : avCreados) {
             if (avatar.getJugador().getNombre().equals(nombre))
@@ -123,14 +98,17 @@ public class Jugador {
             return;
         }
         String tipo = casilla.getTipo();
+        //Si el tipo de casilla no se puede comprar
         if (tipo.equals("Impuesto") || tipo.equals("Suerte") || tipo.equals("Caja") || tipo.equals("IrACarcel") || tipo.equals("Carcel") || tipo.equals("Parking")) {
             System.out.println("La casilla no es una propiedad, por lo que no se puede añadir al jugador");
             return;
         }
+        //La casillla ya pertenece a un jugador
         if (casilla.getDueno() != null && casilla.getDueno() != this) {
             System.out.println("La casilla " + casilla.getNombre() + " pertenece al jugador " + casilla.getDueno().getNombre() + ".");
             return;
         }
+        //Si no pertenece a nadie se la añadimos, sino solo queda que sea suya
         if (!propiedades.contains(casilla)) {
             propiedades.add(casilla);
             casilla.setDueno(this);
@@ -146,11 +124,14 @@ public class Jugador {
             System.out.println("La casilla no existe");
             return;
         }
+        //Si la casilla no pertenece al jugador no se puede eliminar
         if (!propiedades.contains(casilla)) {
             System.out.println("La casilla no pertenece al jugador");
             return;
         }
+        //si pertenece a el jugador se elimina
         propiedades.remove(casilla);
+        //casilla.setDueno(banca); fixme2
         casilla.setDueno(null);
     }
 
@@ -163,33 +144,30 @@ public class Jugador {
     //Método para sumar gastos a un jugador.
     //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
     public boolean sumarGastos(int valor) {
-        this.fortuna -= valor;
+        this.fortuna -= valor; //a su fortuna le restamos el valor
         if (this.fortuna < 0) {
-            this.declararBancarrota();
+            this.declararBancarrota(); //si es negativa se declara en Bancarrota
             return false;
         }
         return true;
     }
 
-    public void recibirDinero(int valor) {
-        this.fortuna += valor;
-    }
-
     public void declararBancarrota() {
         System.out.println(nombre + " ha sido declarado en bancarrota");
-        this.propiedades.clear();
+        this.propiedades.clear();//elimina todas sus propiedades
     }
 
     public void comprarPropiedad(Casilla c) {
-        if (c.getDueno() != null ) { //CAMBIAR DUEÑO
+        if (c.getDueno() != null ) {
             System.out.println("La propiedad ya tiene un dueño actualmente");
             return;
         }
-        if (this.fortuna >= c.getValor()) {
+        if (this.fortuna >= c.getValor()) { //si su fortuna es mayor o igual que el valor de la casilla, la compra
             this.fortuna -= c.getValor();
+
             c.setDueno(this);
             this.propiedades.add(c);
-            MonopolyETSE.menu.getBanca().getPropiedades().remove(c);
+
         } else {
             System.out.println("No tiene dinero suficiente para comprar la propiedad " + c.getNombre());
         }
@@ -202,17 +180,17 @@ public class Jugador {
         this.tiradasCarcel = 0;
     }
 
-    public void pagarAlquiler(Casilla c) {
+    public void pagarAlquiler(Casilla c, int factor_pago) {
         if (c == null) return;
         Jugador dueno = c.getDueno();
         if (dueno != null && dueno != this) {
             int alquiler = c.getAlquiler();        // lo correcto es el alquiler
             boolean ok = this.sumarGastos(alquiler); // resta solo una vez
             if (ok) {
-                dueno.sumarFortuna(alquiler);
-                System.out.println(this.nombre + " ha pagado " + alquiler + " € a " + dueno.getNombre());
+                dueno.sumarFortuna(factor_pago*alquiler);
+                System.out.println(this.nombre + " ha pagado " + alquiler*factor_pago + " € a " + dueno.getNombre());
             } else {
-                System.out.println(this.nombre + " no puede pagar el alquiler de " + alquiler + " €.");
+                System.out.println(this.nombre + " no puede pagar el alquiler de " + alquiler*factor_pago + " €.");
             }
         }
     }
@@ -221,46 +199,14 @@ public class Jugador {
             System.out.println("Precio del impuesto no válido");
             return;
         }
-        boolean ok = this.sumarGastos(valor); // NO restar dos veces
+        boolean ok = this.sumarGastos(valor); //  restamos
         if (ok) {
             System.out.println(nombre + " paga un impuesto de " + (long)valor + "€");
         } else {
             System.out.println(nombre + " no tiene dinero suficiente para pagar el impuesto");
-            // declararBancarrota() ya se llamó desde sumarGastos
         }
     }
 
     // endregion
 
 }
-/*XULIÁN, HE CAMBIADO ESTAS DOS FUNCIONES Y AÑADÍ LO QUE PONE LA LÍNEA 71 (this.vueltas=v;//Añadí esta línea)
-ESTO QUE SIGUE ES COMO LO TENÍAS ANTES
-public void pagarAlquiler(Casilla c) {
-    Jugador dueno = c.getDueno();
-    if (dueno != null && dueno != this) {
-        float alquiler = c.getValor();
-        this.pagarAlquiler(c);
-        dueno.sumarFortuna(alquiler);
-        System.out.println(this.nombre + " ha pagado " + alquiler + " € a " + dueno.getNombre());
-    }
-}
-
-public void pagarImpuesto(float valor) {
-    if (valor <= 0) {
-        System.out.println("Precio del impuesto no válido");
-        return;
-    }
-    if (this.fortuna >= valor) {
-        this.fortuna -= valor;
-        this.sumarGastos(valor);
-        System.out.println(nombre + " paga un impuesto de " + valor + "€");
-        return;
-    } else {
-        System.out.println(nombre + " no tiene dinero suficiente para pagar el impuesto");
-        this.declararBancarrota();
-        return;
-    }
-}
-
-*/
-
