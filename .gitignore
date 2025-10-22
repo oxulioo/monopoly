@@ -1,0 +1,48 @@
+# ========================================
+# 🚫 ARCHIVOS Y CARPETAS QUE NO VAN AL REPO
+# ========================================
+
+# === Compilados Java ===
+*.class
+*.jar
+*.war
+*.ear
+
+# === Carpetas de compilación / ejecución ===
+/out/
+/bin/
+/build/
+/target/
+
+# === Configuración de IDEs ===
+# IntelliJ IDEA
+/.idea/
+/*.iml
+
+# VS Code
+.vscode/
+
+# === Sistema operativo ===
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# === Archivos temporales ===
+*.log
+*.tmp
+*.swp
+
+# === Archivos de seguridad de Windows (descargas) ===
+*:Zone.Identifier
+
+# === Repositorio de control (Git) ===
+# Evita que se suban commits de copias accidentales
+backup-*
+
+# === Archivos personales o de pruebas ===
+/test/
+/tests/
+/pruebas/

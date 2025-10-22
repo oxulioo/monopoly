@@ -4,18 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a1af5034-de7d-4dee-92c0-5fce0953b46c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/monopoly/Casilla.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/monopoly/Casilla.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/monopoly/Grupo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/monopoly/Grupo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/monopoly/MonopolyETSE.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/monopoly/MonopolyETSE.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/monopoly/Tablero.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/monopoly/Tablero.java" afterDir="false" />
-    </list>
-    <list id="a3257d77-6be3-45c1-8712-8e473c240b5e" name="Changes by Noa" comment="">
-      <change beforePath="$PROJECT_DIR$/src/monopoly/Casilla.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/monopoly/Casilla.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/monopoly/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/monopoly/Menu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/partida/Jugador.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/partida/Jugador.java" afterDir="false" />
-    </list>
+    <list default="true" id="a1af5034-de7d-4dee-92c0-5fce0953b46c" name="Changes" comment="" />
+    <list id="a3257d77-6be3-45c1-8712-8e473c240b5e" name="Changes by Noa" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,31 +31,6 @@
     &quot;accountId&quot;: &quot;45e4cfcb-99cb-4e69-b94f-f4af6b2cc7bf&quot;
   }
 }</component>
-  <component name="LineStatusTrackerManager">
-    <file path="$PROJECT_DIR$/src/monopoly/Casilla.java">
-      <ranges>
-        <range start1="13" end1="15" start2="13" end2="15" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="104" end1="105" start2="104" end2="105" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="106" end1="107" start2="106" end2="106" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="120" end1="121" start2="119" end2="120" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="127" end1="129" start2="126" end2="126" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="131" end1="133" start2="128" end2="129" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="152" end1="155" start2="148" end2="148" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="202" end1="202" start2="195" end2="196" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="204" end1="205" start2="198" end2="199" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="214" end1="214" start2="208" end2="210" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="217" end1="217" start2="213" end2="214" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="225" end1="225" start2="222" end2="225" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="236" end1="236" start2="236" end2="239" changelist="a3257d77-6be3-45c1-8712-8e473c240b5e" />
-        <range start1="237" end1="238" start2="240" end2="241" changelist="a3257d77-6be3-45c1-8712-8e473c240b5e" />
-        <range start1="266" end1="267" start2="269" end2="270" changelist="a3257d77-6be3-45c1-8712-8e473c240b5e" />
-        <range start1="282" end1="283" start2="285" end2="286" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="377" end1="377" start2="380" end2="381" changelist="a1af5034-de7d-4dee-92c0-5fce0953b46c" />
-        <range start1="480" end1="481" start2="484" end2="485" changelist="a3257d77-6be3-45c1-8712-8e473c240b5e" />
-        <range start1="496" end1="496" start2="500" end2="514" changelist="a3257d77-6be3-45c1-8712-8e473c240b5e" />
-      </ranges>
-    </file>
-  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -126,7 +91,7 @@
       <option name="presentableId" value="Default" />
       <updated>1761146606166</updated>
       <workItem from="1761146607495" duration="1248000" />
-      <workItem from="1761152521433" duration="3231000" />
+      <workItem from="1761152521433" duration="3502000" />
     </task>
     <servers />
   </component>
