@@ -21,8 +21,6 @@ public class Casilla {
     private int hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
 
-    private static Casilla parkingReferencia;//Dado que el metodo evaluar casilla no tiene como parámetro el tablero, no puedo modificar la casilla parking cuando se pagan impuestos, por lo que creo esta variable
-
     //Diferentes tipos de casilla, podría utilizar un tipo enumerado, pero como más adelante se modificará la práctica, trabajo con string
     public static final String TSOLAR = "Solar";
     public static final String TESPECIAL = "Especial";
@@ -31,6 +29,9 @@ public class Casilla {
     public static final String TCOMUNIDAD = "Comunidad";
     public static final String TSUERTE = "Suerte";
     public static final String TIMPUESTO = "Impuesto";
+
+    //Atributo necesario para que parking sume en el bote (sin definir un nuevo metodo)
+    private static Casilla parkingReferencia;
 
     // endregion
 
@@ -80,6 +81,13 @@ public class Casilla {
         return avatares;
     }
 
+    //Getter y setter necesario para el bote de Parking
+    public static void setParkingReferencia(Casilla c){
+        parkingReferencia=c;
+    }
+    public static Casilla getParkingReferencia(){
+        return parkingReferencia;
+    }
     //Dado que el metodo evaluar casilla no tiene como parámetro el tablero, no puedo modificar la casilla parking cuando se pagan impuestos, por lo que necesito estos getters y setters
     public static Casilla getParkingReferencia() { return parkingReferencia;}
     public static void setParkingReferencia(Casilla c) { parkingReferencia = c; }
@@ -93,18 +101,19 @@ public class Casilla {
     public Casilla(String nombre, String tipo, int posicion, int valor, Jugador dueno) {
         if (!(TSOLAR.equals(tipo) || TSERVICIOS.equals(tipo) || TTRANSPORTE.equals(tipo))) {//Si no es ninguno de los tipos mencionados, da error
             System.out.println("Tipo erróneo, debe ser 'Solar', 'Servicios' o 'Transporte'");
-            //Comprobar si está bien creado el jugador, y sino, no lo inserto en el arrayList
+            //Comprobar si está bien creado el jugador, y sino no lo inserto en el arrayList
         }
         if (posicion < 1 || posicion > 40) {
             System.out.println("La posición debe estar entre 1 y 40");//No hay más de 40 casillas, trato el caso en el que se introduzca un valor no válido
         }
-        //Inicializamos los campos
+
+
         this.nombre = nombre;
         this.tipo = tipo;
         this.posicion = posicion;
-        this.valor = Math.max(0, valor);//En caso en que se dé un valor negativo, se toma el 0 para evitar errores
+        this.valor = Math.max(0, valor);//En caso en que se de un valor negativo, se toma el 0 para evitar errores
         this.dueno = dueno;
-        //Inicializo los demás valores (los no introducidos como parámetros) para que no dé error después (defensivas)
+        //Inicializo los demás valores para que no dé error después
         this.alquiler = 0;
         this.hipoteca = 0;
         this.grupo = null;
@@ -196,9 +205,9 @@ public class Casilla {
             }
             return true;
         }
-        //Si caes en una casilla de impuesto, se cobra al jugador
-        if(TIMPUESTO.equals(tipo)){
-            int cantidad=(this.alquiler>0)?this.alquiler:Valor.IMPUESTO_FIJO;
+        //Si caes en una casilla de impuesto, se cobra al jugador y se suma el bote del parking
+        if (TIMPUESTO.equals(tipo)) {
+            int cantidad = (this.alquiler > 0) ? this.alquiler : Valor.IMPUESTO_FIJO;
             actual.pagarImpuesto(cantidad);
             //Acumulamos ahora el bote del Parking, como el esqueleto no permite meter como parámetro Tablero, hay que usar una variable estática
             Casilla p=Casilla.getParkingReferencia();

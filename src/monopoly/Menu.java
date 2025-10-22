@@ -52,11 +52,10 @@ public class Menu {
         dado1 = new Dado();
         dado2 = new Dado();
 
-        // Banca (según el guion: Jugador() vacío actúa como banca, sin avatar y con fortuna muy alta)
+        // Banca
         banca = new Jugador();
 
         // Tablero: la banca empieza como propietaria de todo
-        // (El propio constructor de Tablero debe asignar la propiedad inicial a banca)
         tablero = new Tablero(banca);
     }
 
@@ -73,7 +72,7 @@ public class Menu {
             ejecutarFichero(ruta);
             return;
         }
-        // crear jugador <Nombre> <tipoAvatar>  (sin trim ni validación)
+        // crear jugador <Nombre> <tipoAvatar>
         if (comando.startsWith("crear jugador ")) {
             String resto = comando.substring("crear jugador ".length());
             int idx = resto.lastIndexOf(' ');
@@ -81,8 +80,8 @@ public class Menu {
                 System.out.println("Uso: crear jugador <Nombre> <tipoAvatar>");
                 return;
             }
-            String nombre = resto.substring(0, idx);          // tal cual (puede tener espacios)
-            String tipo   = resto.substring(idx + 1);          // tal cual (sin validar)
+            String nombre = resto.substring(0, idx);
+            String tipo   = resto.substring(idx + 1);
             crearJugador(nombre, tipo);
             return;
         }
@@ -159,7 +158,6 @@ public class Menu {
 
         // describir <Casilla>
         if (comando.startsWith("describir ")) {
-            // si más adelante añades 'describir jugador ...', ese tendrá su propio if antes
             String nombreCasilla = comando.substring("describir ".length());
             descCasilla(nombreCasilla);
             return;
@@ -167,7 +165,7 @@ public class Menu {
 
         // comprar <Propiedad>
         if (comando.startsWith("comprar ")) {
-            String nombreProp = comando.substring("comprar ".length()); // tal cual, sin trim
+            String nombreProp = comando.substring("comprar ".length());
             comprar(nombreProp);
             return;
         }
@@ -178,7 +176,7 @@ public class Menu {
             return;
         }
 
-        // 14) ver tablero
+        // ver tablero
         if (comando.equals("ver tablero")) {
             verTablero();
             return;
@@ -192,12 +190,12 @@ public class Menu {
             System.out.println("No hay jugadores. Crea uno con: crear jugador <Nombre> <tipoAvatar>");
             return;
         }
-        // por si acaso, normalizamos el índice de turno
+        // normalizamos el índice de turno
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
 
         Jugador actual = jugadores.get(turno);
-        // asumimos que Jugador tiene getNombre()
+
         System.out.println("Tiene el turno: " + actual.getNombre());
     }
 
@@ -212,7 +210,7 @@ public class Menu {
         }
     }
 
-    // Crea Jugador+Avatar en "Salida" y repinta el tablero (sin validación, sin trim)
+    // Crea Jugador+Avatar en "Salida" y repinta el tablero
     private void crearJugador(String nombre, String tipoAvatar) {
         // 1) Buscar casilla de inicio ("Salida")
         Casilla salida = null;
@@ -227,8 +225,7 @@ public class Menu {
             return;
         }
 
-        // 2) Crear jugador (asumimos que el constructor genera el Avatar con ID aleatorio)
-        //    Firma esperada en vuestro modelo: Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados)
+        // 2) Crear jugador
         Jugador j;
         try {
             j = new Jugador(nombre, tipoAvatar, salida, avatares);
@@ -239,7 +236,7 @@ public class Menu {
 
         // 3) Registrar
         jugadores.add(j);
-        // Si vuestro Jugador expone getAvatar(), podríais también: if (j.getAvatar()!=null) avatares.add(j.getAvatar());
+
 
         // 4) Mensaje + “repintar” tablero
         System.out.println("Creado jugador '" + nombre + "' con avatar '" + tipoAvatar + "' en Salida.");
@@ -267,7 +264,7 @@ public class Menu {
             }
 
             // fortuna con dos decimales
-            //String fortunaStr = String.format("%.2f", j.getFortuna());
+
             String fortunaStr = String.format("%d",j.getFortuna());
             // propiedades: lista de nombres o "-"
             String propiedadesStr = "-";
@@ -282,7 +279,7 @@ public class Menu {
                 propiedadesStr = sb.toString();
             }
 
-            // salida pedida en enunciado (en Parte 1 hipotecas y edificios son "-")
+            // salida pedida en enunciado (ahora hipotecas y edificios son "-")
             System.out.println("Jugador: " + nombre);
             System.out.println("  Avatar: " + avatarStr);
             System.out.println("  Fortuna: " + fortunaStr);
@@ -296,7 +293,7 @@ public class Menu {
     /*Método que realiza las acciones asociadas al comando 'describir jugador'.
      * Parámetro: comando introducido
      */
-    // Imprime toda la info del jugador pedido en Parte 1
+    // Imprime toda la info del jugador
     private void descJugador(String nombreBuscado) {
         if (nombreBuscado == null || nombreBuscado.isEmpty()) {
             System.out.println("Uso: describir jugador <Nombre>");
@@ -332,9 +329,9 @@ public class Menu {
         }
 
         // Fortuna
-        //String fortunaStr = String.format("%.2f", j.getFortuna());
+
         String fortunaStr = String.format("%d", j.getFortuna());
-        // Posición actual (si vuestro modelo la expone)
+        // Posición actual
         String posicionStr = "-";
         Casilla pos = null;
         if (a != null) pos = a.getPosicion();
@@ -359,9 +356,6 @@ public class Menu {
 
         // ¿En cárcel? (versión 'Sí/No')
         String carcelStr = j.isEnCarcel() ? "Sí" : "No";
-
-
-
 
         // Salida formateada (Parte 1: Hipotecas y Edificios se muestran como “-”)
         System.out.println("Jugador: " + nombre);
@@ -431,7 +425,7 @@ public class Menu {
             return;
         }
 
-        // Buscar la casilla en el tablero (ajusta el método si en tu Tablero se llama distinto)
+        // Buscar la casilla en el tablero
         Casilla c = null;
         try {
             c = tablero.encontrar_casilla(nombre);
@@ -457,13 +451,21 @@ public class Menu {
         if (jugadores == null || jugadores.isEmpty()) {
             System.out.println("No hay jugadores. Crea uno con: crear jugador <Nombre> <tipoAvatar>");
             return;
-        }
+            }
+
         Jugador actual = jugadores.get(turno);
+        if (lanzamientos==1){ //solo puedes tirar una vez
+            System.out.println("Ya has tirado, no puedes volver a tirar.");
+            return;
+        }
 
         // Tiramos los dos dados usando hacerTirada() para conocer cada valor
         int d1 = dado1.hacerTirada();
         int d2 = dado2.hacerTirada();
         int suma = d1 + d2;
+        if (d1 != d2){ //si los dados no son iguales, no puedes volver a tirar
+            lanzamientos=1;
+        }
         boolean esDoble = (d1 == d2);
 
         System.out.println("Dados: " + d1 + " + " + d2 + " = " + suma + (esDoble ? " (dobles)" : ""));
@@ -482,7 +484,7 @@ public class Menu {
             }
         } else {
             doblesConsecutivos = 0;
-            tirado = true; // si no es doble, este turno ya no puede volver a tirar
+            tirado = true;
         }
 
         // Mover al jugador 'suma' casillas usando su Avatar
@@ -764,6 +766,7 @@ public class Menu {
         // normaliza por si acaso
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
+        lanzamientos=0;
 
         // pasar al siguiente
         turno = (turno + 1) % jugadores.size();

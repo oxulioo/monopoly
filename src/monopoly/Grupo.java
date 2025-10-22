@@ -12,7 +12,7 @@ class Grupo {
     private String colorGrupo; //Color del grupo
     private int numCasillas; //Número de casillas del grupo.
 
-    // endregion
+    // endregion     
 
     // region ==== CONSTRUCTORES ====
 

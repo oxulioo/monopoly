@@ -10,9 +10,5 @@ public class MonopolyETSE {
         Menu m = new Menu();
         m.run();
     }
-    /*ESTO ES LO QUE TENIA ANTES
-    public static void main(String[] args) {
-        new Menu();
-    } //arranca el juego, crea banca, tablero, dados y estado.
-    */
+
 }
