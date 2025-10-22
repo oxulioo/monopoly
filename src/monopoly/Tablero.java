@@ -266,7 +266,7 @@ public class Tablero {
 
     //Para imprimir el tablero, modificamos el método toString().
     public String toString() {
-        final int CELL = 13;// ancho fijo de cada casilla
+        final int CELL = 15;// ancho fijo de cada casilla
         final int CELDAS_FILA = 11;
         final int ANCHO_LINEA = (CELL + 1) * CELDAS_FILA + 1; // |xxxxx|...|  (10 celdas)
 
@@ -275,7 +275,7 @@ public class Tablero {
         // Fila superior: pos 21..30
         sb.append(lineaHorizontal(21, 31, CELL)).append('\n');
         // 9 filas intermedias: izquierda 20..12 y derecha 31..39
-        final int anchoInterior = ANCHO_LINEA - 3 * (CELL) + 1; // interior entre barras laterales
+        final int anchoInterior = ANCHO_LINEA - 3 * (CELL) + 3; // interior entre barras laterales
         for (int i = 0; i < 9; i++) {
             int izq = 20 - i;    // 20→12
             int der = 32 + i;    // 31→39
@@ -322,27 +322,28 @@ public class Tablero {
         if (texto.length() > CELL) texto = texto.substring(0, CELL);
 
         // color
-        String color = Valor.WHITE;
+        String color = Valor.TEXTO_BLANCO;
         if (c != null) {
             if (Casilla.TSOLAR.equals(c.getTipo())) {
                 Grupo g = c.getGrupo();
                 if (g != null) {
                     switch (g.getColorGrupo()) {
-                        case "Marron":   color = Valor.PURPLE;   break;
-                        case "Cian":     color = Valor.CYAN;    break;
-                        case "Rosa":     color = Valor.PURPLE;  break;
-                        case "Naranja":  color = Valor.YELLOW;  break;
-                        case "Rojo":     color = Valor.RED;     break;
-                        case "Amarillo": color = Valor.YELLOW;  break;
-                        case "Verde":    color = Valor.GREEN;   break;
-                        case "Azul":     color = Valor.BLUE;    break;
+                        case "Marron":   color = Valor.RGB_MARRON;   break;
+                        case "Cian":     color = Valor.RGB_CIAN;    break;
+                        case "Rosa":     color = Valor.RGB_ROSA;  break;
+                        case "Naranja":  color = Valor.RGB_NARANJA;  break;
+                        case "Rojo":     color = Valor.RGB_ROJO;     break;
+                        case "Amarillo": color = Valor.RGB_AMARILLO;  break;
+                        case "Verde":    color = Valor.RGB_VERDE;   break;
+                        case "Azul":     color = Valor.RGB_AZUL;    break;
                     }
                 }
-            } else if (Casilla.TSERVICIOS.equals(c.getTipo()))  color = Valor.PURPLE;
-            else if (Casilla.TTRANSPORTE.equals(c.getTipo())) color = Valor.BLUE;
-            else if (Casilla.TIMPUESTO.equals(c.getTipo()))    color = Valor.RED;
-            else if (Casilla.TESPECIAL.equals(c.getTipo()))    color = Valor.CYAN;
-            else if (Casilla.TSUERTE.equals(c.getTipo()))      color = Valor.GREEN;
+            } else if (Casilla.TSERVICIOS.equals(c.getTipo()))  color = Valor.RGB_SERVICIOS;
+            else if (Casilla.TTRANSPORTE.equals(c.getTipo())) color = Valor.RGB_TRANSPORTE;
+            else if (Casilla.TIMPUESTO.equals(c.getTipo()))    color = Valor.RGB_IMPUESTO;
+            else if (Casilla.TESPECIAL.equals(c.getTipo()))    color = Valor.RGB_ESPECIAL;
+            else if (Casilla.TSUERTE.equals(c.getTipo()))      color = Valor.RGB_SUERTE;
+            else if (Casilla.TCOMUNIDAD.equals(c.getTipo()))   color = Valor.RGB_COMUNIDAD;
         }
 
         return color + String.format("%-" + CELL + "s", texto) + Valor.RESET;

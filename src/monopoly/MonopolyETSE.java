@@ -4,11 +4,11 @@ import partida.Jugador;
 
 public class MonopolyETSE {
 
-
+    public static Menu menu = new Menu();
 
     public static void main(String[] args) {
-        Menu m = new Menu();
-        m.run();
+        menu.iniciarPartida();
+        menu.run();
     }
     /*ESTO ES LO QUE TENIA ANTES
     public static void main(String[] args) {

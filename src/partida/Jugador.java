@@ -76,6 +76,7 @@ public class Jugador {
     // region ==== MÉTODOS ====
 
     public ArrayList<Casilla> getPropiedades() {
+        if (propiedades==null) propiedades=new ArrayList<>();
         return propiedades;
     }
 
@@ -188,6 +189,7 @@ public class Jugador {
             this.fortuna -= c.getValor();
             c.setDueno(this);
             this.propiedades.add(c);
+            MonopolyETSE.menu.getBanca().getPropiedades().remove(c);
         } else {
             System.out.println("No tiene dinero suficiente para comprar la propiedad " + c.getNombre());
         }
@@ -208,9 +210,9 @@ public class Jugador {
             boolean ok = this.sumarGastos(alquiler); // resta solo una vez
             if (ok) {
                 dueno.sumarFortuna(alquiler);
-                System.out.println(this.nombre + " ha pagado " + (long)alquiler + " € a " + dueno.getNombre());
+                System.out.println(this.nombre + " ha pagado " + alquiler + " € a " + dueno.getNombre());
             } else {
-                System.out.println(this.nombre + " no puede pagar el alquiler de " + (long)alquiler + " €.");
+                System.out.println(this.nombre + " no puede pagar el alquiler de " + alquiler + " €.");
             }
         }
     }

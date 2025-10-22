@@ -22,10 +22,15 @@ public class Menu {
 
     // endregion
 
+    public Jugador getBanca(){
+        return banca;
+    }
+
     // region ==== MÉTODOS ====
 
     public Menu() {
-        iniciarPartida();
+        // Banca (según el guion: Jugador() vacío actúa como banca, sin avatar y con fortuna muy alta)
+        banca = new Jugador();
     }
 
     // Imprime el tablero (usa toString() del Tablero)
@@ -39,7 +44,8 @@ public class Menu {
 
 
     // Método para inciar una partida: crea los jugadores y avatares.
-    private void iniciarPartida() {
+    ///////////////// es privada
+    public void iniciarPartida() {
         // Estructuras y estado base
         jugadores    = new ArrayList<>();
         avatares     = new ArrayList<>();
@@ -52,8 +58,7 @@ public class Menu {
         dado1 = new Dado();
         dado2 = new Dado();
 
-        // Banca (según el guion: Jugador() vacío actúa como banca, sin avatar y con fortuna muy alta)
-        banca = new Jugador();
+
 
         // Tablero: la banca empieza como propietaria de todo
         // (El propio constructor de Tablero debe asignar la propiedad inicial a banca)
@@ -168,7 +173,8 @@ public class Menu {
         // comprar <Propiedad>
         if (comando.startsWith("comprar ")) {
             String nombreProp = comando.substring("comprar ".length()); // tal cual, sin trim
-            comprar(nombreProp);
+            Casilla casilla = tablero.encontrar_casilla(nombreProp);
+            banca.comprarPropiedad(casilla);
             return;
         }
 
@@ -458,12 +464,19 @@ public class Menu {
             System.out.println("No hay jugadores. Crea uno con: crear jugador <Nombre> <tipoAvatar>");
             return;
         }
+        if (lanzamientos==1){
+            System.out.println("Ya has tirado una vez, no puedes volver a tirar.");
+            return;
+        }
         Jugador actual = jugadores.get(turno);
 
         // Tiramos los dos dados usando hacerTirada() para conocer cada valor
         int d1 = dado1.hacerTirada();
         int d2 = dado2.hacerTirada();
         int suma = d1 + d2;
+        if (d1 !=d2 ){
+            lanzamientos=1;
+        }
         boolean esDoble = (d1 == d2);
 
         System.out.println("Dados: " + d1 + " + " + d2 + " = " + suma + (esDoble ? " (dobles)" : ""));
@@ -699,7 +712,7 @@ public class Menu {
 
     // Método que realiza las acciones asociadas al comando 'listar enventa'.
     // 13) recorrer casillas de la banca y mostrar con casEnVenta()
-    private void listarVenta() {
+    /*private void listarVenta() {
         if (tablero == null) {
             System.out.println("No hay tablero cargado.");
             return;
@@ -724,7 +737,22 @@ public class Menu {
         }
     }
 
+*/
+    private void listarVenta(){
+        ArrayList<Casilla> sinDueno=banca.getPropiedades();
+        ArrayList<Casilla>enVenta=new ArrayList<>();
 
+        for(Casilla c:sinDueno){
+            if(c.getTipo().equals("SOLAR")||c.getTipo().equals("TRANSPORTE")||c.getTipo().equals("Servicios")) {
+                enVenta.add(c);
+            }
+        }
+        for(Casilla c:enVenta){
+            String nombre=c.getNombre();
+            descCasilla(nombre);
+            System.out.println("},\n{");
+        }
+    }
     // Método que realiza las acciones asociadas al comando 'listar avatares'.
     // lista todos los avatares (tolerante si faltan getters)
     private void listarAvatares() {
@@ -764,7 +792,7 @@ public class Menu {
         // normaliza por si acaso
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
-
+        lanzamientos=0;
         // pasar al siguiente
         turno = (turno + 1) % jugadores.size();
 

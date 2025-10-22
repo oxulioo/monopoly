@@ -109,6 +109,10 @@ public class Casilla {
         this.hipoteca = 0;
         this.grupo = null;
         this.avatares = new ArrayList<>();
+        //se la damos a la banca
+        Jugador banca = MonopolyETSE.menu.getBanca();
+        this.dueno = banca;
+        banca.getPropiedades().add(this);
     }
 
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
@@ -466,8 +470,10 @@ public class Casilla {
     /* Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
+    //Esta no la usamos, pero queda aquí por si hace falta
     public String casEnVenta() {
         //Compruebo si es un solar, servicio o transporte (el resto NO SON COMPRABLES)
+
         boolean comprable = TSOLAR.equals(tipo) || TSERVICIOS.equals(tipo) || TTRANSPORTE.equals(tipo);
         if (!comprable) {
             return String.format("La casilla %s no es comprable", nombre);
