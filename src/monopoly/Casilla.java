@@ -11,8 +11,8 @@ public class Casilla {
     // region ==== ATRIBUTOS ====
 
     //Primero pongo los privados (da igual)
-    private String nombre; //Nombre de la casilla
-    private String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte y Impuesto).
+    private final String nombre; //Nombre de la casilla
+    private final String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte y Impuesto).
     private int valor; //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
     private final int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
     private Jugador dueno; //Dueño de la casilla (por defecto sería la banca).
@@ -102,9 +102,8 @@ public class Casilla {
         this.nombre = nombre;
         this.tipo = tipo;
         this.posicion = posicion;
-        this.valor = Math.max(0, valor);//En caso en que se dé un valor negativo, se toma el 0 para evitar errores
+        this.valor = Math.abs(valor);
         this.dueno = dueno;
-        //Inicializo los demás valores (los no introducidos como parámetros) para que no dé error después (defensivas)
         this.alquiler = 0;
         this.hipoteca = 0;
         this.grupo = null;
@@ -118,19 +117,16 @@ public class Casilla {
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
      * Parámetros: nombre, posición en el tablero, impuesto establecido y dueño.
      */
-    public Casilla(String nombre, int posicion, int alquiler, Jugador dueno) {
+    public Casilla(String nombre, int posicion, int valor) {
         if (posicion < 1 || posicion > 40) {
             System.out.println("La posición debe estar entre 1 y 40");//No hay más de 40 casillas, trato el caso en el que se introduzca un valor no válido
         }
         //Inicialuzo las variables
         this.nombre = nombre;
         this.posicion = posicion;
-        this.alquiler = Math.max(0, alquiler);//En caso de valores negativos, se toma el 0
-        this.dueno = dueno;
         this.tipo = TIMPUESTO;
         //Inicializo el resto de valores (los que no son introducidos como parámetros)
-        this.valor = 0;
-        this.hipoteca = 0;
+        this.valor = Math.abs(valor);
         this.grupo = null;
         this.avatares = new ArrayList<>();
     }
@@ -150,9 +146,6 @@ public class Casilla {
         this.tipo = tipo;
         this.posicion = posicion;
         //Inicializo el resto de valores que no han sido introducidos como parámetros
-        this.valor = 0;
-        this.alquiler = 0;
-        this.hipoteca = 0;
         this.grupo = null;
         this.avatares = new ArrayList<>();
 
@@ -200,9 +193,10 @@ public class Casilla {
             }
             return true;
         }
+        // FIXME: EXPLICAR ESTO QUE TIENE UN INTERROGANTE
         //Si caes en una casilla de impuesto, se cobra al jugador
         if(TIMPUESTO.equals(tipo)){
-            int cantidad=(this.alquiler>0)?this.alquiler:Valor.IMPUESTO_FIJO;
+            int cantidad=(this.valor>0)?this.valor:Valor.IMPUESTO_FIJO;
             actual.pagarImpuesto(cantidad);
             //Acumulamos ahora el bote del Parking, como el esqueleto no permite meter como parámetro Tablero, hay que usar una variable estática
             Casilla p=Casilla.getParkingReferencia();
@@ -212,9 +206,12 @@ public class Casilla {
         //Si caes en una casilla de tipo transporte, y tiene dueño y no es el jugador que está en la casilla,
         //como en la primera entrega no se tienen en cuenta el número de casillas de transportes, entonces
         //se calcula la cantidad a pagar (Valor.ALQUILER_TRANSPORTE), se comprueba si puede pagar y se da el dinero al dueño
+        // FIXME: que cojones es respuesta
+
         if(TTRANSPORTE.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)){
                 int aPagar=Valor.ALQUILER_TRANSPORTE;
+                actual.pagarAlquiler(this);
                 boolean respuesta=actual.sumarGastos(aPagar);
                 if(respuesta) this.dueno.sumarFortuna(aPagar);
                 return respuesta;
@@ -223,6 +220,9 @@ public class Casilla {
         }
         //Si caes en una casilla de tipo servicio con dueño, que no eres tú, entonces calculas la cantidad a pagar,
         //compruebas que tiene suficiente dinero y pagas, dándole al dueño lo que le corresponde
+
+        // FIXME: QUE ALGN EXPLIQUE AQUI
+
         if(TSERVICIOS.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)){
                 int aPagar=4*tirada*Valor.FACTOR_SERVICIO;
@@ -234,8 +234,11 @@ public class Casilla {
         }
         //Si caes en un solar con dueño que no eres tú, (...) pagar, si al que tienes que pagar tiene todas
         //las casillas del grupo (color), entonces pagas el doble
+
+        // FIX
+
         if(TSOLAR.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)){
+            if(this.dueno!=null&&!this.dueno.equals(actual)){ //añadir que no sea de la banca
                 int aPagar=(this.alquiler>0)?this.alquiler:0;
                 if(this.grupo!=null){
                     try{
@@ -264,7 +267,7 @@ public class Casilla {
         boolean comprable=TSOLAR.equals(tipo)||TSERVICIOS.equals(tipo)||TTRANSPORTE.equals(tipo);
         if(!comprable) return;
         //Si la casilla ya tiene dueño, no se puede comprar
-        if(this.dueno!=null) return;
+        if(this.dueno!=null) return; //cambie otra cosa aqui
         //Se toma el valor y se comprueba que el que quiere comprar tiene dinero suficiente
         int precio=Math.max(0,this.valor);
         if(!solicitante.sumarGastos(precio)) return;
@@ -280,7 +283,7 @@ public class Casilla {
     public void sumarValor(int suma) {
         this.valor += suma; //verificar mayor que 0
     }
-
+// FIXME: QUE COÑO ES TIPORAW Y PARA QUE SE USA TRIM
     /*Método para mostrar información sobre una casilla.
      * Devuelve una cadena con información específica de cada tipo de casilla.*/
     public String infoCasilla() {
@@ -375,6 +378,7 @@ public class Casilla {
                     + "}";
         }
         //Si es casilla de impuesto, imprime lo siguiente
+        // FIXME: EL INTERROGANTE
         if ("impuesto".equals(tlc)) {
             int apagar = (this.alquiler > 0) ? this.alquiler : this.valor;
             return "{\n"
@@ -478,7 +482,7 @@ public class Casilla {
         if (!comprable) {
             return String.format("La casilla %s no es comprable", nombre);
         }
-        boolean enVenta = (this.dueno == null);
+        boolean enVenta = (this.dueno == null);//cambiar
         //Si tiene dueño (dueno!=null), entonces no está en venta
         if (!enVenta) {
             String grupoStr = (this.grupo == null) ? "-" : this.grupo.getColorGrupo();
@@ -494,6 +498,20 @@ public class Casilla {
                 nombre, tipo, grupoStr, valor);
     }
 
+    private int esDeLaBanca(Casilla cas, Jugador banca) {
+        if (cas == null) return 0;
+
+        Jugador propietario = null;
+        try { propietario = cas.getDueno(); } catch (Exception ignored) {}
+
+        if (propietario == null) return 1;       // sin dueño -> banca
+        if (propietario == banca) return 1;      // misma instancia de banca
+
+        String nombreProp = null;
+        try { nombreProp = propietario.getNombre(); } catch (Exception ignored) {}
+
+        return (nombreProp != null && nombreProp.equalsIgnoreCase("Banca")) ? 1 : 0;
+    }
 
     // endregion
 

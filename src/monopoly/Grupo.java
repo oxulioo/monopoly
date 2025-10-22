@@ -8,9 +8,9 @@ class Grupo {
 
     // region ==== ATRIBUTOS ====
 
-    private ArrayList<Casilla> miembros; //Casillas miembros del grupo.
-    private String colorGrupo; //Color del grupo
-    private int numCasillas; //Número de casillas del grupo.
+    private final ArrayList<Casilla> miembros; //Casillas miembros del grupo.
+    private final String colorGrupo; //Color del grupo
+    private final int numCasillas; //Número de casillas del grupo.
 
     // endregion
 
@@ -62,7 +62,7 @@ class Grupo {
         if(!Casilla.TSOLAR.equals(miembro.getTipo())){
             System.out.println("En este diseño solo tiene sentido agrupar solares");
             return;
-        }
+        } // FIXME: CAMBIAR ESTE PRINTF
         //Se añade únicamente si no está en el array
         if(!miembros.contains(miembro)){
             miembros.add(miembro);

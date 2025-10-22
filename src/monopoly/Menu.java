@@ -546,6 +546,10 @@ public class Menu {
         Jugador actual = jugadores.get(turno);
 
         int suma = d1 + d2;
+        if (d1>6||d2>6||d1<1||d2<1){
+            System.out.println("Los dados no pueden ser mayores a 6 o menores que 1.");
+            return;
+        }
         boolean esDoble = (d1 == d2);
 
         System.out.println("Dados (forzado): " + d1 + " + " + d2 + " = " + suma + (esDoble ? " (dobles)" : ""));
@@ -632,10 +636,19 @@ public class Menu {
             return;
         }
 
-        // 3) Comprobar propietario actual (debe ser la banca)
+        // 3) Comprobar propietario actual
         Jugador propietario = null;
         try { propietario = cas.getDueno(); } catch (Throwable ignored) {}
-        if (propietario != null) {//KNOWEATS, HE QUITADO EL &&propietario!=banca
+
+        String nombreProp = null;
+        if (propietario != null) {
+            try { nombreProp = propietario.getNombre(); } catch (Throwable ignored) {}
+        }
+
+// Está en venta si NO tiene dueño o si el dueño es la banca
+        if (!(propietario == null
+                || propietario == banca
+                || (nombreProp != null && nombreProp.equalsIgnoreCase("Banca")))) {
             System.out.println("La propiedad '" + cas.getNombre() + "' no está en venta.");
             return;
         }

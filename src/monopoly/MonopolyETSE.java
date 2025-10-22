@@ -4,15 +4,13 @@ import partida.Jugador;
 
 public class MonopolyETSE {
 
+
+    // FIXME: crear una banca universal para ahorrar constructores y mejorar gestion y eso se hace metiendola dentro del menu y por lo tanto con universales que sean banca menu y tablero
     public static Menu menu = new Menu();
 
     public static void main(String[] args) {
         menu.iniciarPartida();
         menu.run();
     }
-    /*ESTO ES LO QUE TENIA ANTES
-    public static void main(String[] args) {
-        new Menu();
-    } //arranca el juego, crea banca, tablero, dados y estado.
-    */
+
 }

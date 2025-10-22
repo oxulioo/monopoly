@@ -181,7 +181,7 @@ public class Jugador {
     }
 
     public void comprarPropiedad(Casilla c) {
-        if (c.getDueno() != null) {
+        if (c.getDueno() != null ) { //CAMBIAR DUEÑO
             System.out.println("La propiedad ya tiene un dueño actualmente");
             return;
         }
