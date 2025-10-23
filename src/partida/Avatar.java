@@ -83,14 +83,13 @@ public class Avatar {
             System.out.println("No se puede mover el avatar, el tablero o la posición es nulo");
             return;
         }
- // FIXME: no entiendo
+
         int totalPosiciones = 0;
         for (ArrayList<Casilla> fila: casillas) {
             totalPosiciones += fila.size();
         }
         if(totalPosiciones==0) return;
 
-// FIXME: POR QUE SE USA EL -1
         Casilla anteriorCasilla = this.lugar;
         int posActual= this.lugar.getPosicion()-1;
 
@@ -101,7 +100,7 @@ public class Avatar {
             jugador.setVueltas(jugador.getVueltas()+1);
             System.out.println("El jugador " + jugador.getNombre() + " pasa por salida y recibe 2.000.000€.");
         }
-        int nuevaPosicionActual=nuevaPosicion+1; // FIXME: ???
+        int nuevaPosicionActual=nuevaPosicion+1;
         Casilla nuevaCasilla = null;
         for (ArrayList<Casilla> fila: casillas) {
             for (Casilla casilla: fila) {

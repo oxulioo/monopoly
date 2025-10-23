@@ -171,9 +171,7 @@ public class Menu {
 
         // comprar <Propiedad>
         if (comando.startsWith("comprar ")) {
-            String nombreProp = comando.substring("comprar ".length()); // tal cual, sin trim
-            //fixme2 Casilla casilla = tablero.encontrar_casilla(nombreProp);
-            //fixme2 banca.comprarPropiedad(casilla);
+            String nombreProp = comando.substring("comprar ".length());
 
             comprar(nombreProp);
             return;

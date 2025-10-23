@@ -129,9 +129,8 @@ public class Jugador {
             System.out.println("La casilla no pertenece al jugador");
             return;
         }
-        //si pertenece a el jugador se elimina
+        //si pertenece al jugador se elimina
         propiedades.remove(casilla);
-        //casilla.setDueno(banca); fixme2
         casilla.setDueno(null);
     }
 

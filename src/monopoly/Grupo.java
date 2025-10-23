@@ -62,7 +62,7 @@ class Grupo {
         if(!Casilla.TSOLAR.equals(miembro.getTipo())){
             System.out.println("En este diseño solo tiene sentido agrupar solares");
             return;
-        } // FIXME: CAMBIAR ESTE PRINTF
+        }
         //Se añade únicamente si no está en el array
         if(!miembros.contains(miembro)){
             miembros.add(miembro);

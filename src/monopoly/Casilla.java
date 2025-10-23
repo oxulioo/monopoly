@@ -130,7 +130,6 @@ public class Casilla {
         this.valor = Math.abs(valor);
         this.grupo = null;
         this.avatares = new ArrayList<>();
-        //fixme2
         this.dueno=null;
 
     }
