@@ -6,9 +6,9 @@ import java.util.HashMap;
 
 /*
 * OJO, HAY UNA COSA QUE PREGUNTAR, EL GUION PONE LAS CASILLAS DE SUERTE Y CAJA CON EL MISMO NOMBRE
-* (NO CON NUMEROS) POR LO QUE A LA HORA DE BUSCAR LA CASILLA POR EL NOMBRE, PUEDEN HABER PROBLEMAS
+* (NO CON NÚMEROS) POR LO QUE A LA HORA DE BUSCAR LA CASILLA POR EL NOMBRE, PUEDEN HABER PROBLEMAS
 * HAY DOS OPCIONES, LLAMARLAS CAJA1,CAJA2,...,SUERTE1,SUERTE2,... O EN EL MÉTODO DE BUSCAR,
-* AÑADIR UN CAMPO QUE INDIQUE LA POSICION EXACTA (AUNQUE ENTONCES CREO QUE NO NECESITARÍA EL NOMBRE)
+* AÑADIR UN CAMPO QUE INDIQUE LA POSICIÓN EXACTA (AUNQUE ENTONCES CREO QUE NO NECESITARÍA EL NOMBRE)
 */
 
 public class Tablero {
@@ -17,7 +17,7 @@ public class Tablero {
 
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
-    //La clave es el color del grupo, y el valor es el grupo, que contiene todas las casillas de dicho color (recordar, la tabla HashMap guarda pares clave-valor)
+    //La clave es el color del grupo, y el valor es el grupo, que contiene todas las casillas de dicho color (recordar, la tabla HashMap guarda par clave-valor)
     private Jugador banca; //Un jugador que será la banca.
 
     // endregion
@@ -34,7 +34,7 @@ public class Tablero {
         //Inicializo el HashMap
         this.grupos=new HashMap<>();
 
-        //Llamo a 3 metodos (implementados más adelante) para crear el tablero correctamente)
+        //Llamo a 3 métodos (implementados más adelante) para crear el tablero correctamente
         generarCasillas();
         precargarAlquileres();
         generarGrupos();
@@ -46,7 +46,7 @@ public class Tablero {
 
     //Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).
     private void generarCasillas() {
-        //Llamo a 4 metodos (uno para cada lado del tablero) que generen las casillas
+        //Llamo a 4 métodos (uno para cada lado del tablero) que generen las casillas
         this.insertarLadoSur();
         this.insertarLadoOeste();
         this.insertarLadoNorte();
@@ -304,7 +304,7 @@ public class Tablero {
 
     private String celda(int pos, int CELL) {
         Casilla c = porPos(pos);
-        //Si la casilla no existe o no tiene nombre, muestra “? y su posicion”.
+        //Si la casilla no existe o no tiene nombre, muestra “?", y su posicion.
         //Si sí existe, usa su nombre.
         String nom = (c == null || c.getNombre() == null) ? ("?" + pos) : c.getNombre();
 

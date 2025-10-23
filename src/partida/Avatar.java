@@ -11,7 +11,7 @@ public class Avatar {
     /*Método que permite mover a un avatar a una casilla concreta. Parámetros:
     * - Un array con las casillas del tablero. Se trata de un arrayList de arrayList de casillas (uno por lado).
     * - Un entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).
-    * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siemrpe es positivo.
+    * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siempre es positivo.
      */
 
     // region ==== ATRIBUTOS ====
@@ -50,12 +50,6 @@ public class Avatar {
     }
     public Jugador getJugador() {
         return jugador;
-    }
-    public int getnDobles() {
-        return nDobles;
-    }
-    public void setnDobles(int nDobles) {
-        this.nDobles = nDobles;
     }
     public void setPosicion(Casilla posicion) {
         if (this.lugar == posicion) return; // no hacemos nada

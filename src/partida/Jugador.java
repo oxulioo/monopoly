@@ -108,7 +108,7 @@ public class Jugador {
             System.out.println("La casilla " + casilla.getNombre() + " pertenece al jugador " + casilla.getDueno().getNombre() + ".");
             return;
         }
-        //Si no pertenece a nadie se la añadimos, sino solo queda que sea suya
+        //Si no pertenece a nadie se la añadimos, sino que solo queda que sea suya
         if (!propiedades.contains(casilla)) {
             propiedades.add(casilla);
             casilla.setDueno(this);
@@ -118,21 +118,6 @@ public class Jugador {
         }
     }
 
-    //Método para eliminar una propiedad del arraylist de propiedades de jugador.
-    public void eliminarPropiedad(Casilla casilla) {
-        if (casilla == null) {
-            System.out.println("La casilla no existe");
-            return;
-        }
-        //Si la casilla no pertenece al jugador no se puede eliminar
-        if (!propiedades.contains(casilla)) {
-            System.out.println("La casilla no pertenece al jugador");
-            return;
-        }
-        //si pertenece al jugador se elimina
-        propiedades.remove(casilla);
-        casilla.setDueno(null);
-    }
 
     //Método para añadir fortuna a un jugador
     //Como parámetro se pide el valor a añadir. Si hay que restar fortuna, se pasaría un valor negativo.
@@ -174,7 +159,7 @@ public class Jugador {
 
     /*Método para establecer al jugador en la cárcel.
      * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
-    public void encarcelar(Casilla c) {
+    public void encarcelar() {
         this.enCarcel = true;
         this.tiradasCarcel = 0;
     }

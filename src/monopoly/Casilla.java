@@ -19,7 +19,7 @@ public class Casilla {
     private Grupo grupo; //Grupo al que pertenece la casilla (si es solar).
     private int alquiler; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
     private int hipoteca; //Valor otorgado por hipotecar una casilla
-    private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
+    private final ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
 
     private static Casilla parkingReferencia;//Dado que el metodo evaluar casilla no tiene como parámetro el tablero, no puedo modificar la casilla parking cuando se pagan impuestos, por lo que creo esta variable
 
@@ -49,17 +49,11 @@ public class Casilla {
     public int getValor() {
         return valor;
     }
-    public void setValor(int v) {
-        this.valor = v;
-    }
     public int getAlquiler() {
         return alquiler;
     }
     public void setAlquiler(int imp) {
         this.alquiler = imp;
-    }
-    public int getHipoteca() {
-        return hipoteca;
     }
     public void setHipoteca(int hip) {
         this.hipoteca = hip;
@@ -178,16 +172,16 @@ public class Casilla {
      * - El valor de la tirada: para determinar impuesto a pagar en casillas de servicios.
      * Valor devuelto: true en caso de ser solvente (es decir, de cumplir las deudas), y false
      * en caso de no cumplirlas.*/
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int suma) {
-        if(actual==null) return false;
+    public void evaluarCasilla(Jugador actual, Jugador banca, int suma) {
+        if(actual==null) return;
         //En el caso de que el jugador esté en una casilla de las mencionadas (de momento no se aplica pagos en suerte y comunidad) el jugador de primeras no tiene que pagar nada
         if(TSUERTE.equals(tipo)||TCOMUNIDAD.equals(tipo)||(TESPECIAL.equals(tipo)&&("Cárcel".equalsIgnoreCase(nombre)||"Salida".equalsIgnoreCase(nombre)))){
-            return true;
+            return;
         }
         //Si caes en la casilla IrCarcel, vas directo a la carcel con el método encarcelar
         if(TESPECIAL.equals(tipo)&&"IrCarcel".equalsIgnoreCase(nombre)){
-            actual.encarcelar(this);
-            return true;
+            actual.encarcelar();
+            return;
         }
         //Si la casilla a la que caes es el parking, te llevas la fortuna acumulada en la casilla
         //Si la fortuna es >0, llamas al método sumarFortuna, y se restaura a 0 el bote del parking
@@ -197,7 +191,7 @@ public class Casilla {
                 actual.sumarFortuna(this.valor);
                 this.valor=0;
             }
-            return true;
+            return;
         }
 
         //Si caes en una casilla de impuesto, se cobra al jugador
@@ -207,7 +201,7 @@ public class Casilla {
             //Acumulamos ahora el bote del Parking, como el esqueleto no permite meter como parámetro Tablero, hay que usar una variable estática
             Casilla p=Casilla.getParkingReferencia();
             if(p!=null) p.sumarValor(cantidad);
-            return true;
+            return;
         }
         //Si caes en una casilla de tipo transporte, y tiene dueño y no es el jugador que está en la casilla,
         //como en la primera entrega no se tienen en cuenta el número de casillas de transportes, entonces
@@ -218,9 +212,9 @@ public class Casilla {
             if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){
 
                 actual.pagarAlquiler(this, 1);
-                return actual.getFortuna()>=0;
+                return;
             }
-            return true;
+            return;
         }
         //Si caes en una casilla de tipo servicio con dueño, que no eres tú, entonces calculas la cantidad a pagar,
         //compruebas que tiene suficiente dinero y pagas, dándole al dueño lo que le corresponde
@@ -231,9 +225,9 @@ public class Casilla {
             if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){
                 int factor_pago = 4*suma;
                 actual.pagarAlquiler(this, factor_pago);
-                return actual.getFortuna()>=0;
+                return;
             }
-            return true;
+            return;
         }
         //Si caes en un solar con dueño que no eres tú
 
@@ -246,11 +240,8 @@ public class Casilla {
                     actual.pagarAlquiler(this, 2);
                 }
 
-                return actual.getFortuna()>=0;
             }
-            return true;
         }
-        return true;
     }
 
     /*Método usado para comprar una casilla determinada. Parámetros:
@@ -385,48 +376,43 @@ public class Casilla {
 
         if ("especial".equals(tlc) || "parking".equals(nlc) || "salida".equals(nlc) || "cárcel".equals(nlc) || "carcel".equals(nlc) || "ircarcel".equals(nlc)) {
             //Si es casilla especial de tipo parking, imprime lo siguiente
-            if ("parking".equals(nlc)) {
-                StringBuilder jugadores = new StringBuilder();
-                //Si hay avatares en la casilla, los mete
-                if (this.avatares != null && !this.avatares.isEmpty()) {
-                    for (int i = 0; i < this.avatares.size(); i++) {
-                        Jugador j = this.avatares.get(i).getJugador();
-                        String nom = (j == null) ? "-" : j.getNombre();
-                        if (i > 0) jugadores.append(", ");
-                        jugadores.append(nom);
-                    }
-                }
-                //Imprimo descripción de parking con el valor (bote)
-                return "{\n"
-                        + "bote: " + this.valor + ",\n"
-                        + "jugadores: [" + jugadores + "]\n"
-                        + "}";
-            }
-            //Si es casilla especial de tipo parking, imprime lo siguiente
-            if ("cárcel".equals(nlc) || "carcel".equals(nlc)) {
-                int salir = Valor.PRECIO_SALIR_CARCEL;
-                StringBuilder jugadores = new StringBuilder();
-                if (this.avatares != null && !this.avatares.isEmpty()) {
-                    for (int i = 0; i < this.avatares.size(); i++) {
-                        Jugador j = this.avatares.get(i).getJugador();
-                        String nom = (j == null) ? "-" : j.getNombre();
-                        if (i > 0) jugadores.append(" ");
-                        jugadores.append("[").append(nom).append("]");
-                    }
-                } else {
-                    jugadores.append("[]");
+            switch (nlc) {
+                case "parking" -> {
+                    StringBuilder jugadores = getStringBuilder();
+                    //Imprimo descripción de parking con el valor (bote)
+                    return "{\n"
+                            + "bote: " + this.valor + ",\n"
+                            + "jugadores: [" + jugadores + "]\n"
+                            + "}";
                 }
 
-                return "{\n"
-                        + "salir: " + salir + ",\n"
-                        + "jugadores: " + jugadores + "\n"
-                        + "}";
-            }
-            //Si la casilla es la salida, imprime el cobro al pasar por ella
-            if ("salida".equals(nlc)) {
-                return "{\n"
-                        + "tipo: salida\n"
-                        + "}";
+                //Si es casilla especial de tipo parking, imprime lo siguiente
+                case "cárcel", "carcel" -> {
+                    int salir = Valor.PRECIO_SALIR_CARCEL;
+                    StringBuilder jugadores = new StringBuilder();
+                    if (this.avatares != null && !this.avatares.isEmpty()) {
+                        for (int i = 0; i < this.avatares.size(); i++) {
+                            Jugador j = this.avatares.get(i).getJugador();
+                            String nom = (j == null) ? "-" : j.getNombre();
+                            if (i > 0) jugadores.append(" ");
+                            jugadores.append("[").append(nom).append("]");
+                        }
+                    } else {
+                        jugadores.append("[]");
+                    }
+
+                    return "{\n"
+                            + "salir: " + salir + ",\n"
+                            + "jugadores: " + jugadores + "\n"
+                            + "}";
+                }
+
+                //Si la casilla es la salida, imprime el cobro al pasar por ella
+                case "salida" -> {
+                    return "{\n"
+                            + "tipo: salida\n"
+                            + "}";
+                }
             }
 
             return "{\n"
@@ -459,6 +445,20 @@ public class Casilla {
                 + "}";
     }
 
+    private StringBuilder getStringBuilder() {
+        StringBuilder jugadores = new StringBuilder();
+        //Si hay avatares en la casilla, los mete
+        if (this.avatares != null && !this.avatares.isEmpty()) {
+            for (int i = 0; i < this.avatares.size(); i++) {
+                Jugador j = this.avatares.get(i).getJugador();
+                String nom = (j == null) ? "-" : j.getNombre();
+                if (i > 0) jugadores.append(", ");
+                jugadores.append(nom);
+            }
+        }
+        return jugadores;
+    }
+
 
 
 
@@ -487,6 +487,10 @@ public class Casilla {
 
         return String.format("La casilla %s de tipo %s y grupo %s está en venta con precio: %d",
                 nombre, tipo, grupoStr, valor);
+    }
+
+    public int getHipoteca() {
+        return hipoteca;
     }
 
 
