@@ -17,10 +17,9 @@ public class Avatar {
     // region ==== ATRIBUTOS ====
 
     private char id;
-    private String tipo;
+    private final String tipo;
     private Casilla lugar;
-    private Jugador jugador;
-    private int nDobles;
+    private final Jugador jugador;
 
     // endregion
 
@@ -31,7 +30,7 @@ public class Avatar {
         this.lugar = posicion;
         try { if (posicion != null) posicion.anhadirAvatar(this); } catch (Throwable ignored) {}
         this.jugador = jugador;
-        this.nDobles = 0;
+        int nDobles = 0;
         this.generarId(avataresCreados);
     }
 

@@ -421,28 +421,26 @@ public class Casilla {
                     + "}";
         }
 
-        if ("suerte".equals(tlc)) {
-            return "{\n"
+        return switch (tlc) {
+            case "suerte" -> "{\n"
                     + "tipo: suerte\n"
                     + "}";
-        }
-        //Casilla caja
-        if ("comunidad".equals(tlc)) {
-            return "{\n"
+
+            //Casilla caja
+            case "comunidad" -> "{\n"
                     + "tipo: comunidad\n"
                     + "}";
-        }
-        //Casilla servicios (transporte y servicios)
-        if ("servicios".equals(tlc) || "servicio".equals(tlc) || "transporte".equals(tlc)) {
-            return "{\n"
+
+            //Casilla servicios (transporte y servicios)
+            case "servicios", "servicio", "transporte" -> "{\n"
                     + "tipo: " + tlc + ",\n"
                     + "valor: " + this.valor + "\n"
                     + "}";
-        }
+            default -> "{\n"
+                    + "tipo: " + (tlc.isEmpty() ? "-" : tlc) + "\n"
+                    + "}";
+        };
 
-        return "{\n"
-                + "tipo: " + (tlc.isEmpty() ? "-" : tlc) + "\n"
-                + "}";
     }
 
     private StringBuilder getStringBuilder() {
