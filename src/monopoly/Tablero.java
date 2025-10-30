@@ -43,6 +43,20 @@ public class Tablero {
     // endregion
 
     // region ==== MÉTODOS ====
+    //Métodos auxiliares para simplificar el código
+    private Casilla crearSolar(String nombre, int pos, int valor) {
+        return new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 0, 0, 0, 0);
+    }
+
+    private Casilla crearServicio(String nombre, int pos) {
+        return new Casilla(nombre, Casilla.TSERVICIOS, pos, Valor.PRECIO_SERVICIO_TRANSPORTE, banca, 0, 0, 0, 0);
+    }
+
+    private Casilla crearTransporte(String nombre, int pos) {
+        return new Casilla(nombre, Casilla.TTRANSPORTE, pos, Valor.PRECIO_SERVICIO_TRANSPORTE, banca, 0, 0, 0, 0);
+    }
+
+
 
     //Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).
     private void generarCasillas() {
@@ -191,8 +205,25 @@ public class Tablero {
             grupos.put("Azul",azul);
         }
     }
+    private void insertarLadoNorte() {
+        ArrayList<Casilla> norte = posiciones.get(2);
 
-    //Método para insertar las casillas del lado norte.
+        Casilla parking = new Casilla("Parking", 21, Casilla.TESPECIAL);
+        norte.add(parking);
+        Casilla.setParkingReferencia(parking);
+
+        norte.add(crearSolar("Solar12", 22, 2200000));
+        norte.add(new Casilla("Suerte", 23, Casilla.TSUERTE));
+        norte.add(crearSolar("Solar13", 24, 2200000));
+        norte.add(crearSolar("Solar14", 25, 2400000));
+        norte.add(crearTransporte("Trans3", 26));
+        norte.add(crearSolar("Solar15", 27, 2600000));
+        norte.add(crearSolar("Solar16", 28, 2600000));
+        norte.add(crearServicio("Serv2", 29));
+        norte.add(crearSolar("Solar17", 30, 2800000));
+        norte.add(new Casilla("IrCarcel", 31, Casilla.TESPECIAL));
+    }
+   /*//Método para insertar las casillas del lado norte.
     private void insertarLadoNorte() {
         //Le asigno la posición al array (hay 4)
         ArrayList<Casilla> norte = posiciones.get(2);
@@ -212,26 +243,41 @@ public class Tablero {
         norte.add(new Casilla("Serv2", Casilla.TSERVICIOS, 29, 500000, banca));
         norte.add(new Casilla("Solar17", Casilla.TSOLAR, 30, 2800000, banca));
         norte.add(new Casilla("IrCarcel", 31, Casilla.TESPECIAL));
-    }
-
+    }*/
     //Método para insertar las casillas del lado sur.
+
     private void insertarLadoSur() {
-        //Le asigno la posición al array (hay 4)
-        ArrayList<Casilla>sur=posiciones.getFirst();
-        //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
+        ArrayList<Casilla> sur = posiciones.get(0);
         sur.add(new Casilla("Cárcel", 11, Casilla.TESPECIAL));
-        sur.add(new Casilla("Solar5", Casilla.TSOLAR, 10, 1200000, banca));
-        sur.add(new Casilla("Solar4", Casilla.TSOLAR, 9, 1000000, banca));
+        sur.add(crearSolar("Solar5", 10, 1200000));
+        sur.add(crearSolar("Solar4", 9, 1000000));
         sur.add(new Casilla("Suerte", 8, Casilla.TSUERTE));
-        sur.add(new Casilla("Solar3", Casilla.TSOLAR, 7, 1000000, banca));
-        sur.add(new Casilla("Trans1", Casilla.TTRANSPORTE, 6, 500000, banca));
+        sur.add(crearSolar("Solar3", 7, 1000000));
+        sur.add(crearTransporte("Trans1", 6));
         sur.add(new Casilla("Imp1", 5, 2000000));
-        sur.add(new Casilla("Solar2", Casilla.TSOLAR, 4, 600000, banca));
+        sur.add(crearSolar("Solar2", 4, 600000));
         sur.add(new Casilla("Caja", 3, Casilla.TCOMUNIDAD));
-        sur.add(new Casilla("Solar1", Casilla.TSOLAR, 2, 600000, banca));
+        sur.add(crearSolar("Solar1", 2, 600000));
         sur.add(new Casilla("Salida", 1, Casilla.TESPECIAL));
     }
+    /*
+    private void insertarLadoSur() {
+        ArrayList<Casilla> sur = posiciones.get(0);
+        sur.add(new Casilla("Cárcel", 11, Casilla.TESPECIAL));
+        sur.add(crearSolar("Solar5", 10, 1200000));
+        sur.add(crearSolar("Solar4", 9, 1000000));
+        sur.add(new Casilla("Suerte", 8, Casilla.TSUERTE));
+        sur.add(crearSolar("Solar3", 7, 1000000));
+        sur.add(crearTransporte("Trans1", 6));
+        sur.add(new Casilla("Imp1", 5, 2000000));
+        sur.add(crearSolar("Solar2", 4, 600000));
+        sur.add(new Casilla("Caja", 3, Casilla.TCOMUNIDAD));
+        sur.add(crearSolar("Solar1", 2, 600000));
+        sur.add(new Casilla("Salida", 1, Casilla.TESPECIAL));
+    }
+    */
 
+    /*
     //Método que inserta casillas del lado oeste.
     private void insertarLadoOeste() {
         //Le asigno la posición al array (hay 4)
@@ -246,8 +292,20 @@ public class Tablero {
         oeste.add(new Casilla("Caja", 18, Casilla.TCOMUNIDAD));
         oeste.add(new Casilla("Solar10", Casilla.TSOLAR, 19, 1800000, banca));
         oeste.add(new Casilla("Solar11", Casilla.TSOLAR, 20, 2200000, banca));
+    }*/
+    private void insertarLadoOeste() {
+        ArrayList<Casilla> oeste = posiciones.get(1);
+        oeste.add(crearSolar("Solar6", 12, 1400000));
+        oeste.add(crearServicio("Serv1", 13));
+        oeste.add(crearSolar("Solar7", 14, 1400000));
+        oeste.add(crearSolar("Solar8", 15, 1600000));
+        oeste.add(crearTransporte("Trans2", 16));
+        oeste.add(crearSolar("Solar9", 17, 1800000));
+        oeste.add(new Casilla("Caja", 18, Casilla.TCOMUNIDAD));
+        oeste.add(crearSolar("Solar10", 19, 1800000));
+        oeste.add(crearSolar("Solar11", 20, 2200000));
     }
-
+/*
     //Método que inserta las casillas del lado este.
     private void insertarLadoEste() {
         //Le asigno la posición al array (hay 4)
@@ -263,7 +321,19 @@ public class Tablero {
         este.add(new Casilla("Imp2", 39, 2000000));
         este.add(new Casilla("Solar22", Casilla.TSOLAR, 40, 4000000, banca));
     }
-
+*/
+    private void insertarLadoEste() {
+        ArrayList<Casilla> este = posiciones.get(3);
+        este.add(crearSolar("Solar18", 32, 3000000));
+        este.add(crearSolar("Solar19", 33, 3000000));
+        este.add(new Casilla("Caja", 34, Casilla.TCOMUNIDAD));
+        este.add(crearSolar("Solar20", 35, 3200000));
+        este.add(crearTransporte("Trans4", 36));
+        este.add(new Casilla("Suerte", 37, Casilla.TSUERTE));
+        este.add(crearSolar("Solar21", 38, 3500000));
+        este.add(new Casilla("Imp2", 39, 2000000));
+        este.add(crearSolar("Solar22", 40, 4000000));
+    }
     //Para imprimir el tablero, modificamos el método toString().
     //devolver una representación en texto legible de un objeto
     public String toString() {

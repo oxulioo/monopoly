@@ -5,6 +5,8 @@ import partida.Jugador;
 
 import java.util.ArrayList;
 
+import static java.awt.SystemColor.menu;
+
 
 public class Casilla {
 
@@ -32,7 +34,17 @@ public class Casilla {
     public static final String TSUERTE = "Suerte";
     public static final String TIMPUESTO = "Impuesto";
 
+    private int numCasas=0;
+    private int numHoteles=0;
+    private int numPiscinas=0;
+    private int numPistas=0;
+    
+    Juego juego = new Juego();
+
+
     // endregion
+
+    
 
     // region ==== GETTERS Y SETTERS ====
 
@@ -77,6 +89,16 @@ public class Casilla {
     //Dado que el metodo evaluar casilla no tiene como parámetro el tablero, no puedo modificar la casilla parking cuando se pagan impuestos, por lo que necesito estos getters y setters
     public static Casilla getParkingReferencia() { return parkingReferencia;}
     public static void setParkingReferencia(Casilla c) { parkingReferencia = c; }
+
+    public int getNumCasas() { return numCasas; }
+    public int getNumHoteles() { return numHoteles; }
+    public int getNumPiscinas() { return numPiscinas; }
+    public int getNumPistas() { return numPistas; }
+
+    public void setNumCasas(int n) { this.numCasas = n; }
+    public void setNumHoteles(int n) { this.numHoteles = n; }
+    public void setNumPiscinas(int n) { this.numPiscinas = n; }
+    public void setNumPistas(int n) { this.numPistas = n; }
     // endregion
 
     // region ==== CONSTRUCTORES ====
@@ -104,10 +126,40 @@ public class Casilla {
         this.avatares = new ArrayList<>();
 
         //se la damos a la banca
-        Jugador banca = MonopolyETSE.menu.getBanca();
+        Jugador banca = juego.getBanca();
         this.dueno = banca;
         banca.getPropiedades().add(this);
     }
+    /*
+    public Casilla(String nombre, String tipo, int posicion, int valor, Jugador dueno, int numCasas, int numHoteles, int numPiscinas, int numPistas) {
+        if (!(TSOLAR.equals(tipo) || TSERVICIOS.equals(tipo) || TTRANSPORTE.equals(tipo))) {//Si no es ninguno de los tipos mencionados, da error
+            System.out.println("Tipo erróneo, debe ser 'Solar', 'Servicios' o 'Transporte'");
+            //Comprobar si está bien creado el jugador, y sino, no lo inserto en el arrayList
+        }
+        if (posicion < 1 || posicion > 40) {
+            System.out.println("La posición debe estar entre 1 y 40");//No hay más de 40 casillas, trato el caso en el que se introduzca un valor no válido
+        }
+        //Inicializamos los campos
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.posicion = posicion;
+        this.valor = Math.abs(valor);
+        this.dueno = dueno;
+        this.alquiler = 0;
+        this.hipoteca = 0;
+        this.grupo = null;
+        this.numCasas=numCasas;
+        this.numHoteles=numHoteles;
+        this.numPiscinas=numPiscinas;
+        this.numPistas=numPistas;
+        this.avatares = new ArrayList<>();
+
+        //se la damos a la banca
+        Jugador banca = juego.getBanca();
+        this.dueno = banca;
+        banca.getPropiedades().add(this);
+    }
+     */
 
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
      * Parámetros: nombre, posición en el tablero, impuesto establecido y dueño.

@@ -3,6 +3,7 @@ package monopoly;
 import java.util.ArrayList;
 import partida.*;
 
+
 public class Menu {
 
     // region ==== ATRIBUTOS ====
@@ -15,19 +16,13 @@ public class Menu {
     private Tablero tablero; //Tablero en el que se juega.
     private Dado dado1; //Dos dados para lanzar y avanzar casillas.
     private Dado dado2;
-    private final Jugador banca; //El jugador banca.
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private int doblesConsecutivos = 0; // para contar dobles en el mismo turno
+    private int casas;
     // endregion
-
-    public Jugador getBanca(){return banca;}
+    Juego juego = new Juego();
 
     // region ==== MÉTODOS ====
-
-    public Menu() {
-        // Banca (según el guion: Jugador() vacío actúa como banca, sin avatar y con fortuna muy alta)
-        banca = new Jugador();
-    }
 
     // Imprime el tablero (usa toString() del Tablero)
     private void verTablero() {
@@ -58,7 +53,7 @@ public class Menu {
 
         // Tablero: la banca empieza como propietaria de todo
 
-        tablero = new Tablero(banca);
+        tablero = new Tablero(juego.getBanca());
     }
 
     /*Método que interpreta el comando introducido y toma la acción correspondiente.
@@ -189,6 +184,51 @@ public class Menu {
             verTablero();
         }
 
+
+        if(comando.equals("edificar casa")){
+            edificarCasa();
+          }
+        if(comando.equals("edificar hotel")){
+            edificarHotel();
+        }
+ /*       if(comando.equals("edificar piscina"){
+            edificarPiscina();
+        }
+        if(comando.equals("listar edificios"){
+            listarEdificios();
+        }
+        if(comando.startsWith("listar edificios "){
+            String nombreGrupo= comando.substring("listar edificios ".length());
+            listarEdificiosGrupo(nombreGrupo);
+        }
+        if(comando.startsWith("hipotecar "){
+            String nombreProp= comando.substring("hipotecar ".length());
+            hipotecar(nombreProp);
+        }
+        if(comando.startsWith("deshipotecar "){
+            String nombreProp= comando.substring("deshipotecar ".length());
+            deshipotecar(nombreProp);
+        }
+        if(comando.startsWith("vender "){//La estructura es vender casas Solar1 3
+
+            String[] partes = comando.substring(7).split(" ");//Elimino los 7 primeros caracteres, es decir, "vender ", quedando la información
+            //El split(" "); Lo que hace es, con el resto que queda, separarlo por espacios
+            if(partes.length >= 3) {//Si no hay tres partes en la entrada, no es válida
+                String tipo = partes[0];//"casas" por ejemplo
+                String solar = partes[1];//"Solar1" por ejemplo
+                int cantidad = Integer.parseInt(partes[2]); // 3
+                venderPropiedad(tipo, solar, cantidad);
+            } else {
+                System.out.println("Formato incorrecto. Uso: vender <tipo> <solar> <cantidad>");
+            }
+        }
+        if(comando.equals("estadisticas"){
+            describirEstadisticas();
+        }
+        if(comando.startsWith("estadisticas "){
+            describirEstadisticasJugador();
+        }
+*/
     }
 
     // Muestra quién tiene el turno actual (por índice 'turno')
@@ -539,7 +579,7 @@ public class Menu {
 
             // Evaluar efectos de la casilla (pagos, etc.)
             if (c != null) {
-                c.evaluarCasilla(actual, banca, suma);
+                c.evaluarCasilla(actual, juego.getBanca(), suma);
             }
         } catch (Throwable e) {
             System.out.println("(Aviso) Falta implementar correctamente el movimiento del Avatar.");
@@ -645,7 +685,7 @@ public class Menu {
 
             // Evaluar efectos de la casilla (pagos, etc.)
             if (c != null) {
-                c.evaluarCasilla(actual, banca, suma);
+                c.evaluarCasilla(actual, juego.getBanca(), suma);
             }
         } catch (Throwable e) {
             System.out.println("(Aviso) Falta implementar correctamente el movimiento del Avatar.");
@@ -696,7 +736,7 @@ public class Menu {
         // 3) Comprobar propietario actual (debe ser la banca)
         Jugador propietario = null;
         try { propietario = cas.getDueno(); } catch (Throwable ignored) {}
-        if (propietario != null && propietario != banca) {
+        if (propietario != null && propietario != juego.getBanca()) {
             System.out.println("La propiedad '" + cas.getNombre() + "' no está en venta.");
             return;
         }
@@ -712,7 +752,7 @@ public class Menu {
             System.out.println("No tienes suficiente dinero para comprar '" + cas.getNombre() + "'. Precio: " + (long)precio);
             return;
         }
-        cas.comprarCasilla(actual, banca);
+        cas.comprarCasilla(actual, juego.getBanca());
 
         // Mensajes y repintado
         System.out.println(actual.getNombre() + " compra '" + cas.getNombre() + "' por " + (long)precio + ".");
@@ -762,7 +802,7 @@ public class Menu {
 
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) { // recorres cada lado del tablero
             for (Casilla c : lado) {                              // recorres cada casilla del lado
-                if (c.getDueno() == banca &&
+                if (c.getDueno() == juego.getBanca() &&
                         c.getTipo().equalsIgnoreCase("Solar") ||
                                 c.getTipo().equalsIgnoreCase("Transporte") ||
                                 c.getTipo().equalsIgnoreCase("Servicios")) {
@@ -873,10 +913,73 @@ public class Menu {
             }
         }
     }
+    private void edificarCasa(){
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores en la partida.");
+            return;
+        }
+        if (turno < 0) turno = 0;
+        if (turno >= jugadores.size()) turno = turno % jugadores.size();
+        Jugador actual = jugadores.get(turno);
+        //Sacamos la casilla a la que pertenece el avatar
+        Casilla pos = actual.getAvatar().getPosicion();
+        if(!Casilla.TSOLAR.equals(pos.getTipo())) {
+            System.out.println("Sólo se puede edificar en casillas de tipo solar.\n");
+            return;
+        }
+        if(!pos.getGrupo().esDuenoGrupo(actual)){
+            System.out.println("No se puede edificar una casilla de un grupo que no es del jugador\n");
+            return;
+        }
+
+        if (casas>=4){
+            System.out.println("Ya tienes el máximo de casas en este solar. Prueba a construir un hotel!");
+            return;
+        } else {
+            int n= pos.getNumCasas();
+            pos.setNumCasas(n++);
+            casas++;
+            System.out.println("Se ha edificado una casa en " + pos.getNombre() + ".La fortuna de"+actual.getNombre()+" se reduce en ");
+        }
+
+    //FIXME FALTA ACABAR DE DESCONTAR EL DINERO DEL SOLAR DEL QUE ACABAMOS DE COMPRAR LA CASA Y VER QUE LA AÑADE BIEN.
+    }
+
+    private void edificarHotel(){
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores en la partida.");
+            return;
+        }
+        if (turno < 0) turno = 0;
+        if (turno >= jugadores.size()) turno = turno % jugadores.size();
+        Jugador actual = jugadores.get(turno);
+
+        Casilla pos = actual.getAvatar().getPosicion();
+        if(!Casilla.TSOLAR.equals(pos.getTipo())) {
+        System.out.println("Sólo se puede edificar en casillas de tipo solar.\n");
+        return;
+        }
+        if(!pos.getGrupo().esDuenoGrupo(actual)){
+        System.out.println("No se puede edificar una casilla de un grupo que no es del jugador\n");
+        return;
+        }
+        if(casas!=4 && pos.getNumCasas()!=4){
+            System.out.println("Aún no tienes las suficientes casas para comprar un hotel. Prueba a construír una casa!");
+            return;
+        }
+        int n= pos.getNumHoteles();
+        pos.setNumHoteles(n++);
+        pos.setNumCasas(0);
+        casas=0;
+        System.out.println("Se ha edificado un hotel en " + pos.getNombre() + ".La fortuna de"+actual.getNombre()+" se reduce en ");
+        //FIXME FALTA ACABAR DE DESCONTAR EL DINERO DEL SOLAR DEL QUE ACABAMOS DE COMPRAR LA CASA Y VER QUE LA AÑADE BIEN.
+    }
+
+    }
 
     // endregion
 
-}
+
 
 
 
