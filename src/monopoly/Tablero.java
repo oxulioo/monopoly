@@ -36,7 +36,7 @@ public class Tablero {
 
         //Llamo a 3 métodos (implementados más adelante) para crear el tablero correctamente
         generarCasillas();
-        precargarAlquileres();
+        precargarDatosCasillas();
         generarGrupos();
     }
 
@@ -44,10 +44,20 @@ public class Tablero {
 
     // region ==== MÉTODOS ====
     //Métodos auxiliares para simplificar el código
-    private Casilla crearSolar(String nombre, int pos, int valor) {
-        return new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 0, 0, 0, 0);
-    }
 
+    private Casilla crearSolar(String nombre, int pos, int valor) {
+        return switch (nombre) {
+            case "Solar1", "Solar2" -> new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 500000, 500000, 100000, 200000);
+            case "Solar3", "Solar4", "Solar5" -> new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 500000, 500000, 100000, 200000);
+            case "Solar6", "Solar7", "Solar8" -> new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 1000000, 1000000, 200000, 400000);
+            case "Solar9", "Solar10", "Solar11" -> new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 1000000, 1000000, 200000, 400000);
+            case "Solar12", "Solar13", "Solar14" -> new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 1500000, 1500000, 300000, 600000);
+            case "Solar15", "Solar16", "Solar17" -> new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 1500000, 1500000, 300000, 600000);
+            case "Solar18", "Solar19", "Solar20" -> new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 2000000, 2000000, 400000, 800000);
+            case "Solar21", "Solar22" -> new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 2000000, 2000000, 400000, 800000);
+            default -> new Casilla(nombre, Casilla.TSOLAR, pos, valor, banca, 0, 0, 0, 0);
+        };
+    }
     private Casilla crearServicio(String nombre, int pos) {
         return new Casilla(nombre, Casilla.TSERVICIOS, pos, Valor.PRECIO_SERVICIO_TRANSPORTE, banca, 0, 0, 0, 0);
     }
@@ -66,78 +76,168 @@ public class Tablero {
         this.insertarLadoNorte();
         this.insertarLadoEste();
     }
-    //Método para cargar inicialmente los valores de los alquileres según el Apéndice
-    private void precargarAlquileres() {
-        // Recorremos todas las casillas de los 4 lados
-        for (ArrayList<Casilla> lado:posiciones) {
-            for (Casilla c:lado) {
-                if (c==null) continue;
+    private void precargarDatosCasillas() {
+        for (ArrayList<Casilla> lado : posiciones) {
+            for (Casilla c : lado) {
+                if (c == null) continue;
 
-                String tipo=c.getTipo();
-                String nombre=c.getNombre();
+                String tipo = c.getTipo();
+                String nombre = c.getNombre();
 
-                //Valores exactos del alquiler +hipoteca(50% del precio)
-                if (Casilla.TSOLAR.equals(tipo)) {
-                    int alquiler = switch (nombre) {
-                        // Marrón
-                        case "Solar1" -> 20000;
-                        case "Solar2" -> 40000;
-                        // Cián
-                        case "Solar3" -> 60000;
-                        case "Solar4" -> 60000;
-                        case "Solar5" -> 80000;
-                        // Rosa
-                        case "Solar6" -> 100000;
-                        case "Solar7" -> 100000;
-                        case "Solar8" -> 120000;
-                        // Naranja
-                        case "Solar9" -> 140000;
-                        case "Solar10" -> 140000;
-                        case "Solar11" -> 160000;
-                        // Rojo
-                        case "Solar12" -> 180000;
-                        case "Solar13" -> 180000;
-                        case "Solar14" -> 200000;
-                        // Amarillo
-                        case "Solar15" -> 220000;
-                        case "Solar16" -> 220000;
-                        case "Solar17" -> 240000;
-                        // Verde
-                        case "Solar18" -> 260000;
-                        case "Solar19" -> 260000;
-                        case "Solar20" -> 280000;
-                        // Azul
-                        case "Solar21" -> 350000;
-                        case "Solar22" -> 500000;
-                        default -> 0;
-                    };
-                    c.setAlquiler(alquiler);//Introduzco el alquiler base (sin edificios), con el setter
-                    c.setHipoteca(c.getValor() / 2);
+                switch (tipo) {
+                    case Casilla.TSOLAR:
+                        // ALQUILER BASE según Apéndice I
+                        int alquilerBase = switch (nombre) {
+                            case "Solar1" -> 20000;
+                            case "Solar2" -> 40000;
+                            case "Solar3", "Solar4" -> 60000;
+                            case "Solar5" -> 80000;
+                            case "Solar6", "Solar7" -> 100000;
+                            case "Solar8" -> 120000;
+                            case "Solar9", "Solar10" -> 140000;
+                            case "Solar11" -> 160000;
+                            case "Solar12", "Solar13" -> 180000;
+                            case "Solar14" -> 200000;
+                            case "Solar15", "Solar16" -> 220000;
+                            case "Solar17" -> 240000;
+                            case "Solar18", "Solar19" -> 260000;
+                            case "Solar20" -> 280000;
+                            case "Solar21" -> 350000;
+                            case "Solar22" -> 500000;
+                            default -> 0;
+                        };
+                        c.setAlquiler(alquilerBase);
+                        c.setHipoteca(c.getValor() / 2);
+
+                        //ALQUILERES DE EDIFICIOS según Apéndice I
+                        switch (nombre) {
+                            // Marrón
+                            case "Solar1" -> {
+                                c.setAlquilerCasa(400000);
+                                c.setAlquilerHotel(2500000);
+                                c.setAlquilerPiscina(500000);
+                                c.setAlquilerPistaDeporte(500000);
+                            }
+                            case "Solar2" -> {
+                                c.setAlquilerCasa(800000);
+                                c.setAlquilerHotel(4500000);
+                                c.setAlquilerPiscina(900000);
+                                c.setAlquilerPistaDeporte(900000);
+                            }
+                            // Cián
+                            case "Solar3", "Solar4" -> {
+                                c.setAlquilerCasa(1000000);
+                                c.setAlquilerHotel(5500000);
+                                c.setAlquilerPiscina(1100000);
+                                c.setAlquilerPistaDeporte(1100000);
+                            }
+                            case "Solar5" -> {
+                                c.setAlquilerCasa(1250000);
+                                c.setAlquilerHotel(6000000);
+                                c.setAlquilerPiscina(1200000);
+                                c.setAlquilerPistaDeporte(1200000);
+                            }
+                            // Rosa
+                            case "Solar6", "Solar7" -> {
+                                c.setAlquilerCasa(1500000);
+                                c.setAlquilerHotel(7500000);
+                                c.setAlquilerPiscina(1500000);
+                                c.setAlquilerPistaDeporte(1500000);
+                            }
+                            case "Solar8" -> {
+                                c.setAlquilerCasa(1750000);
+                                c.setAlquilerHotel(9000000);
+                                c.setAlquilerPiscina(1800000);
+                                c.setAlquilerPistaDeporte(1800000);
+                            }
+                            // Naranja
+                            case "Solar9", "Solar10" -> {
+                                c.setAlquilerCasa(1850000);
+                                c.setAlquilerHotel(9500000);
+                                c.setAlquilerPiscina(1900000);
+                                c.setAlquilerPistaDeporte(1900000);
+                            }
+                            case "Solar11" -> {
+                                c.setAlquilerCasa(2000000);
+                                c.setAlquilerHotel(10000000);
+                                c.setAlquilerPiscina(2000000);
+                                c.setAlquilerPistaDeporte(2000000);
+                            }
+                            // Rojo
+                            case "Solar12", "Solar13" -> {
+                                c.setAlquilerCasa(2200000);
+                                c.setAlquilerHotel(10500000);
+                                c.setAlquilerPiscina(2100000);
+                                c.setAlquilerPistaDeporte(2100000);
+                            }
+                            case "Solar14" -> {
+                                c.setAlquilerCasa(2325000);
+                                c.setAlquilerHotel(11000000);
+                                c.setAlquilerPiscina(2200000);
+                                c.setAlquilerPistaDeporte(2200000);
+                            }
+                            // Amarillo
+                            case "Solar15", "Solar16" -> {
+                                c.setAlquilerCasa(2450000);
+                                c.setAlquilerHotel(11500000);
+                                c.setAlquilerPiscina(2300000);
+                                c.setAlquilerPistaDeporte(2300000);
+                            }
+                            case "Solar17" -> {
+                                c.setAlquilerCasa(2600000);
+                                c.setAlquilerHotel(12000000);
+                                c.setAlquilerPiscina(2400000);
+                                c.setAlquilerPistaDeporte(2400000);
+                            }
+                            // Verde
+                            case "Solar18", "Solar19" -> {
+                                c.setAlquilerCasa(2750000);
+                                c.setAlquilerHotel(12750000);
+                                c.setAlquilerPiscina(2550000);
+                                c.setAlquilerPistaDeporte(2550000);
+                            }
+                            case "Solar20" -> {
+                                c.setAlquilerCasa(3000000);
+                                c.setAlquilerHotel(14000000);
+                                c.setAlquilerPiscina(2800000);
+                                c.setAlquilerPistaDeporte(2800000);
+                            }
+                            // Azul
+                            case "Solar21" -> {
+                                c.setAlquilerCasa(3250000);
+                                c.setAlquilerHotel(17000000);
+                                c.setAlquilerPiscina(3400000);
+                                c.setAlquilerPistaDeporte(3400000);
+                            }
+                            case "Solar22" -> {
+                                c.setAlquilerCasa(4250000);
+                                c.setAlquilerHotel(20000000);
+                                c.setAlquilerPiscina(4000000);
+                                c.setAlquilerPistaDeporte(4000000);
+                            }
+                        }
+                        break;
+
+                    case Casilla.TTRANSPORTE:
+                        c.setAlquiler(Valor.ALQUILER_TRANSPORTE);
+                        c.setHipoteca(0);
+                        break;
+
+                    case Casilla.TSERVICIOS:
+                        c.setAlquiler(Valor.FACTOR_SERVICIO);
+                        c.setHipoteca(0);
+                        break;
+
+                    case Casilla.TIMPUESTO:
+                        c.setAlquiler(c.getValor());
+                        break;
+
+                    default:
+                        break;
                 }
-
-                //Si es TRANSPORTE, el precio de compra es 500.000 y el alquiler fijo es250.000
-                else if (Casilla.TTRANSPORTE.equals(tipo)) {
-                    c.setAlquiler(Valor.ALQUILER_TRANSPORTE);// 250.000
-                    c.setHipoteca(0);// No hipotecable en esta parte, hay que cambiarlo (entiendo) en siguientes entregas
-                }
-
-                //Si es SERVICIO, el precio de compra es 500.000 y el alquiler se calcula con la tirada
-                else if (Casilla.TSERVICIOS.equals(tipo)) {
-                    c.setAlquiler(Valor.FACTOR_SERVICIO);// Se calcula: 4 * tirada * FACTOR_SERVICIO
-                    c.setHipoteca(0);// No hipotecable en esta parte
-                }
-
-                //En el caso de que sean IMPUESTOS/ESPECIALES/SUERTE/COMUNIDAD, se tiene que (no hace falta hacer nada):
-                //Los impuestos ya traen la "cantidad a pagar" en el campo 'alquiler' desde el constructor.
-                //El parking acumula bote en 'valor' cuando alguien paga impuestos.
             }
-
         }
-
     }
-
-
-
     //Esta la escribo yo, no estaba en el esqueleto, MIRAR BIEN
     private void generarGrupos(){
         //Busco la casilla, compruebo que no sean null y la añado al grupo
@@ -223,28 +323,6 @@ public class Tablero {
         norte.add(crearSolar("Solar17", 30, 2800000));
         norte.add(new Casilla("IrCarcel", 31, Casilla.TESPECIAL));
     }
-   /*//Método para insertar las casillas del lado norte.
-    private void insertarLadoNorte() {
-        //Le asigno la posición al array (hay 4)
-        ArrayList<Casilla> norte = posiciones.get(2);
-
-        //Dado que el parking tiene que actualizar el bote y no tengo un metodo que acepte el tablero como parámetro (no está en el esqueleto); uso una variable estática y actualizo la casilla
-        Casilla parking = new Casilla("Parking",21, Casilla.TESPECIAL);
-        norte.add(parking);
-        Casilla.setParkingReferencia(parking);
-        //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
-        norte.add(new Casilla("Solar12", Casilla.TSOLAR, 22, 2200000, banca));
-        norte.add(new Casilla("Suerte", 23, Casilla.TSUERTE));
-        norte.add(new Casilla("Solar13", Casilla.TSOLAR, 24, 2200000, banca));
-        norte.add(new Casilla("Solar14", Casilla.TSOLAR, 25, 2400000, banca));
-        norte.add(new Casilla("Trans3", Casilla.TTRANSPORTE, 26, 500000, banca));
-        norte.add(new Casilla("Solar15", Casilla.TSOLAR, 27, 2600000, banca));
-        norte.add(new Casilla("Solar16", Casilla.TSOLAR, 28, 2600000, banca));
-        norte.add(new Casilla("Serv2", Casilla.TSERVICIOS, 29, 500000, banca));
-        norte.add(new Casilla("Solar17", Casilla.TSOLAR, 30, 2800000, banca));
-        norte.add(new Casilla("IrCarcel", 31, Casilla.TESPECIAL));
-    }*/
-    //Método para insertar las casillas del lado sur.
 
     private void insertarLadoSur() {
         ArrayList<Casilla> sur = posiciones.get(0);
@@ -260,39 +338,6 @@ public class Tablero {
         sur.add(crearSolar("Solar1", 2, 600000));
         sur.add(new Casilla("Salida", 1, Casilla.TESPECIAL));
     }
-    /*
-    private void insertarLadoSur() {
-        ArrayList<Casilla> sur = posiciones.get(0);
-        sur.add(new Casilla("Cárcel", 11, Casilla.TESPECIAL));
-        sur.add(crearSolar("Solar5", 10, 1200000));
-        sur.add(crearSolar("Solar4", 9, 1000000));
-        sur.add(new Casilla("Suerte", 8, Casilla.TSUERTE));
-        sur.add(crearSolar("Solar3", 7, 1000000));
-        sur.add(crearTransporte("Trans1", 6));
-        sur.add(new Casilla("Imp1", 5, 2000000));
-        sur.add(crearSolar("Solar2", 4, 600000));
-        sur.add(new Casilla("Caja", 3, Casilla.TCOMUNIDAD));
-        sur.add(crearSolar("Solar1", 2, 600000));
-        sur.add(new Casilla("Salida", 1, Casilla.TESPECIAL));
-    }
-    */
-
-    /*
-    //Método que inserta casillas del lado oeste.
-    private void insertarLadoOeste() {
-        //Le asigno la posición al array (hay 4)
-        ArrayList<Casilla>oeste=posiciones.get(1);
-        //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
-        oeste.add(new Casilla("Solar6", Casilla.TSOLAR, 12, 1400000, banca));
-        oeste.add(new Casilla("Serv1", Casilla.TSERVICIOS, 13, 500000,banca));
-        oeste.add(new Casilla("Solar7", Casilla.TSOLAR, 14, 1400000, banca));
-        oeste.add(new Casilla("Solar8", Casilla.TSOLAR, 15, 1600000, banca));
-        oeste.add(new Casilla("Trans2", Casilla.TTRANSPORTE, 16, 500000, banca));
-        oeste.add(new Casilla("Solar9", Casilla.TSOLAR, 17, 1800000, banca));
-        oeste.add(new Casilla("Caja", 18, Casilla.TCOMUNIDAD));
-        oeste.add(new Casilla("Solar10", Casilla.TSOLAR, 19, 1800000, banca));
-        oeste.add(new Casilla("Solar11", Casilla.TSOLAR, 20, 2200000, banca));
-    }*/
     private void insertarLadoOeste() {
         ArrayList<Casilla> oeste = posiciones.get(1);
         oeste.add(crearSolar("Solar6", 12, 1400000));
@@ -305,23 +350,7 @@ public class Tablero {
         oeste.add(crearSolar("Solar10", 19, 1800000));
         oeste.add(crearSolar("Solar11", 20, 2200000));
     }
-/*
-    //Método que inserta las casillas del lado este.
-    private void insertarLadoEste() {
-        //Le asigno la posición al array (hay 4)
-        ArrayList<Casilla>este=posiciones.get(3);
-        //Añado cada casilla, le asigno el nombre, el tipo, la posición, el valor y el dueño según corresponda (algunas casillas no tienen dueño o valor por ejemplo)
-        este.add(new Casilla("Solar18", Casilla.TSOLAR, 32, 3000000, banca));
-        este.add(new Casilla("Solar19", Casilla.TSOLAR, 33, 3000000, banca));
-        este.add(new Casilla("Caja", 34, Casilla.TCOMUNIDAD));
-        este.add(new Casilla("Solar20", Casilla.TSOLAR, 35, 3200000, banca));
-        este.add(new Casilla("Trans4", Casilla.TTRANSPORTE, 36, 500000, banca));
-        este.add(new Casilla("Suerte", 37, Casilla.TSUERTE));
-        este.add(new Casilla("Solar21", Casilla.TSOLAR, 38, 3500000, banca));
-        este.add(new Casilla("Imp2", 39, 2000000));
-        este.add(new Casilla("Solar22", Casilla.TSOLAR, 40, 4000000, banca));
-    }
-*/
+
     private void insertarLadoEste() {
         ArrayList<Casilla> este = posiciones.get(3);
         este.add(crearSolar("Solar18", 32, 3000000));

@@ -16,6 +16,12 @@ public class Jugador {
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
 
+    private final java.util.List<Edificio> misEdificios = new java.util.ArrayList<>();
+    public java.util.List<Edificio> getMisEdificios() { return java.util.Collections.unmodifiableList(misEdificios); }
+    public void anadirEdificio(Edificio e) { misEdificios.add(e); }
+    public void eliminarEdificio(Edificio e){ misEdificios.remove(e); }
+
+
     // endregion
 
     // region ==== CONSTRUCTORES ====
