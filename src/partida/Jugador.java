@@ -106,11 +106,8 @@ public class Jugador {
         //Si no pertenece a nadie (o a la banca) se la añadimos
         if (!propiedades.contains(casilla)) {
             propiedades.add(casilla);
-            casilla.setDueno(this); // ❗️ ESTA ES LA LÍNEA CLAVE
-            // El mensaje de éxito de 'Juego.comprar' se encarga de informar al usuario.
-            // System.out.println(nombre + " ha adquirido la propiedad " + casilla.getNombre()); // Comentamos esto para evitar mensajes duplicados
+            casilla.setDueno(this);
         } else {
-            // Esto no debería pasar si la lógica de compra es correcta
             System.out.println("La casilla " + casilla.getNombre() + " ya pertenece al jugador");
         }
     }
