@@ -6,15 +6,11 @@ import java.util.ArrayList;
 
 class Grupo {
 
-    // region ==== ATRIBUTOS ====
 
     private final ArrayList<Casilla> miembros; //Casillas miembros del grupo.
     private final String colorGrupo; //Color del grupo
     private final int numCasillas; //Número de casillas del grupo.
 
-    // endregion
-
-    // region ==== CONSTRUCTORES ====
 
     public Grupo() {
         //Inicializo con estos valores (defensivo)
@@ -45,10 +41,6 @@ class Grupo {
         anhadirCasilla(cas2);
         anhadirCasilla(cas3);
     }
-
-    // endregion
-
-    // region ==== MÉTODOS ====
 
     /* Método que añade una casilla al array de casillas miembro de un grupo.
     * Parámetro: casilla que se quiere añadir.
@@ -97,6 +89,5 @@ class Grupo {
         return colorGrupo;
     }
 
-    // endregion
 
 }

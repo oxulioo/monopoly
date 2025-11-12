@@ -14,16 +14,10 @@ public class Avatar {
     * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siempre es positivo.
      */
 
-    // region ==== ATRIBUTOS ====
-
     private char id;
     private final String tipo;
     private Casilla lugar;
     private final Jugador jugador;
-
-    // endregion
-
-    // region ==== CONSTRUCTOR ====
 
     public Avatar(String tipo, Casilla posicion, Jugador jugador, ArrayList<Avatar> avataresCreados) {
         this.tipo = tipo;
@@ -33,10 +27,6 @@ public class Avatar {
         int nDobles = 0;
         this.generarId(avataresCreados);
     }
-
-    // endregion
-
-    // region ==== GETTERS Y SETTERS ====
 
     public char getID() {
         return id;
@@ -65,9 +55,6 @@ public class Avatar {
     }
 
 
-    // endregion
-
-    // region ==== MÉTODOS ====
 
     public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
 
@@ -115,9 +102,6 @@ public class Avatar {
         }
     }
 
-    // endregion
-
-    // region ==== GENERADOR DE ID ====
     private void generarId(ArrayList<Avatar> avCreados) {
         char id;
         do {
@@ -140,7 +124,5 @@ public class Avatar {
         // devuelve una letra aleatoria entre A y Z
         return (char) (Math.random() * 26 + 65);
     }
-
-    // endregion
 
 }

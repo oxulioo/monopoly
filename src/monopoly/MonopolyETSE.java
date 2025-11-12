@@ -2,9 +2,10 @@ package monopoly;
 
 public class MonopolyETSE {
 
-    private static Menu menu = new Menu();
+    private static Juego juego = new Juego();
+    private static Menu menu = new Menu(juego);
     static void main() {
-        menu.iniciarPartida(); //iniciamos la partida
+        juego.iniciarPartida(); //iniciamos la partida
         menu.run();
     }
 

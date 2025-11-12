@@ -13,16 +13,18 @@ import java.util.HashMap;
 
 public class Tablero {
 
-    // region ==== ATRIBUTOS ====
 
     private final ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private final HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
     //La clave es el color del grupo, y el valor es el grupo, que contiene todas las casillas de dicho color (recordar, la tabla HashMap guarda par clave-valor)
     private final Jugador banca; //Un jugador que será la banca.
 
-    // endregion
+    public ArrayList<ArrayList<Casilla>> getPosiciones() {
+        return posiciones;
+    }
+    //Ojo, no me sirve el getter getPosicion() porque este solo toma una posición, y necesito el array (más posiciones, para una fila/columna)
 
-    // region ==== CONSTRUCTORES ====
+
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
     public Tablero(Jugador banca) {
         this.banca=banca;
@@ -40,9 +42,6 @@ public class Tablero {
         generarGrupos();
     }
 
-    // endregion
-
-    // region ==== MÉTODOS ====
     //Métodos auxiliares para simplificar el código
 
     private Casilla crearSolar(String nombre, int pos, int valor) {
@@ -387,12 +386,10 @@ public class Tablero {
         // Fila inferior: pos 11 a 1
         sb.append(lineasur()).append('\n');
 
-
-
         return sb.toString(); // devuelve el tablero como un String
     }
 
-    /** Devuelve la casilla por posición absoluta (1..40). Recorre todas las casillas y devuelve la primera posición que coincide */
+    // Devuelve la casilla por posición absoluta (1..40). Recorre todas las casillas y devuelve la primera posición que coincide
     private Casilla porPos(int pos) {
         for (ArrayList<Casilla> lado : posiciones)
             for (Casilla c : lado)
@@ -469,8 +466,6 @@ public class Tablero {
         return sb.toString();
     }
 
-// === HASTA aquí (fin de reemplazo) ===
-
 
 
     //Método usado para buscar la casilla con el nombre pasado como argumento:
@@ -494,12 +489,7 @@ public class Tablero {
 
     //A partir de aquí lo añado para ayudar al menu (se puede quitar si no sirve)
     // Devuelve las 4 listas (Sur, Oeste, Norte, Este)
-    public ArrayList<ArrayList<Casilla>> getPosiciones() {
-        return posiciones;
-    }
-    //Ojo, no me sirve el getter getPosicion() porque este solo toma una posición, y necesito el array (más posiciones, para una fila/columna)
 
 
-    // endregion
 
 }

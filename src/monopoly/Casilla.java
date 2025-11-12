@@ -10,7 +10,6 @@ import static java.awt.SystemColor.menu;
 
 public class Casilla {
 
-    // region ==== ATRIBUTOS ====
 
     //Primero pongo los privados (da igual)
     private final String nombre; //Nombre de la casilla
@@ -22,6 +21,8 @@ public class Casilla {
     private int alquiler; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
     private int hipoteca; //Valor otorgado por hipotecar una casilla
     private final ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
+
+    private int hipotecada; //bandera para saber si hay
 
     private static Casilla parkingReferencia;//Dado que el metodo evaluar casilla no tiene como parámetro el tablero, no puedo modificar la casilla parking cuando se pagan impuestos, por lo que creo esta variable
 
@@ -59,12 +60,6 @@ public class Casilla {
 
     //Juego juego = new Juego();
 
-
-    // endregion
-
-    
-
-    // region ==== GETTERS Y SETTERS ====
 
     //Vamos a añadir getters y setters
     public String getNombre() {
@@ -108,6 +103,10 @@ public class Casilla {
     public static Casilla getParkingReferencia() { return parkingReferencia;}
     public static void setParkingReferencia(Casilla c) { parkingReferencia = c; }
 
+    
+    public int gethipotecada(){return hipotecada;}
+    public void sethipotecada(int h){hipotecada=h;}
+
     public int getNumCasas() { return numCasas; }
     public int getNumHoteles() { return numHoteles; }
     public int getNumPiscinas() { return numPiscinas; }
@@ -133,9 +132,7 @@ public class Casilla {
     public void setAlquilerHotel(int alquiler) { this.alquilerHotel = alquiler; }
     public void setAlquilerPiscina(int alquiler) { this.alquilerPiscina = alquiler; }
     public void setAlquilerPistaDeporte(int alquiler) { this.alquilerPistaDeporte = alquiler; }
-// endregion
 
-    // region ==== CONSTRUCTORES ====
 
     /*Constructor para casillas tipo Solar, Servicios o Transporte:
      * Parámetros: nombre casilla, tipo (debe ser solar, serv. o transporte), posición en el tablero, valor y dueño.
@@ -251,9 +248,6 @@ public class Casilla {
         this.dueno=null;
 
     }
-    // endregion
-
-    // region ==== MÉTODOS ====
 
     //Método utilizado para añadir un avatar al array de avatares en casilla.
     public void anhadirAvatar(Avatar av) {
@@ -275,6 +269,12 @@ public class Casilla {
         if(actual==null) return;
         //En el caso de que el jugador esté en una casilla de las mencionadas (de momento no se aplica pagos en suerte y comunidad) el jugador de primeras no tiene que pagar nada
         if(TSUERTE.equals(tipo)||TCOMUNIDAD.equals(tipo)||(TESPECIAL.equals(tipo)&&("Cárcel".equalsIgnoreCase(nombre)||"Salida".equalsIgnoreCase(nombre)))){
+            return;
+        }
+        if ("Suerte".equals(this.tipo) || "Comunidad".equals(this.tipo)) {
+            // Necesitas una referencia al juego para esto
+            Juego.procesarCasillaEspecial(actual, this.tipo);
+            System.out.println(actual.getNombre() + " cae en " + this.nombre + " - Se debe procesar carta");
             return;
         }
         //Si caes en la casilla IrCarcel, vas directo a la carcel con el método encarcelar
@@ -330,7 +330,6 @@ public class Casilla {
         }
         //Si caes en un solar con dueño que no eres tú
 
-        // FIX
 
         if(TSOLAR.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca&&this.grupo.esDuenoGrupo(this.dueno)){
@@ -537,7 +536,5 @@ public class Casilla {
         return hipoteca;
     }
 
-
-    // endregion
 
 }

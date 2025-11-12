@@ -6,8 +6,6 @@ import java.util.ArrayList;
 
 public class Jugador {
 
-    // region ==== ATRIBUTOS ====
-
     private String nombre; //Nombre del jugador
     private Avatar avatar; //Avatar que tiene en la partida.
     private int fortuna; //Dinero que posee.
@@ -15,32 +13,13 @@ public class Jugador {
     private int tiradasCarcel; //Cuando está en la carcel, contará las tiradas sin éxito que ha hecho allí para intentar salir (se usa para limitar el número de intentos).
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
-
     private final java.util.List<Edificio> misEdificios = new java.util.ArrayList<>();
+
+
+
     public java.util.List<Edificio> getMisEdificios() { return java.util.Collections.unmodifiableList(misEdificios); }
     public void anadirEdificio(Edificio e) { misEdificios.add(e); }
     public void eliminarEdificio(Edificio e){ misEdificios.remove(e); }
-
-
-    // endregion
-
-    // region ==== CONSTRUCTORES ====
-
-    //Constructor vacío. Se usará para crear la banca.
-    public Jugador() {
-        this.nombre = "Banca";
-        this.avatar = null; // La banca no se representa en el tablero con avatar
-        this.fortuna = Integer.MAX_VALUE; // Dinero "infinito"
-        this.enCarcel = false;
-        this.tiradasCarcel = 0;
-        this.vueltas = 0;
-        this.propiedades = new ArrayList<>();
-    }
-
-    // endregion
-
-    // region ==== SETTERS Y GETTERS ====
-
     public String getNombre() {return nombre;}
     public Avatar getAvatar() {return avatar;}
     public int getFortuna() {return fortuna;}
@@ -54,11 +33,6 @@ public class Jugador {
     }
     public int getTiradasCarcel() {return tiradasCarcel;}
     public void setTiradasCarcel(int t) {this.tiradasCarcel=t;}
-
-    // endregion
-
-    // region ==== MÉTODOS ====
-
 
 
     /*Constructor principal. Requiere parámetros:
@@ -197,7 +171,5 @@ public class Jugador {
         }
     }
 
-
-    // endregion
 
 }
