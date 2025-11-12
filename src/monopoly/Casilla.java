@@ -103,7 +103,7 @@ public class Casilla {
     public static Casilla getParkingReferencia() { return parkingReferencia;}
     public static void setParkingReferencia(Casilla c) { parkingReferencia = c; }
 
-    
+
     public int gethipotecada(){return hipotecada;}
     public void sethipotecada(int h){hipotecada=h;}
 
@@ -132,6 +132,12 @@ public class Casilla {
     public void setAlquilerHotel(int alquiler) { this.alquilerHotel = alquiler; }
     public void setAlquilerPiscina(int alquiler) { this.alquilerPiscina = alquiler; }
     public void setAlquilerPistaDeporte(int alquiler) { this.alquilerPistaDeporte = alquiler; }
+
+
+    public int getAlquilerCasa() { return alquilerCasa; }
+    public int getAlquilerHotel() { return alquilerHotel; }
+    public int getAlquilerPiscina() { return alquilerPiscina; }
+    public int getAlquilerPistaDeporte() { return alquilerPistaDeporte; }
 
 
     /*Constructor para casillas tipo Solar, Servicios o Transporte:
@@ -273,7 +279,7 @@ public class Casilla {
         }
         if ("Suerte".equals(this.tipo) || "Comunidad".equals(this.tipo)) {
             // Necesitas una referencia al juego para esto
-            Juego.procesarCasillaEspecial(actual, this.tipo);
+            //Juego.procesarCasillaEspecial(actual, this.tipo);
             System.out.println(actual.getNombre() + " cae en " + this.nombre + " - Se debe procesar carta");
             return;
         }
@@ -333,11 +339,15 @@ public class Casilla {
 
         if(TSOLAR.equals(tipo)){
             if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca&&this.grupo.esDuenoGrupo(this.dueno)){
-                actual.pagarAlquiler(this, 2);
+                if(this.hipotecada==0) {
+                    actual.pagarAlquiler(this, 2);
+                }
 
 
                 }else if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){
+                if(this.hipotecada==0) {
                     actual.pagarAlquiler(this, 1);
+                }
             }
         }
     }
@@ -345,21 +355,25 @@ public class Casilla {
     /*Método usado para comprar una casilla determinada. Parámetros:
      * - Jugador que solicita la compra de la casilla.
      * - Banca del monopoly (es el dueño de las casillas no compradas aún).*/
+
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
 
-        //Comprobamos si la casilla es comprable (pertenece a un tipo que se puede comprar)
-        boolean comprable=TSOLAR.equals(tipo)||TSERVICIOS.equals(tipo)||TTRANSPORTE.equals(tipo);
-        if(!comprable) return;
-        //Si la casilla ya tiene dueño, no se puede comprar
-        if(this.dueno!=null && (banca==null || this.dueno!=banca)) return; //cambie otra cosa aqui
         //Se toma el valor y se comprueba que el que quiere comprar tiene dinero suficiente
-        int precio=Math.max(0,this.valor);
-        if(!solicitante.sumarGastos(precio)) return;
-        //Se añade la propiedad al solicitante y este se convierte en su propietario (dueño)
-        this.dueno=solicitante;
-        solicitante.anadirPropiedad(this);
-    }
+        int precio = Math.max(0, this.valor);
 
+        if (!solicitante.sumarGastos(precio)) {
+            // sumarGastos ya imprime el mensaje de bancarrota si ocurre
+            System.out.println(solicitante.getNombre() + " no tiene suficiente dinero para comprar " + this.nombre);
+            return;
+        }
+
+        //Se añade la propiedad al solicitante.
+        //Esta función (anadirPropiedad) se encargará de poner al 'solicitante' como dueño.
+        solicitante.anadirPropiedad(this);
+
+        // El mensaje de éxito se mueve a Juego.comprar(),
+        // pero también podría ir aquí si lo prefieres.
+    }
     /*Método para añadir valor a una casilla. Utilidad:
      * - Sumar valor a la casilla de parking.
      * - Sumar valor a las casillas de solar al no comprarlas tras cuatro vueltas de todos los jugadores.

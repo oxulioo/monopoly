@@ -22,7 +22,7 @@ public class Menu {
         // Exige exactamente "comandos" (en minúsculas) al principio
         if (comando.startsWith("comandos ")) {
             String ruta = comando.substring(9); // NO trim: se usa tal cual
-            juego.ejecutarFichero(ruta);
+            ejecutarFichero(ruta);
             return;
         }
         // crear jugador <Nombre> <tipoAvatar> (sin trim ni validación)
@@ -165,11 +165,11 @@ public class Menu {
         }
         if (comando.startsWith("hipotecar ")) {
             String nombreProp = comando.substring("hipotecar ".length());
-        //    juego.hipotecar(nombreProp);
+            juego.hipotecar(nombreProp);
         }
-     /*   if(comando.startsWith("deshipotecar ")){
+        if(comando.startsWith("deshipotecar ")){
             String nombreProp= comando.substring("deshipotecar ".length());
-            deshipotecar(nombreProp);
+            juego.deshipotecar(nombreProp);
         }
         if(comando.startsWith("vender ")){//La estructura es vender casas Solar1 3
 
@@ -179,18 +179,18 @@ public class Menu {
                 String tipo = partes[0]; //"casas" por ejemplo
                 String solar = partes[1]; //"Solar1" por ejemplo
                 int cantidad = Integer.parseInt(partes[2]); // 3
-                venderPropiedad(tipo, solar, cantidad);
+                juego.venderPropiedad(tipo, solar, cantidad);
             } else {
                 System.out.println("Formato incorrecto. Uso: vender <tipo> <solar> <cantidad>");
             }
         }
-        if(comando.equals("estadisticas")){
-            describirEstadisticas();
+       if(comando.equals("estadisticas")){
+           // juego.describirEstadisticas();
         }
         if(comando.startsWith("estadisticas ")){
-            describirEstadisticasJugador();
+          //  juego.describirEstadisticasJugador();
         }
-*/
+
     }
 
     // Lector de comandos por consola
@@ -213,6 +213,17 @@ public class Menu {
             } catch (Exception e) {
                 System.out.println("Error procesando comando: " + e.getMessage());
             }
+        }
+    }
+
+    private void ejecutarFichero(String ruta) {
+        try (java.util.Scanner sc = new java.util.Scanner(new java.io.File(ruta))) {
+            while (sc.hasNextLine()) {
+                String linea = sc.nextLine();
+                this.analizarComando(linea);
+            }
+        } catch (Exception e) {
+            System.out.println("Error leyendo: " + ruta);
         }
     }
 }

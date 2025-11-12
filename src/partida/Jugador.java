@@ -33,6 +33,7 @@ public class Jugador {
     }
     public int getTiradasCarcel() {return tiradasCarcel;}
     public void setTiradasCarcel(int t) {this.tiradasCarcel=t;}
+    public void setFortuna(int t){this.fortuna=t;}
 
 
     /*Constructor principal. Requiere parámetros:
@@ -40,6 +41,17 @@ public class Jugador {
      * avatares creados (usado para dos propósitos: evitar que dos jugadores tengan el mismo nombre y
      * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
      */
+
+    public Jugador() {
+        this.nombre = "Banca";
+        this.enCarcel = false;
+        this.tiradasCarcel = 0;
+        this.vueltas = 0;
+        this.fortuna = Valor.FORTUNA_BANCA; // Todos los jugadores empiezan con 15M
+        this.propiedades = new ArrayList<>();
+        this.avatar = new Avatar("Banca", null, this, new ArrayList<>());
+
+    }
 
     public Jugador(String nombre, String tipoAvatar, Casilla casilla, ArrayList<Avatar> avCreados) {
         //verificar que el nombre no exista en el array de avatares creados
@@ -49,7 +61,7 @@ public class Jugador {
         }
 
         this.nombre = nombre;
-        this.fortuna = 15000000; // Todos los jugadores empiezan con 15M
+        this.fortuna = Valor.FORTUNA_INICIAL; // Todos los jugadores empiezan con 15M
         this.enCarcel = false;
         this.tiradasCarcel = 0;
         this.vueltas = 0;
@@ -74,27 +86,32 @@ public class Jugador {
 
     public void anadirPropiedad(Casilla casilla) {
         if (casilla == null) {
-            System.out.println("La casilla no existe");
+            System.out.println("Error: La casilla no existe");
             return;
         }
+
         String tipo = casilla.getTipo();
         //Si el tipo de casilla no se puede comprar
         if (tipo.equals("Impuesto") || tipo.equals("Suerte") || tipo.equals("Caja") || tipo.equals("IrACarcel") || tipo.equals("Carcel") || tipo.equals("Parking")) {
-            System.out.println("La casilla no es una propiedad, por lo que no se puede añadir al jugador");
+            System.out.println("La casilla " + casilla.getNombre() + " no es una propiedad, por lo que no se puede añadir al jugador");
             return;
         }
-        //La casillla ya pertenece a un jugador
-        if (casilla.getDueno() != null && casilla.getDueno() != this) {
+
+        //La casilla ya pertenece a un jugador
+        if (casilla.getDueno() != null && casilla.getDueno() != this && !"Banca".equals(casilla.getDueno().getNombre())) {
             System.out.println("La casilla " + casilla.getNombre() + " pertenece al jugador " + casilla.getDueno().getNombre() + ".");
             return;
         }
-        //Si no pertenece a nadie se la añadimos, sino que solo queda que sea suya
+
+        //Si no pertenece a nadie (o a la banca) se la añadimos
         if (!propiedades.contains(casilla)) {
             propiedades.add(casilla);
-            casilla.setDueno(this);
-            System.out.println(nombre + " ha adquirido la propiedad " + casilla.getNombre());
+            casilla.setDueno(this); // ❗️ ESTA ES LA LÍNEA CLAVE
+            // El mensaje de éxito de 'Juego.comprar' se encarga de informar al usuario.
+            // System.out.println(nombre + " ha adquirido la propiedad " + casilla.getNombre()); // Comentamos esto para evitar mensajes duplicados
         } else {
-            System.out.println("La casilla ya pertenece al jugador");
+            // Esto no debería pasar si la lógica de compra es correcta
+            System.out.println("La casilla " + casilla.getNombre() + " ya pertenece al jugador");
         }
     }
 
@@ -119,22 +136,6 @@ public class Jugador {
     public void declararBancarrota() {
         System.out.println(nombre + " ha sido declarado en bancarrota");
         this.propiedades.clear();//elimina todas sus propiedades
-    }
-
-    public void comprarPropiedad(Casilla c) {
-        if (c.getDueno() != null ) {
-            System.out.println("La propiedad ya tiene un dueño actualmente");
-            return;
-        }
-        if (this.fortuna >= c.getValor()) { //si su fortuna es mayor o igual que el valor de la casilla, la compra
-            this.fortuna -= c.getValor();
-
-            c.setDueno(this);
-            this.propiedades.add(c);
-
-        } else {
-            System.out.println("No tiene dinero suficiente para comprar la propiedad " + c.getNombre());
-        }
     }
 
     /*Método para establecer al jugador en la cárcel.
