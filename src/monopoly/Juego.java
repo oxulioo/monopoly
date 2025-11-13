@@ -30,6 +30,9 @@ public class Juego {
     public Tablero getTablero() {
         return tablero;
     }
+    public int getJugadoresNum(){
+        return jugadores.size();
+    }
     private long secEdificio = 0;
     private long nextEdificioId() { return ++secEdificio; }
 
@@ -1033,7 +1036,7 @@ public class Juego {
 
         int importe = c.getHipoteca();
         c.sethipotecada(1);
-        actual.sumarGastos(importe);
+        actual.sumarFortuna(importe);
 
         String color = (c.getGrupo()!=null ? c.getGrupo().getColorGrupo() : "-");
         System.out.println(actual.getNombre() + " recibe " + importe + "€ por la hipoteca de " + c.getNombre() + ". No puede recibir alquileres ni edificar en el grupo " + color + ".");
@@ -1069,8 +1072,9 @@ public class Juego {
         while (it.hasNext() && quitados < n) {
             Edificio e = it.next();
             if (e.getTipo() == tipo && e.getPropietario() == propietario) {
-                it.remove();                        // quita de la casilla
-                propietario.eliminarEdificio(e);    // quita del jugador
+                it.remove();// quita de la casilla
+                e.eliminar(); //elimina el edificio
+                propietario.eliminarEdificio(e);// quita del jugador
                 numeroPorEdificio.remove(e.getId()); // limpia numeración
                 quitados++;
             }
@@ -1207,6 +1211,7 @@ public class Juego {
     public Jugador[] getJugadores() {
         return jugadores.toArray(new Jugador[0]);
     }
+
     //Método para mostrar las estadísticas de un jugador
     public void estadisticasJugador(String nombreJugador){
         if(jugadores==null||jugadores.isEmpty()){

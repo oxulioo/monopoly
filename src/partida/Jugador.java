@@ -124,7 +124,7 @@ public class Jugador {
         this.fortuna -= valor; //a su fortuna le restamos el valor
         estadisticas.sumarDineroInvertido(valor);
         if (this.fortuna < 0) {
-            this.declararBancarrota(); //si es negativa se declara en Bancarrota
+            System.out.println("No tienes suficiente dinero para comprar la propiedad");
             return false;
         }
         return true;
@@ -142,7 +142,7 @@ public class Jugador {
         this.tiradasCarcel = 0;
         this.estadisticas.incrementarVecesEnLaCarcel();
     }
-
+/*
     public void pagarAlquiler(Casilla c, int factor_pago) {
         if (c == null) return;
         Jugador dueno = c.getDueno();
@@ -159,6 +159,43 @@ public class Jugador {
             }
         }
     }
+
+ */
+public void pagarAlquiler(Casilla c, int factor_pago) {
+    if (c == null) return;
+    Jugador dueno = c.getDueno();
+    if (dueno != null && dueno != this) {
+
+        int casas = c.getNumCasas();
+        int hoteles = c.getNumHoteles();
+        int piscinas = c.getNumPiscinas();
+        int pistas = c.getNumPistas();
+
+        int alquiler;
+        if (casas > 0 || hoteles > 0 || piscinas > 0 || pistas > 0) {
+            alquiler = 0;
+            if (casas   > 0) alquiler += casas    * c.getAlquilerCasa();        // 1 casa => 1x, 2 => 2x.
+            if (hoteles > 0) alquiler += hoteles  * c.getAlquilerHotel();       // normalmente 1
+            if (piscinas> 0) alquiler += piscinas * c.getAlquilerPiscina();     // piscina
+            if (pistas  > 0) alquiler += pistas   * c.getAlquilerPistaDeporte();// pista
+        } else {
+            alquiler = c.getAlquiler(); // sin edificios: alquiler base
+        }
+
+        int importe = factor_pago * alquiler;
+        boolean ok = this.sumarGastos(importe);
+        if (ok) {
+            dueno.sumarFortuna(importe);
+            this.estadisticas.sumarPagoDeAlquileres(importe);
+            dueno.getEstadisticas().sumarCobroDeAlquileres(importe);
+            System.out.println(this.nombre + " ha pagado " + importe + " € a " + dueno.getNombre());
+        } else {
+            System.out.println(this.nombre + " no puede pagar el alquiler de " + importe + " €.");
+        }
+    }
+}
+
+
     public void pagarImpuesto(int valor) {
         if (valor <= 0) {
             System.out.println("Precio del impuesto no válido");

@@ -74,7 +74,7 @@ public class Carta {
                 jugador.getEstadisticas().sumarPremiosInversionesOBote(1000000);
                 break;
             case 4: pagarATodos(jugador, juego, 250000);
-                jugador.getEstadisticas().sumarPagoTasasImpuestos(250000);
+                jugador.getEstadisticas().sumarPagoTasasImpuestos(250000L *juego.getJugadoresNum());
                 break;
             case 5: retrocederCasillas(jugador, juego, 3); break;
             case 6: pagarSiPuede(jugador, 150000); break;

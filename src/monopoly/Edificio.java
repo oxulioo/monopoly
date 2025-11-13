@@ -19,10 +19,10 @@ public final class Edificio {
     public Jugador getPropietario() { return propietario; }
     // public int getTurnoConstruccion() { return turnoConstruccion; }
 
-    public boolean eliminar() {
+    public void eliminar() {
         Casilla s = getSolar();
         Jugador p = getPropietario();
-        if (s == null) return false;
+        if (s == null) return;
 
         // 1) quitar de las listas
         try { s.eliminarEdificio(this); } catch (Throwable ignored) {}
@@ -45,20 +45,7 @@ public final class Edificio {
                 if (s.getNumPistas() > 0) s.setNumPistas(s.getNumPistas() - 1);
                 break;
         }
-        return true;
-    }
-
-    public static boolean eliminarUnoPorTipo(Casilla solar, Jugador propietario, Tipo tipo) {
-        if (solar == null || solar.getEdificios() == null) return false;
-
-        Edificio target = null;
-        for (Edificio e : solar.getEdificios()) {
-            if (e != null && e.getTipo() == tipo && e.getSolar() == solar &&
-                    (propietario == null || e.getPropietario() == propietario)) {
-                target = e; break;
-            }
-        }
-        return target != null && target.eliminar();
+        return;
     }
 
 
