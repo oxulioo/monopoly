@@ -14,7 +14,7 @@ public class Jugador {
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
     private final java.util.List<Edificio> misEdificios = new java.util.ArrayList<>();
-
+    private EstadisticasJugador estadisticas;
 
 
     public java.util.List<Edificio> getMisEdificios() { return java.util.Collections.unmodifiableList(misEdificios); }
@@ -33,8 +33,7 @@ public class Jugador {
     }
     public int getTiradasCarcel() {return tiradasCarcel;}
     public void setTiradasCarcel(int t) {this.tiradasCarcel=t;}
-    public void setFortuna(int t){this.fortuna=t;}
-
+    public EstadisticasJugador getEstadisticas() {return estadisticas;}
 
     /*Constructor principal. Requiere parámetros:
      * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
@@ -50,7 +49,7 @@ public class Jugador {
         this.fortuna = Valor.FORTUNA_BANCA; // Todos los jugadores empiezan con 15M
         this.propiedades = new ArrayList<>();
         this.avatar = new Avatar("Banca", null, this, new ArrayList<>());
-
+        this.estadisticas = new EstadisticasJugador();
     }
 
     public Jugador(String nombre, String tipoAvatar, Casilla casilla, ArrayList<Avatar> avCreados) {
@@ -72,7 +71,7 @@ public class Jugador {
 
         // Colocamos el avatar en la casilla inicial (Salida)
         this.avatar.setPosicion(casilla);
-
+        this.estadisticas = new EstadisticasJugador();
     }
 
     //Funcion que verifica si ya existe un nombre en el array de avatares creados.
@@ -123,6 +122,7 @@ public class Jugador {
     //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
     public boolean sumarGastos(int valor) {
         this.fortuna -= valor; //a su fortuna le restamos el valor
+        estadisticas.sumarDineroInvertido(valor);
         if (this.fortuna < 0) {
             this.declararBancarrota(); //si es negativa se declara en Bancarrota
             return false;
@@ -140,6 +140,7 @@ public class Jugador {
     public void encarcelar() {
         this.enCarcel = true;
         this.tiradasCarcel = 0;
+        this.estadisticas.incrementarVecesEnLaCarcel();
     }
 
     public void pagarAlquiler(Casilla c, int factor_pago) {
@@ -150,6 +151,8 @@ public class Jugador {
             boolean ok = this.sumarGastos(alquiler); // resta solo una vez
             if (ok) {
                 dueno.sumarFortuna(factor_pago*alquiler);
+                this.estadisticas.sumarPagoDeAlquileres(factor_pago*alquiler);
+                dueno.getEstadisticas().sumarCobroDeAlquileres(factor_pago*alquiler);
                 System.out.println(this.nombre + " ha pagado " + alquiler*factor_pago + " € a " + dueno.getNombre());
             } else {
                 System.out.println(this.nombre + " no puede pagar el alquiler de " + alquiler*factor_pago + " €.");
@@ -163,6 +166,7 @@ public class Jugador {
         }
         boolean ok = this.sumarGastos(valor); //  restamos
         if (ok) {
+            this.estadisticas.sumarPagoTasasImpuestos(valor);
             System.out.println(nombre + " paga un impuesto de " + (long)valor + "€");
         } else {
             System.out.println(nombre + " no tiene dinero suficiente para pagar el impuesto");

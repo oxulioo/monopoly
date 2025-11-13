@@ -58,6 +58,7 @@ public class Casilla {
     public void eliminarEdificio(Edificio e){ edificios.remove(e); }
 
 
+
     //Juego juego = new Juego();
 
 
@@ -271,17 +272,23 @@ public class Casilla {
      * - El valor de la tirada: para determinar impuesto a pagar en casillas de servicios.
      * Valor devuelto: true en caso de ser solvente (es decir, de cumplir las deudas), y false
      * en caso de no cumplirlas.*/
-    public void evaluarCasilla(Jugador actual, Jugador banca, int suma) {
+    public void evaluarCasilla(Jugador actual, Juego juego, int suma) {
         if(actual==null) return;
         //En el caso de que el jugador esté en una casilla de las mencionadas (de momento no se aplica pagos en suerte y comunidad) el jugador de primeras no tiene que pagar nada
-        if(TSUERTE.equals(tipo)||TCOMUNIDAD.equals(tipo)||(TESPECIAL.equals(tipo)&&("Cárcel".equalsIgnoreCase(nombre)||"Salida".equalsIgnoreCase(nombre)))){
-            return;
+        if (actual == null) return;
+
+        if (TSUERTE.equals(tipo)) {
+            System.out.println(actual.getNombre() + " cae en Suerte.");
+            juego.procesarCasillaEspecial(actual, tipo);
+            return; // La acción de la carta se encarga del resto
         }
-        if ("Suerte".equals(this.tipo) || "Comunidad".equals(this.tipo)) {
-            // Necesitas una referencia al juego para esto
-            //Juego.procesarCasillaEspecial(actual, this.tipo);
-            System.out.println(actual.getNombre() + " cae en " + this.nombre + " - Se debe procesar carta");
-            return;
+        if (TCOMUNIDAD.equals(tipo)) {
+            System.out.println(actual.getNombre() + " cae en Caja de Comunidad.");
+            juego.procesarCasillaEspecial(actual, tipo);
+            return; // La acción de la carta se encarga del resto
+        }
+        if (TESPECIAL.equals(tipo) && ("Cárcel".equalsIgnoreCase(nombre) || "Salida".equalsIgnoreCase(nombre))) {
+            return; // Visita a la cárcel o paso por salida (gestionado en moverAvatar)
         }
         //Si caes en la casilla IrCarcel, vas directo a la carcel con el método encarcelar
         if(TESPECIAL.equals(tipo)&&"IrCarcel".equalsIgnoreCase(nombre)){
@@ -314,7 +321,7 @@ public class Casilla {
 
 
         if(TTRANSPORTE.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){
+            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()){
 
                 actual.pagarAlquiler(this, 1);
                 return;
@@ -327,7 +334,7 @@ public class Casilla {
 
 
         if(TSERVICIOS.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){
+            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()){
                 int factor_pago = 4*suma;
                 actual.pagarAlquiler(this, factor_pago);
                 return;
@@ -338,13 +345,13 @@ public class Casilla {
 
 
         if(TSOLAR.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca&&this.grupo.esDuenoGrupo(this.dueno)){
+            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()&&this.grupo.esDuenoGrupo(this.dueno)){
                 if(this.hipotecada==0) {
                     actual.pagarAlquiler(this, 2);
                 }
 
 
-                }else if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=banca){
+                }else if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()){
                 if(this.hipotecada==0) {
                     actual.pagarAlquiler(this, 1);
                 }

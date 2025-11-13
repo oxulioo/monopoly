@@ -68,10 +68,14 @@ public class Carta {
 
     private void ejecutarSuerte(Jugador jugador, Juego juego) {
         switch(id) {
-            case 1: avanzarACasilla(jugador, juego, "Solar19", true); break;
+            case 1: avanzarACasilla(jugador, juego, "Solar19", true);break;
             case 2: juego.enviarACarcel(jugador); break;
-            case 3: jugador.sumarFortuna(1000000); break;
-            case 4: pagarATodos(jugador, juego, 250000); break;
+            case 3: jugador.sumarFortuna(1000000);
+                jugador.getEstadisticas().sumarPremiosInversionesOBote(1000000);
+                break;
+            case 4: pagarATodos(jugador, juego, 250000);
+                jugador.getEstadisticas().sumarPagoTasasImpuestos(250000);
+                break;
             case 5: retrocederCasillas(jugador, juego, 3); break;
             case 6: pagarSiPuede(jugador, 150000); break;
             case 7: avanzarTransporteMasCercano(jugador, juego); break;
@@ -85,8 +89,11 @@ public class Carta {
             case 3:
                 avanzarACasilla(jugador, juego, "Salida", false);
                 jugador.sumarFortuna(2000000);
+                jugador.getEstadisticas().sumarPremiosInversionesOBote(2000000);
                 break;
-            case 4: jugador.sumarFortuna(500000); break;
+            case 4: jugador.sumarFortuna(500000);
+                jugador.getEstadisticas().sumarPremiosInversionesOBote(500000);
+                break;
             case 5: avanzarACasilla(jugador, juego, "Solar1", false); break;
             case 6: avanzarACasilla(jugador, juego, "Solar20", true); break;
         }
@@ -129,6 +136,7 @@ public class Carta {
     private void pagarSiPuede(Jugador jugador, int cantidad) {
         if (jugador.getFortuna() >= cantidad) {
             jugador.sumarGastos(cantidad);
+            jugador.getEstadisticas().sumarPagoDeAlquileres(cantidad);
         } else {
             System.out.println(jugador.getNombre() + " no tiene suficiente dinero. Debe hipotecar propiedades.");
         }

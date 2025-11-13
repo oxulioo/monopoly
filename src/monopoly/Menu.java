@@ -185,10 +185,11 @@ public class Menu {
             }
         }
        if(comando.equals("estadisticas")){
-           // juego.describirEstadisticas();
+           //juego.estadisticasJuego();
         }
         if(comando.startsWith("estadisticas ")){
-          //  juego.describirEstadisticasJugador();
+            String  nombreJugador=comando.substring("estadisticas ".length());
+          //juego.estadisticasJugador();
         }
 
     }

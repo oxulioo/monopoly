@@ -24,7 +24,6 @@ public class Avatar {
         this.lugar = posicion;
         try { if (posicion != null) posicion.anhadirAvatar(this); } catch (Throwable ignored) {}
         this.jugador = jugador;
-        int nDobles = 0;
         this.generarId(avataresCreados);
     }
 
