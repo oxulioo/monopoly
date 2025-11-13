@@ -57,6 +57,8 @@ public class Casilla {
     public void anadirEdificio(Edificio e) { edificios.add(e); }
     public void eliminarEdificio(Edificio e){ edificios.remove(e); }
 
+    private long dineroGenerado = 0;   // suma de alquileres cobrados
+    private int vecesVisitada = 0;     // veces que cae un jugador
 
 
     //Juego juego = new Juego();
@@ -140,6 +142,11 @@ public class Casilla {
     public int getAlquilerPiscina() { return alquilerPiscina; }
     public int getAlquilerPistaDeporte() { return alquilerPistaDeporte; }
 
+    public void sumarDineroGenerado(long cant) { dineroGenerado += cant; }
+    public long getDineroGenerado() { return dineroGenerado; }
+
+    public void incrementarVisita() { vecesVisitada++; }
+    public int getVecesVisitada() { return vecesVisitada; }
 
     /*Constructor para casillas tipo Solar, Servicios o Transporte:
      * Parámetros: nombre casilla, tipo (debe ser solar, serv. o transporte), posición en el tablero, valor y dueño.
@@ -276,6 +283,7 @@ public class Casilla {
         if(actual==null) return;
         //En el caso de que el jugador esté en una casilla de las mencionadas (de momento no se aplica pagos en suerte y comunidad) el jugador de primeras no tiene que pagar nada
         if (actual == null) return;
+        this.incrementarVisita();
 
         if (TSUERTE.equals(tipo)) {
             System.out.println(actual.getNombre() + " cae en Suerte.");
@@ -309,11 +317,14 @@ public class Casilla {
         //Si caes en una casilla de impuesto, se cobra al jugador
         if(TIMPUESTO.equals(tipo)){
             int cantidad=(this.valor>0)?this.valor:Valor.IMPUESTO_FIJO;
-            actual.pagarImpuesto(cantidad);
+
             //Acumulamos ahora el bote del Parking, como el esqueleto no permite meter como parámetro Tablero, hay que usar una variable estática
-            Casilla p=Casilla.getParkingReferencia();
-            if(p!=null) p.sumarValor(cantidad);
-            return;
+            boolean ok = actual.sumarGastos(cantidad);
+            if (ok) {
+                actual.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
+                Casilla.getParkingReferencia().sumarValor(cantidad);
+            }
+
         }
         //Si caes en una casilla de tipo transporte, y tiene dueño y no es el jugador que está en la casilla,
         //como en la primera entrega no se tienen en cuenta el número de casillas de transportes, entonces

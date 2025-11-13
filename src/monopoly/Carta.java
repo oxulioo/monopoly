@@ -89,7 +89,7 @@ public class Carta {
             case 3:
                 avanzarACasilla(jugador, juego, "Salida", false);
                 jugador.sumarFortuna(2000000);
-                jugador.getEstadisticas().sumarPremiosInversionesOBote(2000000);
+                jugador.getEstadisticas().sumarPasarPorSalida(2000000);
                 break;
             case 4: jugador.sumarFortuna(500000);
                 jugador.getEstadisticas().sumarPremiosInversionesOBote(500000);
@@ -107,13 +107,18 @@ public class Carta {
     private void pagarATodos(Jugador jugador, Juego juego, int cantidad) {
         for (Jugador otro : juego.getJugadores()) {
             if (otro != jugador && !"Banca".equals(otro.getNombre())) {
-                if (jugador.getFortuna() >= cantidad) {
-                    jugador.sumarGastos(cantidad);
+
+                boolean ok = jugador.sumarGastos(cantidad);
+
+                if (ok) {
                     otro.sumarFortuna(cantidad);
+                    // El receptor sí debe sumar cobro
+                    otro.getEstadisticas().sumarCobroDeAlquileres(cantidad);
                 }
             }
         }
     }
+
 
     private void retrocederCasillas(Jugador jugador, Juego juego, int casillas) {
         // Implementación simple - retrocede en el tablero
@@ -134,13 +139,19 @@ public class Carta {
     }
 
     private void pagarSiPuede(Jugador jugador, int cantidad) {
-        if (jugador.getFortuna() >= cantidad) {
-            jugador.sumarGastos(cantidad);
-            jugador.getEstadisticas().sumarPagoDeAlquileres(cantidad);
+        boolean ok = jugador.sumarGastos(cantidad);
+        if (ok) {
+            // Estadística correcta
+            jugador.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
+
+            // Añadir al parking
+            Casilla parking = Casilla.getParkingReferencia();
+            if (parking != null) parking.sumarValor(cantidad);
         } else {
             System.out.println(jugador.getNombre() + " no tiene suficiente dinero. Debe hipotecar propiedades.");
         }
     }
+
 
     // Getters
     public String getDescripcion() { return descripcion; }

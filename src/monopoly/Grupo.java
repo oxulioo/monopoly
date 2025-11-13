@@ -10,6 +10,7 @@ class Grupo {
     private final ArrayList<Casilla> miembros; //Casillas miembros del grupo.
     private final String colorGrupo; //Color del grupo
     private final int numCasillas; //Número de casillas del grupo.
+    private long rentabilidad = 0;
 
 
     public Grupo() {
@@ -88,6 +89,8 @@ class Grupo {
     public String getColorGrupo(){
         return colorGrupo;
     }
+    public void sumarRentabilidad(long cant) { rentabilidad += cant; }
+    public long getRentabilidad() { return rentabilidad; }
 
 
 }

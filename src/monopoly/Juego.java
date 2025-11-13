@@ -646,7 +646,9 @@ public class Juego {
         }
 
         // 3) Pagar a la banca y marcar como libre
-        actual.sumarGastos(COSTE_SALIR_CARCEL);
+        boolean ok= actual.sumarGastos(COSTE_SALIR_CARCEL);
+        if(ok) actual.getEstadisticas().sumarPagoTasasImpuestos(COSTE_SALIR_CARCEL);
+
         actual.salirCarcel();
 
         // 4) Mensaje + repintado del tablero (si toString() está implementado)
@@ -742,6 +744,7 @@ public class Juego {
         Casilla carcel = tablero.encontrar_casilla("Cárcel");
         if (carcel == null) carcel = tablero.encontrar_casilla("Carcel"); // por si no hay tilde
         j.encarcelar();
+        j.getEstadisticas().incrementarVecesEnLaCarcel();
         try {
             Avatar a = j.getAvatar();
             if (a != null) a.setPosicion(carcel);
@@ -1184,6 +1187,7 @@ public class Juego {
         if (destino != null) {
             if (cobrarSalida && pasaPorSalida(jugador.getAvatar().getPosicion(), destino)) {
                 jugador.sumarFortuna(2000000);
+                jugador.getEstadisticas().sumarPasarPorSalida(2000000);
                 System.out.println("¡Pasas por Salida! Cobras 2.000.000€");
             }
             jugador.getAvatar().setPosicion(destino);
@@ -1248,21 +1252,92 @@ public class Juego {
             return;
         }
 
-        // Aquí implementarías la lógica para:
-        // - casillaMasRentable
-        // - grupoMasRentable
-        // - casillaMasFrecuentada
-        // - jugadorMasVueltas
-        // - jugadorEnCabeza
+        long totalInvertido = 0;
+        long totalTasas = 0;
+        long totalAlquileresPagados = 0;
+        long totalAlquileresCobrados = 0;
+        long totalSalida = 0;
+        long totalPremios = 0;
+        int totalCarcel = 0;
 
-        System.out.println("estadisticas {");
-        System.out.println("    casillaMasRentable: Solar3,");    // Ejemplo
-        System.out.println("    grupoMasRentable: Verde,");       // Ejemplo
-        System.out.println("    casillaMasFrecuentada: Solar22,"); // Ejemplo
-        System.out.println("    jugadorMasVueltas: Pedro,");       // Ejemplo
-        System.out.println("    jugadorEnCabeza: Maria");          // Ejemplo
-        System.out.println("}");
+        Jugador masPaga = null;
+        Jugador masCobra = null;
+        Jugador masSalida = null;
+
+        for (Jugador j : jugadores) {
+
+            EstadisticasJugador e = j.getEstadisticas();
+            totalInvertido += e.getDineroInvertido();
+            totalTasas += e.getPagoTasasImpuestos();
+            totalAlquileresPagados += e.getPagoDeAlquileres();
+            totalAlquileresCobrados += e.getCobroDeAlquileres();
+            totalSalida += e.getPasarPorCasillaDeSalida();
+            totalPremios += e.getPremiosInversionesOBote();
+            totalCarcel += e.getVecesEnLaCarcel();
+
+            if (masPaga == null ||
+                    e.getPagoTasasImpuestos() + e.getPagoDeAlquileres() >
+                            masPaga.getEstadisticas().getPagoTasasImpuestos() + masPaga.getEstadisticas().getPagoDeAlquileres()) {
+                masPaga = j;
+            }
+
+            if (masCobra == null ||
+                    e.getCobroDeAlquileres() + e.getPremiosInversionesOBote() >
+                            masCobra.getEstadisticas().getCobroDeAlquileres() + masCobra.getEstadisticas().getPremiosInversionesOBote()) {
+                masCobra = j;
+            }
+
+            if (masSalida == null ||
+                    e.getPasarPorCasillaDeSalida() >
+                            masSalida.getEstadisticas().getPasarPorCasillaDeSalida()) {
+                masSalida = j;
+            }
+        }
+
+        // Imprimir estadisticas globales del juego
+        System.out.println("=== ESTADÍSTICAS DE LA PARTIDA ===");
+
+        System.out.println("Dinero invertido total: " + totalInvertido);
+        System.out.println("Tasas/Impuestos totales pagados: " + totalTasas);
+        System.out.println("Alquileres pagados totales: " + totalAlquileresPagados);
+        System.out.println("Alquileres cobrados totales: " + totalAlquileresCobrados);
+        System.out.println("Premios/Bote cobrados totales: " + totalPremios);
+        System.out.println("Cantidad recibida al pasar por salida (total): " + totalSalida);
+        System.out.println("Veces totales en la cárcel: " + totalCarcel);
+
+        System.out.println("\n--- Jugadores destacados ---");
+        System.out.println("Jugador que MÁS pagó (tasas + alquileres): " +
+                (masPaga != null ? masPaga.getNombre() : "-"));
+
+        System.out.println("Jugador que MÁS cobró (alquileres + premios): " +
+                (masCobra != null ? masCobra.getNombre() : "-"));
+
+        System.out.println("Jugador que MÁS pasó por la salida: " +
+                (masSalida != null ? masSalida.getNombre() : "-"));
+
+        // Ranking final por fortuna
+        System.out.println("\n--- Ranking por Fortuna ---");
+        jugadores.stream()
+                .sorted((a, b) -> Long.compare(b.getFortuna(), a.getFortuna()))
+                .forEach(j -> System.out.println(j.getNombre() + ": " + j.getFortuna()));
     }
+    private long valorTotalJugador(Jugador j) {
+        long total = j.getFortuna();
+
+        for (Casilla c : j.getPropiedades()) {
+            total += c.getValor();
+
+            // edificios
+            total += c.getNumCasas() * c.getPrecioCasa();
+            total += c.getNumHoteles() * c.getPrecioHotel();
+            total += c.getNumPiscinas() * c.getPrecioPiscina();
+            total += c.getNumPistas() * c.getPrecioPistaDeporte();
+        }
+
+        return total;
+    }
+
+
 
 }
 

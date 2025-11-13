@@ -121,14 +121,14 @@ public class Jugador {
     //Método para sumar gastos a un jugador.
     //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
     public boolean sumarGastos(int valor) {
-        this.fortuna -= valor; //a su fortuna le restamos el valor
-        estadisticas.sumarDineroInvertido(valor);
-        if (this.fortuna < 0) {
-            System.out.println("No tienes suficiente dinero para comprar la propiedad");
+        if (this.fortuna < valor) {
+            System.out.println("No tienes suficiente dinero.");
             return false;
         }
+        this.fortuna -= valor;
         return true;
     }
+
 
     public void declararBancarrota() {
         System.out.println(nombre + " ha sido declarado en bancarrota");
@@ -185,8 +185,8 @@ public void pagarAlquiler(Casilla c, int factor_pago) {
         int importe = factor_pago * alquiler;
         boolean ok = this.sumarGastos(importe);
         if (ok) {
-            dueno.sumarFortuna(importe);
             this.estadisticas.sumarPagoDeAlquileres(importe);
+            dueno.sumarFortuna(importe);
             dueno.getEstadisticas().sumarCobroDeAlquileres(importe);
             System.out.println(this.nombre + " ha pagado " + importe + " € a " + dueno.getNombre());
         } else {
