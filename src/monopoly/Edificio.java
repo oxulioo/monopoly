@@ -8,9 +8,9 @@ public final class Edificio {
     private final Tipo tipo;
     private final Casilla solar;
     private final Jugador propietario;
-//    private final int turnoConstruccion;
+//    private final int turnoConstrucción;
 
-    public Edificio(long id, Tipo tipo, Casilla solar, Jugador propietario, int turno) {
+    public Edificio(long id, Tipo tipo, Casilla solar, Jugador propietario) {
         this.id = id; this.tipo = tipo; this.solar = solar; this.propietario = propietario; // this.turnoConstruccion = turno;
     }
     public long getId() { return id; }
@@ -45,7 +45,6 @@ public final class Edificio {
                 if (s.getNumPistas() > 0) s.setNumPistas(s.getNumPistas() - 1);
                 break;
         }
-        return;
     }
 
 

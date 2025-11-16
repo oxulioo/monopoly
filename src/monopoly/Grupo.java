@@ -69,7 +69,7 @@ class Grupo {
     * Valor devuelto: true si es dueño de todas las casillas del grupo, false en otro caso.
      */
     public boolean esDuenoGrupo(Jugador jugador) {
-        //Si hay alguna incongruencia, como jugador nulo, 0 casillas en el grupo o un grupo con un numero distinto de casillas que de miembros, devuelve falso
+        //Si hay alguna incongruencia, como jugador nulo, 0 casillas en el grupo o un grupo con un número distinto de casillas que de miembros, devuelve falso
         if (jugador == null || miembros.size() != numCasillas || numCasillas == 0) {
             return false;
         }

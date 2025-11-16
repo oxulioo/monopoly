@@ -138,10 +138,7 @@ public class Juego {
             System.out.println("Uso: describir jugador <Nombre>");
             return;
         }
-        if (jugadores == null || jugadores.isEmpty()) {
-            System.out.println("No hay jugadores en la partida.");
-            return;
-        }
+        if(hayJugadores()){return;}
 
         // Buscar por nombre exacto
         Jugador j = null;
@@ -180,33 +177,6 @@ public class Juego {
         }
         if (pos != null) posicion = pos.getNombre();
 
-        /*
-        // Propiedades
-        String propiedades = "-";
-        java.util.List<Casilla> auxProps = j.getPropiedades();
-        if (auxProps != null && !auxProps.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < auxProps.size(); i++) {
-                if (auxProps.get(i).gethipotecada() == 0) {
-                    sb.append(auxProps.get(i).getNombre());
-                    if (i < auxProps.size() - 1) sb.append(", ");
-                }
-            }
-            propiedades = sb.toString();
-        }
-        String hipotecadas = "-";
-        java.util.List<Casilla> auxHip = j.getPropiedades();
-        if (auxHip != null && !auxHip.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < auxHip.size(); i++) {
-                if (auxHip.get(i).gethipotecada() == 1) {
-                    sb.append(auxHip.get(i).getNombre());
-                    if (i < auxHip.size() - 1) sb.append(", ");
-                }
-            }
-            hipotecadas = sb.toString();
-        }
-         */
         String propiedades = "-";
         java.util.List<Casilla> auxProps = j.getPropiedades();
         if (auxProps != null && !auxProps.isEmpty()) {
@@ -567,10 +537,7 @@ public class Juego {
      */
     // comprar <Propiedad>
     public void comprar(String nombre) {
-        if (jugadores == null || jugadores.isEmpty()) {
-            System.out.println("No hay jugadores en la partida.");
-            return;
-        }
+        if(hayJugadores()){return;}
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
         Jugador actual = jugadores.get(turno);
@@ -623,10 +590,7 @@ public class Juego {
     public static final int COSTE_SALIR_CARCEL = 500000;
 
     public void salirCarcel() {
-        if (jugadores == null || jugadores.isEmpty()) {
-            System.out.println("No hay jugadores en la partida.");
-            return;
-        }
+        if(hayJugadores()){return;}
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
 
@@ -753,10 +717,7 @@ public class Juego {
 
 
     public void edificarCasa(){
-        if (jugadores == null || jugadores.isEmpty()) {
-            System.out.println("No hay jugadores en la partida.");
-            return;
-        }
+        if(hayJugadores()){return;}
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
         Jugador actual = jugadores.get(turno);
@@ -788,7 +749,7 @@ public class Juego {
 
         // Crear y registrar el edificio
         Edificio.Tipo tipo = Edificio.Tipo.CASA;
-        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual, turno);
+        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual);
         pos.anadirEdificio(e);
         actual.anadirEdificio(e);
 
@@ -800,10 +761,7 @@ public class Juego {
 
 
     public void edificarHotel(){
-        if (jugadores == null || jugadores.isEmpty()) {
-            System.out.println("No hay jugadores en la partida.");
-            return;
-        }
+        if(hayJugadores()){return;}
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
         Jugador actual = jugadores.get(turno);
@@ -840,7 +798,7 @@ public class Juego {
 
 
         Edificio.Tipo tipo = Edificio.Tipo.HOTEL;
-        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual, turno);
+        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual);
         pos.anadirEdificio(e);
         actual.anadirEdificio(e);
 
@@ -854,10 +812,7 @@ public class Juego {
     }
 
     public void edificarPiscina(){
-        if (jugadores == null || jugadores.isEmpty()) {
-            System.out.println("No hay jugadores en la partida.");
-            return;
-        }
+        if(hayJugadores()){return;}
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
         Jugador actual = jugadores.get(turno);
@@ -882,7 +837,7 @@ public class Juego {
         pos.setNumPiscinas(pos.getNumPiscinas() + 1);
 
         Edificio.Tipo tipo = Edificio.Tipo.PISCINA;
-        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual, turno);
+        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual);
         pos.anadirEdificio(e);
         actual.anadirEdificio(e);
 
@@ -928,7 +883,7 @@ public class Juego {
         pos.setNumPistas(pos.getNumPistas() + 1);
 
         Edificio.Tipo tipo = Edificio.Tipo.PISTA;
-        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual, turno);
+        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual);
         pos.anadirEdificio(e);
         actual.anadirEdificio(e);
 
@@ -1003,18 +958,12 @@ public class Juego {
 
     public long costeConstruccion(Casilla c, Edificio.Tipo t) {
         if (c == null) return 0;
-        switch (t) {
-            case CASA:
-                return c.getPrecioCasa();
-            case HOTEL:
-                return c.getPrecioHotel();
-            case PISCINA:
-                return c.getPrecioPiscina();
-            case PISTA:
-                return c.getPrecioPistaDeporte();
-            default:
-                return 0;
-        }
+        return switch (t) {
+            case CASA -> c.getPrecioCasa();
+            case HOTEL -> c.getPrecioHotel();
+            case PISCINA -> c.getPrecioPiscina();
+            case PISTA -> c.getPrecioPistaDeporte();
+        };
     }
 
 
@@ -1232,6 +1181,7 @@ public class Juego {
         if(jugador==null){
             System.out.println("No existe el jugador: "+nombreJugador);
         }
+        assert jugador != null;
         EstadisticasJugador estadisticas=jugador.getEstadisticas();
         System.out.println("estadísticas " + nombreJugador);
         System.out.println("{");
@@ -1307,13 +1257,13 @@ public class Juego {
 
         System.out.println("\n--- Jugadores destacados ---");
         System.out.println("Jugador que MÁS pagó (tasas + alquileres): " +
-                (masPaga != null ? masPaga.getNombre() : "-"));
+                masPaga.getNombre());
 
         System.out.println("Jugador que MÁS cobró (alquileres + premios): " +
-                (masCobra != null ? masCobra.getNombre() : "-"));
+                masCobra.getNombre());
 
         System.out.println("Jugador que MÁS pasó por la salida: " +
-                (masSalida != null ? masSalida.getNombre() : "-"));
+                masSalida.getNombre());
 
         // Ranking final por fortuna
         System.out.println("\n--- Ranking por Fortuna ---");
@@ -1328,13 +1278,21 @@ public class Juego {
             total += c.getValor();
 
             // edificios
-            total += c.getNumCasas() * c.getPrecioCasa();
-            total += c.getNumHoteles() * c.getPrecioHotel();
-            total += c.getNumPiscinas() * c.getPrecioPiscina();
-            total += c.getNumPistas() * c.getPrecioPistaDeporte();
+            total += (long) c.getNumCasas() * c.getPrecioCasa();
+            total += (long) c.getNumHoteles() * c.getPrecioHotel();
+            total += (long) c.getNumPiscinas() * c.getPrecioPiscina();
+            total += (long) c.getNumPistas() * c.getPrecioPistaDeporte();
         }
 
         return total;
+    }
+
+    private boolean hayJugadores() {
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores en la partida.");
+            return false;
+        }
+        return true;
     }
 
 

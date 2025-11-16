@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Carta {
-    private int id;
-    private String descripcion;
-    private String tipo; // "Suerte" o "Comunidad"
+    private final int id;
+    private final String descripcion;
+    private final String tipo; // "Suerte" o "Comunidad"
 
     // Mazos estáticos para no tener que crearlos cada vez
-    private static List<Carta> mazoSuerte = new ArrayList<>();
-    private static List<Carta> mazoComunidad = new ArrayList<>();
+    private static final List<Carta> mazoSuerte = new ArrayList<>();
+    private static final List<Carta> mazoComunidad = new ArrayList<>();
     private static int indiceSuerte = 0;
     private static int indiceComunidad = 0;
 
@@ -152,9 +152,4 @@ public class Carta {
         }
     }
 
-
-    // Getters
-    public String getDescripcion() { return descripcion; }
-    public int getId() { return id; }
-    public String getTipo() { return tipo; }
 }

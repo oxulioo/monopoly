@@ -324,7 +324,7 @@ public class Tablero {
     }
 
     private void insertarLadoSur() {
-        ArrayList<Casilla> sur = posiciones.get(0);
+        ArrayList<Casilla> sur = posiciones.getFirst();
         sur.add(new Casilla("Cárcel", 11, Casilla.TESPECIAL));
         sur.add(crearSolar("Solar5", 10, 1200000));
         sur.add(crearSolar("Solar4", 9, 1000000));

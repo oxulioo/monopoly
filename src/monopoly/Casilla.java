@@ -5,15 +5,12 @@ import partida.Jugador;
 
 import java.util.ArrayList;
 
-import static java.awt.SystemColor.menu;
-
-
 public class Casilla {
 
 
     //Primero pongo los privados (da igual)
     private final String nombre; //Nombre de la casilla
-    private final String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte y Impuesto).
+    private final String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte e Impuesto).
     private int valor; //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
     private final int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
     private Jugador dueno; //Dueño de la casilla (por defecto sería la banca).
@@ -24,7 +21,7 @@ public class Casilla {
 
     private int hipotecada; //bandera para saber si hay
 
-    private static Casilla parkingReferencia;//Dado que el metodo evaluar casilla no tiene como parámetro el tablero, no puedo modificar la casilla parking cuando se pagan impuestos, por lo que creo esta variable
+    private static Casilla parkingReferencia;//Dado que el método evaluar casilla no tiene como parámetro el tablero, no puedo modificar la casilla parking cuando se pagan impuestos, por lo que creo esta variable
 
     //Diferentes tipos de casilla, podría utilizar un tipo enumerado, pero como más adelante se modificará la práctica, trabajo con string
     public static final String TSOLAR = "Solar";
@@ -124,10 +121,6 @@ public class Casilla {
     public int getPrecioHotel() { return precioHotel; }
     public int getPrecioPiscina() { return precioPiscina; }
     public int getPrecioPistaDeporte() { return precioPistaDeporte; }
-    public void setPrecioCasa(int precio) { this.precioCasa = precio; }
-    public void setPrecioHotel(int precio) { this.precioHotel = precio; }
-    public void setPrecioPiscina(int precio) { this.precioPiscina = precio; }
-    public void setPrecioPistaDeporte(int precio) { this.precioPistaDeporte = precio; }
 
 
 
@@ -148,37 +141,6 @@ public class Casilla {
     public void incrementarVisita() { vecesVisitada++; }
     public int getVecesVisitada() { return vecesVisitada; }
 
-    /*Constructor para casillas tipo Solar, Servicios o Transporte:
-     * Parámetros: nombre casilla, tipo (debe ser solar, serv. o transporte), posición en el tablero, valor y dueño.
-     */
-    public Casilla(String nombre, String tipo, int posicion, int valor, Jugador dueno) {
-        if (!(TSOLAR.equals(tipo) || TSERVICIOS.equals(tipo) || TTRANSPORTE.equals(tipo))) {//Si no es ninguno de los tipos mencionados, da error
-            System.out.println("Tipo erróneo, debe ser 'Solar', 'Servicios' o 'Transporte'");
-            //Comprobar si está bien creado el jugador, y sino, no lo inserto en el arrayList
-        }
-        if (posicion < 1 || posicion > 40) {
-            System.out.println("La posición debe estar entre 1 y 40");//No hay más de 40 casillas, trato el caso en el que se introduzca un valor no válido
-        }
-        //Inicializamos los campos
-        this.nombre = nombre;
-        this.tipo = tipo;
-        this.posicion = posicion;
-        this.valor = Math.abs(valor);
-        this.dueno = dueno;
-        this.alquiler = 0;
-        this.hipoteca = 0;
-        this.grupo = null;
-        this.avatares = new ArrayList<>();
-
-        //se la damos a la banca
-        /*
-        Jugador banca = juego.getBanca();
-        this.dueno = banca;
-        banca.getPropiedades().add(this);
-
-         */
-        this.dueno=dueno;
-    }
 
     public Casilla(String nombre, String tipo, int posicion, int valor, Jugador dueno,
                    int precioCasa, int precioHotel, int precioPiscina, int precioPistaDeporte) {
@@ -282,7 +244,6 @@ public class Casilla {
     public void evaluarCasilla(Jugador actual, Juego juego, int suma) {
         if(actual==null) return;
         //En el caso de que el jugador esté en una casilla de las mencionadas (de momento no se aplica pagos en suerte y comunidad) el jugador de primeras no tiene que pagar nada
-        if (actual == null) return;
         this.incrementarVisita();
 
         if (TSUERTE.equals(tipo)) {
@@ -486,9 +447,10 @@ public class Casilla {
 
                 //Si la casilla es la salida, imprime el cobro al pasar por ella
                 case "salida" -> {
-                    return "{\n"
-                            + "tipo: salida\n"
-                            + "}";
+                    return """
+                            {
+                            tipo: salida
+                            }""";
                 }
             }
 
@@ -499,14 +461,16 @@ public class Casilla {
         }
 
         return switch (tlc) {
-            case "suerte" -> "{\n"
-                    + "tipo: suerte\n"
-                    + "}";
+            case "suerte" -> """
+                    {
+                    tipo: suerte
+                    }""";
 
             //Casilla caja
-            case "comunidad" -> "{\n"
-                    + "tipo: comunidad\n"
-                    + "}";
+            case "comunidad" -> """
+                    {
+                    tipo: comunidad
+                    }""";
 
             //Casilla servicios (transporte y servicios)
             case "servicios", "servicio", "transporte" -> "{\n"
@@ -540,29 +504,6 @@ public class Casilla {
     /* Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
-
-    public String casEnVenta() {
-        //Compruebo si es un solar, servicio o transporte (el resto NO SON COMPRABLES)
-
-        boolean comprable = TSOLAR.equals(tipo) || TSERVICIOS.equals(tipo) || TTRANSPORTE.equals(tipo);
-        if (!comprable) {
-            return String.format("La casilla %s no es comprable", nombre);
-        }
-        boolean enVenta = (this.dueno == null);
-
-        if (!enVenta) {
-            String grupoStr = (this.grupo == null) ? "-" : this.grupo.getColorGrupo();
-            return String.format("La casilla %s de tipo %s y grupo %s no está en venta", nombre, tipo, grupoStr);
-        }
-        //Si no tiene grupo, tampoco está en venta
-        String grupoStr = (this.grupo == null) ? "-" : this.grupo.getColorGrupo();
-        if (this.grupo == null) {
-            return String.format("La casilla %s de tipo %s está en venta con precio: %d", nombre, tipo, valor);
-        }
-
-        return String.format("La casilla %s de tipo %s y grupo %s está en venta con precio: %d",
-                nombre, tipo, grupoStr, valor);
-    }
 
     public int getHipoteca() {
         return hipoteca;
