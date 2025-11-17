@@ -486,6 +486,9 @@ public class Tablero {
         //En otro caso, no se encuentra
         return null;
     }
+    public java.util.HashMap<String, Grupo> getGrupos() {
+        return this.grupos;
+    }
 
     //A partir de aquí lo añado para ayudar al menu (se puede quitar si no sirve)
     // Devuelve las 4 listas (Sur, Oeste, Norte, Este)

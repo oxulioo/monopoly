@@ -579,6 +579,11 @@ public class Juego {
         }
         cas.comprarCasilla(actual, this.getBanca());
 
+        // Actualizar estadísticas de inversión
+        if (cas.getDueno() == actual) {
+            actual.getEstadisticas().sumarDineroInvertido((long)precio);
+        }
+
         // Mensajes y repintado
         System.out.println(actual.getNombre() + " compra '" + cas.getNombre() + "' por " + (long)precio + ".");
         System.out.println("La fortuna actual de " + actual.getNombre() + " es: " + actual.getFortuna()+".");
@@ -743,8 +748,11 @@ public class Juego {
             return;
         }
 
+
         // Restar dinero
         actual.sumarGastos(precio);
+        // Actualizar estadísticas de inversión
+        actual.getEstadisticas().sumarDineroInvertido(precio);
         pos.setNumCasas(pos.getNumCasas() + 1);
 
         // Crear y registrar el edificio
@@ -779,6 +787,12 @@ public class Juego {
             System.out.println("Aún no tienes las suficientes casas para comprar un hotel. Prueba a construír una casa!\n");
             return;
         }
+        int precio = pos.getPrecioHotel();
+        if (actual.getFortuna() < precio) {
+            System.out.println("No tienes suficiente dinero para construir un hotel");
+            return;
+        }
+        actual.sumarGastos(precio);
         // elimina 4 casas de ese solar y jugador
         java.util.List<Edificio> borrar = new java.util.ArrayList<>();
         for (Edificio ed : pos.getEdificios()) {
@@ -794,6 +808,7 @@ public class Juego {
         }
 
         pos.setNumCasas(0);
+
         pos.setNumHoteles(pos.getNumHoteles() + 1);
 
 
@@ -804,7 +819,8 @@ public class Juego {
 
 
         // asigna "hotel 1", "hotel 2", ...
-        int precio= pos.getPrecioHotel();
+        // Actualizar estadísticas de inversión
+        actual.getEstadisticas().sumarDineroInvertido(precio);
         numeroPorEdificio.put(e.getId(), nextNumTipo(tipo));
         System.out.println("Se ha edificado un hotel en " + pos.getNombre() + ". La fortuna de " + actual.getNombre() + " se reduce en " + precio + "€.");
 
@@ -834,6 +850,13 @@ public class Juego {
             System.out.println("Aún no tienes un hotel. Prueba a construír uno!");
             return;
         }
+        int precio = pos.getPrecioPiscina();
+        if (actual.getFortuna() < precio) {
+            System.out.println("No tienes suficiente dinero para construir una piscina");
+            return;
+        }
+        actual.sumarGastos(precio);
+
         pos.setNumPiscinas(pos.getNumPiscinas() + 1);
 
         Edificio.Tipo tipo = Edificio.Tipo.PISCINA;
@@ -842,7 +865,9 @@ public class Juego {
         actual.anadirEdificio(e);
 
         // asigna "piscina 1", "piscina 2", ...
-        int precio= pos.getPrecioPiscina();
+
+        // Actualizar estadísticas de inversión
+        actual.getEstadisticas().sumarDineroInvertido(precio);
         numeroPorEdificio.put(e.getId(), nextNumTipo(tipo));
         System.out.println("Se ha edificado una piscina en " + pos.getNombre() + ". La fortuna de " + actual.getNombre() + " se reduce en " + precio + "€.");
 
@@ -879,6 +904,12 @@ public class Juego {
             System.out.println("Aún no tienes una piscina, prueba a construir una!");
             return;
         }
+        int precio = pos.getPrecioPistaDeporte();
+        if (actual.getFortuna() < precio) {
+            System.out.println("No tienes suficiente dinero para construir una pista");
+            return;
+        }
+        actual.sumarGastos(precio);
 
         pos.setNumPistas(pos.getNumPistas() + 1);
 
@@ -888,7 +919,9 @@ public class Juego {
         actual.anadirEdificio(e);
 
         // asigna "pista 1", "pista 2", ...
-        int precio=pos.getPrecioPiscina();
+
+        // Actualizar estadísticas de inversión
+        actual.getEstadisticas().sumarDineroInvertido(precio);
         numeroPorEdificio.put(e.getId(), nextNumTipo(tipo));
         System.out.println("Se ha edificado una pista en " + pos.getNombre() + ". La fortuna de " + actual.getNombre() + " se reduce en " + precio + "€.");
 
@@ -1180,8 +1213,9 @@ public class Juego {
         }
         if(jugador==null){
             System.out.println("No existe el jugador: "+nombreJugador);
+            return;
         }
-        assert jugador != null;
+
         EstadisticasJugador estadisticas=jugador.getEstadisticas();
         System.out.println("estadísticas " + nombreJugador);
         System.out.println("{");
@@ -1195,6 +1229,85 @@ public class Juego {
         System.out.println("}");
     }
 
+    public void estadisticasJuego() {
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores en la partida.");
+            return;
+        }
+
+        Casilla masRentable = null;
+        Casilla masFrecuentada = null;
+        Grupo masRentableGrupo = null;
+        Jugador masVueltas = null;
+        Jugador enCabeza = null;
+
+        long maxRentabilidadCasilla = -1;
+        int maxFrecuencia = -1;
+        long maxRentabilidadGrupo = -1;
+        int maxVueltas = -1;
+        long maxFortunaTotal = -1;
+
+        // 1. Recorrer todas las casillas del tablero
+        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
+            for (Casilla c : lado) {
+                if (c == null) continue;
+
+                // A. Casilla más rentable
+                if (c.getDineroGenerado() > maxRentabilidadCasilla) {
+                    maxRentabilidadCasilla = c.getDineroGenerado();
+                    masRentable = c;
+                }
+
+                // B. Casilla más frecuentada
+                if (c.getVecesVisitada() > maxFrecuencia) {
+                    maxFrecuencia = c.getVecesVisitada();
+                    masFrecuentada = c;
+                }
+            }
+        }
+
+        // 2. Recorrer todos los grupos (usa el getter que creaste en Tablero)
+        java.util.HashMap<String, Grupo> grupos = tablero.getGrupos();
+        if (grupos != null) {
+            for (Grupo g : grupos.values()) {
+                // C. Grupo más rentable
+                if (g.getRentabilidad() > maxRentabilidadGrupo) {
+                    maxRentabilidadGrupo = g.getRentabilidad();
+                    masRentableGrupo = g;
+                }
+            }
+        }
+
+        // 3. Recorrer todos los jugadores
+        for (Jugador j : jugadores) {
+            if (j == null || j.getNombre().equals("Banca")) continue;
+
+            // D. Jugador con más vueltas
+            if (j.getVueltas() > maxVueltas) {
+                maxVueltas = j.getVueltas();
+                masVueltas = j;
+            }
+
+            // E. Jugador en cabeza (usa tu método valorTotalJugador)
+            long fortunaTotal = valorTotalJugador(j);
+            if (fortunaTotal > maxFortunaTotal) {
+                maxFortunaTotal = fortunaTotal;
+                enCabeza = j;
+            }
+        }
+
+        // 4. Imprimir resultados (Req 24)
+        System.out.println("estadisticas");
+        System.out.println("{");
+        System.out.println("  casillaMasRentable: " + (masRentable != null ? masRentable.getNombre() : "-") + ",");
+        System.out.println("  grupoMasRentable: " + (masRentableGrupo != null ? masRentableGrupo.getColorGrupo() : "-") + ",");
+        System.out.println("  casillaMasFrecuentada: " + (masFrecuentada != null ? masFrecuentada.getNombre() : "-") + ",");
+        System.out.println("  jugadorMasVueltas: " + (masVueltas != null ? masVueltas.getNombre() : "-") + ",");
+        System.out.println("  jugadorEnCabeza: " + (enCabeza != null ? enCabeza.getNombre() : "-"));
+        System.out.println("}");
+    }
+
+    /*
     // Método para mostrar estadísticas generales del juego (Req. 24)
     public void estadisticasJuego() {
         if (jugadores == null || jugadores.isEmpty()) {
@@ -1271,6 +1384,8 @@ public class Juego {
                 .sorted((a, b) -> Long.compare(b.getFortuna(), a.getFortuna()))
                 .forEach(j -> System.out.println(j.getNombre() + ": " + j.getFortuna()));
     }
+    */
+
     private long valorTotalJugador(Jugador j) {
         long total = j.getFortuna();
 

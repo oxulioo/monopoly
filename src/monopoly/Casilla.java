@@ -270,6 +270,7 @@ public class Casilla {
         if(TESPECIAL.equals(tipo)&&"Parking".equalsIgnoreCase(nombre)){
             if(this.valor>0){
                 actual.sumarFortuna(this.valor);
+                actual.getEstadisticas().sumarPremiosInversionesOBote(this.valor);
                 this.valor=0;
             }
             return;
@@ -496,6 +497,14 @@ public class Casilla {
             }
         }
         return jugadores;
+    }
+
+    public void sumarRentabilidadGrupo(long importe) {
+        if (this.grupo != null) {
+            // Como Casilla y Grupo están en el paquete 'monopoly',
+            // Casilla SÍ puede llamar a los métodos de Grupo.
+            this.grupo.sumarRentabilidad(importe);
+        }
     }
 
 

@@ -188,6 +188,14 @@ public void pagarAlquiler(Casilla c, int factor_pago) {
             this.estadisticas.sumarPagoDeAlquileres(importe);
             dueno.sumarFortuna(importe);
             dueno.getEstadisticas().sumarCobroDeAlquileres(importe);
+            // Actualizar rentabilidad de la casilla
+            c.sumarDineroGenerado(importe);
+
+            // Actualizar rentabilidad del grupo (si es un solar)
+            if (c.getGrupo() != null) {
+                //c.getGrupo().sumarRentabilidad(importe);
+                c.sumarRentabilidadGrupo(importe);
+            }
             System.out.println(this.nombre + " ha pagado " + importe + " € a " + dueno.getNombre());
         } else {
             System.out.println(this.nombre + " no puede pagar el alquiler de " + importe + " €.");
