@@ -93,4 +93,13 @@ class Grupo {
     public long getRentabilidad() { return rentabilidad; }
 
 
+    /* Devuelve la lista de Casillas que pertenecen a este grupo.
+       @return un ArrayList<Casilla> con los miembros del grupo.
+     */
+    public ArrayList<Casilla> getMiembros() {
+        return this.miembros;
+    }
+
 }
+
+

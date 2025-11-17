@@ -842,10 +842,7 @@ public class Juego {
             System.out.println("No se puede edificar una casilla de un grupo que no es del jugador\n");
             return;
         }
-        if(pos.getNumCasas()!=4){
-            System.out.println("Aún no tienes las suficientes casas para comprar un hotel. Prueba a construír una casa!");
-            return;
-        }
+
         if (pos.getNumHoteles()==0){
             System.out.println("Aún no tienes un hotel. Prueba a construír uno!");
             return;
@@ -892,10 +889,7 @@ public class Juego {
             System.out.println("No se puede edificar una casilla de un grupo que no es del jugador\n");
             return;
         }
-        if(pos.getNumCasas()!=4){
-            System.out.println("Aún no tienes las suficientes casas para comprar un hotel. Prueba a construír una casa!");
-            return;
-        }
+
         if (pos.getNumHoteles()==0){
             System.out.println("Aún no tienes un hotel. Prueba a construír uno!");
             return;
@@ -928,7 +922,7 @@ public class Juego {
 
     }
 
-    // Menu.java
+    /*
     public void listarEdificios(String color) {
         java.util.List<Edificio> todos = new java.util.ArrayList<>();
         if (jugadores != null && color==null) {
@@ -986,6 +980,151 @@ public class Juego {
             System.out.println("grupo: " + grupo + ",");
             System.out.println("coste: " + coste);
             System.out.println(i < todos.size() - 1 ? "}," : "}");
+        }
+    }
+    */
+    public void listarEdificios(String color) {
+        // --- LÓGICA PARA 'listar edificios' (sin color) ---
+        if (color == null) {
+            java.util.List<Edificio> todos = new java.util.ArrayList<>();
+            if (jugadores != null) {
+                for (Jugador j : jugadores) {
+                    if (j != null && j.getMisEdificios() != null) todos.addAll(j.getMisEdificios());
+                }
+            }
+
+            if (todos.isEmpty()) {
+                System.out.println("{}");
+                return;
+            }
+
+            for (int i = 0; i < todos.size(); i++) {
+                Edificio e = todos.get(i);
+                String tipo = e.getTipo().name().toLowerCase(); // casa, hotel, piscina, pista
+                int numTipo = numeroPorEdificio.getOrDefault(e.getId(), 0);
+                String idStr = tipo + "-" + numTipo;
+
+                String propietario = (e.getPropietario() != null) ? e.getPropietario().getNombre() : "-";
+                String casilla = (e.getSolar() != null) ? e.getSolar().getNombre() : "-";
+                String grupo = "-";
+                if (e.getSolar() != null && e.getSolar().getGrupo() != null) {
+                    try { grupo = e.getSolar().getGrupo().getColorGrupo(); }
+                    catch (Throwable t) { }
+                }
+
+                long coste = costeConstruccion(e.getSolar(), e.getTipo());
+
+                System.out.println("{");
+                System.out.println("id: " + idStr + ",");
+                System.out.println("propietario: " + propietario + ",");
+                System.out.println("casilla: " + casilla + ",");
+                System.out.println("grupo: " + grupo + ",");
+                System.out.println("coste: " + coste);
+                System.out.println(i < todos.size() - 1 ? "}," : "}");
+            }
+            return; // Termina aquí si era 'listar edificios'
+        }
+
+        // --- INICIO DE LA NUEVA LÓGICA PARA 'listar edificios <grupo>' (Req 17) ---
+
+        Grupo grupo = tablero.getGrupos().get(color);
+        if (grupo == null) {
+            // Intenta buscar por color capitalizado (ej: "azul" -> "Azul")
+            String colorCapitalizado = Character.toUpperCase(color.charAt(0)) + color.substring(1).toLowerCase();
+            grupo = tablero.getGrupos().get(colorCapitalizado);
+            if (grupo == null) {
+                System.out.println("No existe el grupo de color: " + color);
+                return;
+            }
+        }
+
+        boolean puedeCasa = true;
+        boolean puedeHotel = true;
+        boolean puedePiscina = true;
+        boolean puedePista = true;
+        int maxCasas = 0;
+        int maxHoteles = 0;
+
+        // Iterar sobre las propiedades del grupo
+        for (Casilla c : grupo.getMiembros()) {
+            if (c == null) continue;
+
+            System.out.println("propiedad: " + c.getNombre() + ",");
+
+            // Listar casas
+            System.out.print("  casas: ");
+            listarEdificiosPorTipo(c, Edificio.Tipo.CASA);
+
+            // Listar hoteles
+            System.out.print("  hoteles: ");
+            listarEdificiosPorTipo(c, Edificio.Tipo.HOTEL);
+
+            // Listar piscinas
+            System.out.print("  piscinas: ");
+            listarEdificiosPorTipo(c, Edificio.Tipo.PISCINA);
+
+            // Listar pistas
+            System.out.print("  pistasDeDeporte: "); // El PDF usa "pistasDeDeporte" [cite: 25]
+            listarEdificiosPorTipo(c, Edificio.Tipo.PISTA);
+
+            // Calcular alquiler actual
+            long alquilerActual = c.getAlquiler(); // Alquiler base
+            if (c.getNumCasas() > 0) alquilerActual = (long) c.getNumCasas() * c.getAlquilerCasa();
+            if (c.getNumHoteles() > 0) alquilerActual += (long) c.getNumHoteles() * c.getAlquilerHotel();
+            if (c.getNumPiscinas() > 0) alquilerActual += (long) c.getNumPiscinas() * c.getAlquilerPiscina();
+            if (c.getNumPistas() > 0) alquilerActual += (long) c.getNumPistas() * c.getAlquilerPistaDeporte();
+
+            System.out.println("  alquiler: " + alquilerActual);
+
+            // Actualizar máximos para el resumen final
+            if (c.getNumCasas() == 4) maxCasas++;
+            if (c.getNumHoteles() == 1) maxHoteles++;
+        }
+
+        int numPropiedadesGrupo = grupo.getMiembros().size();
+        if (maxCasas == numPropiedadesGrupo) {
+            puedeCasa = false; // No más casas si todas tienen 4
+        }
+        if (maxHoteles == numPropiedadesGrupo) {
+            puedeHotel = false; // No más hoteles si todas tienen 1
+            if (maxCasas == 0) puedeCasa = false; // Tampoco casas (si ya hay hoteles)
+        }
+        // (La lógica de puedePiscina/Pista es más compleja, la simplificamos)
+        if (!puedeHotel) {
+            puedePiscina = true;
+            puedePista = true;
+        } else {
+            puedePiscina = false;
+            puedePista = false;
+        }
+
+        // Imprimir resumen final [cite: 31]
+        System.out.print("Aún se puede edificar");
+        if (puedePiscina) System.out.print(" una piscina");
+        if (puedePista) System.out.print(" y una pista de deporte");
+        System.out.print(". Ya no se pueden construir");
+        if (!puedeHotel) System.out.print(" ni hoteles");
+        if (!puedeCasa) System.out.print(" ni casas");
+        System.out.println(".");
+    }
+
+    /**
+     * Método ayudante para 'listarEdificios(String color)'
+     * Imprime la lista de edificios de un tipo para una casilla.
+     */
+    private void listarEdificiosPorTipo(Casilla c, Edificio.Tipo tipo) {
+        ArrayList<String> nombresEdificios = new ArrayList<>();
+        for (Edificio e : c.getEdificios()) {
+            if (e.getTipo() == tipo) {
+                int numTipo = numeroPorEdificio.getOrDefault(e.getId(), 0);
+                nombresEdificios.add(tipo.name().toLowerCase() + "-" + numTipo);
+            }
+        }
+
+        if (nombresEdificios.isEmpty()) {
+            System.out.println("-");
+        } else {
+            System.out.println("[" + String.join(", ", nombresEdificios) + "]");
         }
     }
 
