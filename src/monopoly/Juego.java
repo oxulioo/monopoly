@@ -138,7 +138,7 @@ public class Juego {
             System.out.println("Uso: describir jugador <Nombre>");
             return;
         }
-        if(hayJugadores()){return;}
+        if(!hayJugadores()){return;}
 
         // Buscar por nombre exacto
         Jugador j = null;
@@ -537,7 +537,7 @@ public class Juego {
      */
     // comprar <Propiedad>
     public void comprar(String nombre) {
-        if(hayJugadores()){return;}
+        if(!hayJugadores()){return;}
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
         Jugador actual = jugadores.get(turno);
@@ -595,7 +595,7 @@ public class Juego {
     public static final int COSTE_SALIR_CARCEL = 500000;
 
     public void salirCarcel() {
-        if(hayJugadores()){return;}
+        if(!hayJugadores()){return;}
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
 
@@ -722,7 +722,7 @@ public class Juego {
 
 
     public void edificarCasa(){
-        if(hayJugadores()){return;}
+        if(!hayJugadores()){return;}
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
         Jugador actual = jugadores.get(turno);
@@ -769,7 +769,7 @@ public class Juego {
 
 
     public void edificarHotel(){
-        if(hayJugadores()){return;}
+        if(!hayJugadores()){return;}
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
         Jugador actual = jugadores.get(turno);
@@ -828,7 +828,7 @@ public class Juego {
     }
 
     public void edificarPiscina(){
-        if(hayJugadores()){return;}
+        if(!hayJugadores()){return;}
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
         Jugador actual = jugadores.get(turno);
