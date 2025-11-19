@@ -397,10 +397,10 @@ public class Juego {
                 try { System.out.println(tablero); } catch (Throwable ignore) {}
                 return;
             }
-
+            /*
             if (c != null && ("Suerte".equals(c.getTipo()) || "Comunidad".equals(c.getTipo()))) {
                 procesarCasillaEspecial(actual, c.getTipo());
-            }
+            }*/
             // Evaluar efectos de la casilla (pagos, etc.)
             if (c != null) {
                 c.evaluarCasilla(actual, this, suma);
@@ -506,11 +506,11 @@ public class Juego {
                 try { System.out.println(tablero); } catch (Throwable ignore) {}
                 return;
             }
-
+/*
             if (c != null && ("Suerte".equals(c.getTipo()) || "Comunidad".equals(c.getTipo()))) {
                 procesarCasillaEspecial(actual, c.getTipo());
             }
-
+*/
             // Evaluar efectos de la casilla (pagos, etc.)
             if (c != null) {
                 c.evaluarCasilla(actual, this, suma);
@@ -1233,7 +1233,7 @@ public class Juego {
                     System.out.println("No hay suficientes casas en esta propiedad.Se venderán " + c.getNumCasas()+ " casas. Recibiendo"+cantidad*c.getPrecioCasa());
                 }
                 if (c.getNumCasas() == cantidad) {
-                    System.out.println("Se venden todas las casas de esta propiedad.Recibiendo"+cantidad*c.getPrecioCasa());
+                    System.out.println("Se venden todas las casas de esta propiedad.Recibiendo "+cantidad*c.getPrecioCasa());
                 }
                 actual.sumarFortuna(vendidas * c.getPrecioCasa());
                 c.setNumCasas(c.getNumCasas()-cantidad);
@@ -1249,7 +1249,7 @@ public class Juego {
                     System.out.println("Solamente se puede vender 1 pista, recibiendo"+c.getPrecioPistaDeporte());
                 }
                 if (c.getNumPistas()==1){
-                    System.out.println("Vendiendo 1 pista, recibiendo"+c.getPrecioPistaDeporte());
+                    System.out.println("Vendiendo 1 pista, recibiendo "+c.getPrecioPistaDeporte());
                 }
                 actual.sumarFortuna(c.getPrecioPistaDeporte());
                 c.setNumPistas(c.getNumPistas()- cantidad);
@@ -1262,10 +1262,10 @@ public class Juego {
                     return;
                 }
                 if (cantidad>1 && c.getNumPiscinas()==1){
-                    System.out.println("Solamente se puede vender 1 piscina, recibiendo"+c.getPrecioPiscina());
+                    System.out.println("Solamente se puede vender 1 piscina, recibiendo "+c.getPrecioPiscina());
                 }
                 if (c.getNumPiscinas()==1){
-                    System.out.println("Vendiendo 1 piscinas, recibiendo"+c.getPrecioPiscina());
+                    System.out.println("Vendiendo 1 piscinas, recibiendo "+c.getPrecioPiscina());
                 }
                 actual.sumarFortuna(c.getPrecioPiscina());
                 c.setNumPiscinas(c.getNumPiscinas() - cantidad);
@@ -1278,10 +1278,10 @@ public class Juego {
                     return;
                 }
                 if (cantidad>1 && c.getNumHoteles()==1){
-                    System.out.println("Solamente se puede vender 1 piscina, recibiendo"+c.getPrecioHotel());
+                    System.out.println("Solamente se puede vender 1 piscina, recibiendo "+c.getPrecioHotel());
                 }
                 if (c.getNumHoteles()==1){
-                    System.out.println("Vendiendo 1 hoteles, recibiendo"+c.getPrecioHotel());
+                    System.out.println("Vendiendo 1 hoteles, recibiendo "+c.getPrecioHotel());
                 }
                 actual.sumarFortuna(c.getPrecioHotel());
                 c.setNumHoteles(c.getNumHoteles() - cantidad);
@@ -1314,6 +1314,7 @@ public class Juego {
             jugador.getAvatar().setPosicion(destino);
             // Evaluar efectos de la nueva casilla
             destino.evaluarCasilla(jugador, this, 0);
+
         }
     }
 

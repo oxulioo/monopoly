@@ -267,11 +267,23 @@ public class Casilla {
         //Si la casilla a la que caes es el parking, te llevas la fortuna acumulada en la casilla
         //Si la fortuna es >0, llamas al método sumarFortuna, y se restaura a 0 el bote del parking
 
+        // CÓDIGO CORREGIDO (en Casilla.java)
+
         if(TESPECIAL.equals(tipo)&&"Parking".equalsIgnoreCase(nombre)){
             if(this.valor>0){
-                actual.sumarFortuna(this.valor);
-                actual.getEstadisticas().sumarPremiosInversionesOBote(this.valor);
+                // Guardamos el valor para el mensaje antes de resetearlo
+                int bote = this.valor;
+
+                actual.sumarFortuna(bote);
+                actual.getEstadisticas().sumarPremiosInversionesOBote(bote);
                 this.valor=0;
+
+                // AÑADE ESTA LÍNEA
+                System.out.println(actual.getNombre() + " cae en el Parking y se lleva el bote de " + bote + "€.");
+
+            } else {
+                // (Opcional) Añade esto para que no sea confuso si cae y no hay nada
+                System.out.println(actual.getNombre() + " cae en el Parking, pero el bote está a 0€.");
             }
             return;
         }
@@ -279,12 +291,13 @@ public class Casilla {
         //Si caes en una casilla de impuesto, se cobra al jugador
         if(TIMPUESTO.equals(tipo)){
             int cantidad=(this.valor>0)?this.valor:Valor.IMPUESTO_FIJO;
-
+            System.out.println("Jugador actual: "+actual.getNombre() + " debe pagar: "+cantidad);
             //Acumulamos ahora el bote del Parking, como el esqueleto no permite meter como parámetro Tablero, hay que usar una variable estática
             boolean ok = actual.sumarGastos(cantidad);
             if (ok) {
                 actual.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
                 Casilla.getParkingReferencia().sumarValor(cantidad);
+                System.out.println("Dinero añadido al parking. Bote actual: "+ getParkingReferencia().getValor());
             }
 
         }
@@ -317,15 +330,29 @@ public class Casilla {
         //Si caes en un solar con dueño que no eres tú
 
 
+        // CÓDIGO CORREGIDO
         if(TSOLAR.equals(tipo)){
+
+            // Si el dueño tiene el grupo entero
             if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()&&this.grupo.esDuenoGrupo(this.dueno)){
                 if(this.hipotecada==0) {
-                    actual.pagarAlquiler(this, 2);
+
+                    // CORRECCIÓN: Comprobamos si hay edificios
+                    boolean hayEdificios = (this.numCasas > 0 || this.numHoteles > 0 || this.numPiscinas > 0 || this.numPistas > 0);
+
+                    if (hayEdificios) {
+                        // Si hay edificios, el alquiler de edificio YA incluye el monopolio. El factor es 1.
+                        actual.pagarAlquiler(this, 1);
+                    } else {
+                        // Si NO hay edificios, se paga el alquiler base DOBLE.
+                        actual.pagarAlquiler(this, 2);
+                    }
                 }
 
-
-                }else if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()){
+                // Si no tiene el grupo entero (propiedad normal)
+            }else if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()){
                 if(this.hipotecada==0) {
+                    // El alquiler es simple. Factor 1.
                     actual.pagarAlquiler(this, 1);
                 }
             }
