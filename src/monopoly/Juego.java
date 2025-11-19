@@ -1025,8 +1025,6 @@ public class Juego {
             return; // Termina aquí si era 'listar edificios'
         }
 
-        // --- INICIO DE LA NUEVA LÓGICA PARA 'listar edificios <grupo>' (Req 17) ---
-
         Grupo grupo = tablero.getGrupos().get(color);
         if (grupo == null) {
             // Intenta buscar por color capitalizado (ej: "azul" -> "Azul")
@@ -1044,10 +1042,13 @@ public class Juego {
         boolean puedePista = true;
         int maxCasas = 0;
         int maxHoteles = 0;
+        int maxPiscinas = 0;
+        int maxPistas = 0;
 
         // Iterar sobre las propiedades del grupo
         for (Casilla c : grupo.getMiembros()) {
             if (c == null) continue;
+            System.out.println("{");
 
             System.out.println("propiedad: " + c.getNombre() + ",");
 
@@ -1076,9 +1077,12 @@ public class Juego {
 
             System.out.println("  alquiler: " + alquilerActual);
 
-            // Actualizar máximos para el resumen final
+            
             if (c.getNumCasas() == 4) maxCasas++;
             if (c.getNumHoteles() == 1) maxHoteles++;
+            if (c.getNumPiscinas()==1) maxPiscinas++;
+            if (c.getNumPistas()==1) maxPistas++;
+
         }
 
         int numPropiedadesGrupo = grupo.getMiembros().size();
@@ -1089,23 +1093,48 @@ public class Juego {
             puedeHotel = false; // No más hoteles si todas tienen 1
             if (maxCasas == 0) puedeCasa = false; // Tampoco casas (si ya hay hoteles)
         }
-        // (La lógica de puedePiscina/Pista es más compleja, la simplificamos)
-        if (!puedeHotel) {
-            puedePiscina = true;
-            puedePista = true;
-        } else {
-            puedePiscina = false;
+        if (maxPiscinas == numPropiedadesGrupo) {
+            puedePiscina=false;
+        }
+        if (maxPistas==0) {
             puedePista = false;
         }
 
-        // Imprimir resumen final [cite: 31]
-        System.out.print("Aún se puede edificar");
-        if (puedePiscina) System.out.print(" una piscina");
-        if (puedePista) System.out.print(" y una pista de deporte");
-        System.out.print(". Ya no se pueden construir");
-        if (!puedeHotel) System.out.print(" ni hoteles");
-        if (!puedeCasa) System.out.print(" ni casas");
-        System.out.println(".");
+
+
+        if (!puedeCasa||!puedeHotel||!puedePiscina||!puedePista) {
+            System.out.println("Ya no puedes construír:\n");
+        }
+        if (!puedeCasa) {
+            System.out.println("   -casas: no se pueden construir casas, ya que todos tienen 4 casas o 1 hotel.\n");
+        }
+        if (!puedeHotel) {
+            System.out.println("   -hoteles: no se pueden construir hoteles, ya que todos tienen 1 hotel.\n");
+        }
+        if (!puedePiscina) {
+            System.out.println("   -piscinas: no se pueden construir piscinas, ya que todos tienen 1 piscina.\n");
+        }
+        if (!puedePista) {
+            System.out.println("   -pistas de deporte: no se pueden construir pistas de deporte, ya que todos tienen 1 pista de deporte.\n");
+        }
+        if (puedeCasa||puedeHotel||puedePiscina||puedePista) {
+            System.out.println("Aun puedes construír:\n");
+        }
+        if(puedeCasa){
+            System.out.println("   -casas\n");
+        }
+        if(puedeHotel){
+            System.out.println("   -hoteles\n");
+        }
+        if(puedePiscina){
+            System.out.println("   -piscinas\n");
+        }
+        if(puedePista){
+            System.out.println("   -pistas de deporte\n");
+        }
+        System.out.println("}");
+
+
     }
 
     /**
@@ -1171,7 +1200,7 @@ public class Juego {
         Casilla c = this.tablero.encontrar_casilla(nombreSolar);
         if (c == null) { System.out.println("No existe la casilla: " + nombreSolar); return; }
         if (!(c.getDueno().equals(actual))) { System.out.println(actual.getNombre() + " no puede deshipotecar " + nombreSolar + ". No es una propiedad que le pertenece."); return; }
-        if (c.gethipotecada()==0) { System.out.println(actual.getNombre() + " no puede hipotecar " + nombreSolar + ". No está hipotecada."); return; }
+        if (c.gethipotecada()==0) { System.out.println(actual.getNombre() + " no puede deshipotecar " + nombreSolar + ". No está hipotecada."); return; }
 
         int importe = c.getHipoteca();
         if (actual.getFortuna() < importe) {
@@ -1229,11 +1258,12 @@ public class Juego {
                     System.out.println("No hay casas en esta propiedad.");
                     return;
                 }
-                if (c.getNumCasas() < cantidad) {
-                    System.out.println("No hay suficientes casas en esta propiedad.Se venderán " + c.getNumCasas()+ " casas. Recibiendo"+cantidad*c.getPrecioCasa());
+                if (c.getNumCasas() < cantidad && c.getNumCasas()!=0) {
+                    System.out.println("No hay suficientes casas en esta propiedad.Se venderán " + c.getNumCasas() + " casas. Recibiendo " + cantidad*c.getPrecioCasa());
+                    c.setNumCasas(0);
                 }
-                if (c.getNumCasas() == cantidad) {
-                    System.out.println("Se venden todas las casas de esta propiedad.Recibiendo "+cantidad*c.getPrecioCasa());
+                if (c.getNumCasas() == cantidad && c.getNumCasas()!=0) {
+                    System.out.println("Se venden todas las casas de esta propiedad.Recibiendo " + cantidad*c.getPrecioCasa());
                 }
                 actual.sumarFortuna(vendidas * c.getPrecioCasa());
                 c.setNumCasas(c.getNumCasas()-cantidad);

@@ -167,28 +167,28 @@ public class Menu {
             String nombreProp = comando.substring("hipotecar ".length());
             juego.hipotecar(nombreProp);
         }
-        if(comando.startsWith("deshipotecar ")){
-            String nombreProp= comando.substring("deshipotecar ".length());
+        if (comando.startsWith("deshipotecar ")) {
+            String nombreProp = comando.substring("deshipotecar ".length());
             juego.deshipotecar(nombreProp);
         }
-        if(comando.startsWith("vender ")){//La estructura es vender casas Solar1 3
+        if (comando.startsWith("vender ")) {//La estructura es vender casas Solar1 3
 
             String[] partes = comando.substring(7).split(" ");//Elimino los 7 primeros caracteres, es decir, "vender ", quedando la información
             //El split(" "); Lo que hace es, con el resto que queda, separarlo por espacios
-            if(partes.length >= 3) {//Si no hay tres partes en la entrada, no es válida
+            if (partes.length >= 3) {//Si no hay tres partes en la entrada, no es válida
                 String tipo = partes[0]; //"casas" por ejemplo
                 String solar = partes[1]; //"Solar1" por ejemplo
                 int cantidad = Integer.parseInt(partes[2]); // 3
                 juego.venderPropiedad(tipo, solar, cantidad);
             } else {
-                System.out.println("Formato incorrecto. Uso: vender <tipo> <solar> <cantidad>");
+                System.out.println("Formato incorrecto. Escriba: vender <tipo> <solar> <cantidad>");
             }
         }
-       if(comando.equals("estadisticas")){
-           juego.estadisticasJuego();
+        if (comando.equals("estadisticas")) {
+            juego.estadisticasJuego();
         }
-        if(comando.startsWith("estadisticas ")){
-            String  nombreJugador=comando.substring("estadisticas ".length());
+        if (comando.startsWith("estadisticas ")) {
+            String nombreJugador = comando.substring("estadisticas ".length());
             juego.estadisticasJugador(nombreJugador);
         }
 
@@ -217,17 +217,22 @@ public class Menu {
         }
     }
 
+
     private void ejecutarFichero(String ruta) {
+        if (ruta == null) {
+            System.out.println("Error leyendo: " + ruta);
+            return;
+        }
         try (java.util.Scanner sc = new java.util.Scanner(new java.io.File(ruta))) {
             while (sc.hasNextLine()) {
                 String linea = sc.nextLine();
-                this.analizarComando(linea);
+                analizarComando(linea);
             }
-        } catch (Exception e) {
-            System.out.println("Error leyendo: " + ruta);
+        } catch (Exception _) {
         }
     }
 }
+
 
 
 

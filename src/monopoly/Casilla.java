@@ -107,7 +107,7 @@ public class Casilla {
     public int gethipotecada(){return hipotecada;}
     public void sethipotecada(int h){hipotecada=h;}
 
-    public int getNumCasas() { return numCasas; }
+    public int getNumCasas() { return Math.max(0,numCasas); }
     public int getNumHoteles() { return numHoteles; }
     public int getNumPiscinas() { return numPiscinas; }
     public int getNumPistas() { return numPistas; }
