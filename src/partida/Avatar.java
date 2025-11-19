@@ -98,7 +98,7 @@ public class Avatar {
             setPosicion(nuevaCasilla);
             System.out.println("El avatar " + this.id + " avanza " + valorTirada + " casillas desde la casilla "+anteriorCasilla.getNombre()+" hasta la casilla " + nuevaCasilla.getNombre() + ".");
         }else {
-            System.out.println("No se encuentra la casilla pedida");
+            System.out.println("No se encuentra la casilla pedida.");
         }
     }
 

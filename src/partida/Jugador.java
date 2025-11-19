@@ -17,23 +17,62 @@ public class Jugador {
     private EstadisticasJugador estadisticas;
 
 
-    public java.util.List<Edificio> getMisEdificios() { return java.util.Collections.unmodifiableList(misEdificios); }
-    public void anadirEdificio(Edificio e) { misEdificios.add(e); }
-    public void eliminarEdificio(Edificio e){ misEdificios.remove(e); }
-    public String getNombre() {return nombre;}
-    public Avatar getAvatar() {return avatar;}
-    public int getFortuna() {return fortuna;}
-    public boolean isEnCarcel() {return enCarcel;}
-    public void salirCarcel() {enCarcel = false;}
-    public int getVueltas() {return vueltas;}
-    public void setVueltas(int v) {this.vueltas=v;}
+    public java.util.List<Edificio> getMisEdificios() {
+        return java.util.Collections.unmodifiableList(misEdificios);
+    } // Devuelve una lista inmutable de edificios que posee el jugador.
+
+    public void anadirEdificio(Edificio e) {
+        misEdificios.add(e);
+    }
+
+    public void eliminarEdificio(Edificio e) {
+        misEdificios.remove(e);
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public Avatar getAvatar() {
+        return avatar;
+    }
+
+    public int getFortuna() {
+        return fortuna;
+    }
+
+    public boolean isEnCarcel() {
+        return enCarcel;
+    }
+
+    public void salirCarcel() {
+        enCarcel = false;
+    }
+
+    public int getVueltas() {
+        return vueltas;
+    }
+
+    public void setVueltas(int v) {
+        this.vueltas = v;
+    }
+
     public ArrayList<Casilla> getPropiedades() {
-        if (propiedades==null) propiedades=new ArrayList<>();
+        if (propiedades == null) propiedades = new ArrayList<>();
         return propiedades;
     }
-    public int getTiradasCarcel() {return tiradasCarcel;}
-    public void setTiradasCarcel(int t) {this.tiradasCarcel=t;}
-    public EstadisticasJugador getEstadisticas() {return estadisticas;}
+
+    public int getTiradasCarcel() {
+        return tiradasCarcel;
+    }
+
+    public void setTiradasCarcel(int t) {
+        this.tiradasCarcel = t;
+    }
+
+    public EstadisticasJugador getEstadisticas() {
+        return estadisticas;
+    }
 
     /*Constructor principal. Requiere parámetros:
      * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
@@ -129,12 +168,6 @@ public class Jugador {
         return true;
     }
 
-
-    public void declararBancarrota() {
-        System.out.println(nombre + " ha sido declarado en bancarrota");
-        this.propiedades.clear();//elimina todas sus propiedades
-    }
-
     /*Método para establecer al jugador en la cárcel.
      * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
     public void encarcelar() {
@@ -142,81 +175,46 @@ public class Jugador {
         this.tiradasCarcel = 0;
         this.estadisticas.incrementarVecesEnLaCarcel();
     }
-/*
+
     public void pagarAlquiler(Casilla c, int factor_pago) {
         if (c == null) return;
         Jugador dueno = c.getDueno();
         if (dueno != null && dueno != this) {
-            int alquiler = c.getAlquiler();        // lo correcto es el alquiler
-            boolean ok = this.sumarGastos(alquiler); // resta solo una vez
-            if (ok) {
-                dueno.sumarFortuna(factor_pago*alquiler);
-                this.estadisticas.sumarPagoDeAlquileres(factor_pago*alquiler);
-                dueno.getEstadisticas().sumarCobroDeAlquileres(factor_pago*alquiler);
-                System.out.println(this.nombre + " ha pagado " + alquiler*factor_pago + " € a " + dueno.getNombre());
+
+            int casas = c.getNumCasas();
+            int hoteles = c.getNumHoteles();
+            int piscinas = c.getNumPiscinas();
+            int pistas = c.getNumPistas();
+
+            int alquiler;
+            if (casas > 0 || hoteles > 0 || piscinas > 0 || pistas > 0) {
+                alquiler = 0;
+                if (casas > 0) alquiler += casas * c.getAlquilerCasa();        // 1 casa => 1x, 2 => 2x.
+                if (hoteles > 0) alquiler += hoteles * c.getAlquilerHotel();       // normalmente 1
+                if (piscinas > 0) alquiler += piscinas * c.getAlquilerPiscina();     // piscina
+                if (pistas > 0) alquiler += pistas * c.getAlquilerPistaDeporte();// pista
             } else {
-                System.out.println(this.nombre + " no puede pagar el alquiler de " + alquiler*factor_pago + " €.");
+                alquiler = c.getAlquiler(); // sin edificios: alquiler base
+            }
+
+            int importe = factor_pago * alquiler;
+            boolean ok = this.sumarGastos(importe);
+            if (ok) {
+                this.estadisticas.sumarPagoDeAlquileres(importe);
+                dueno.sumarFortuna(importe);
+                dueno.getEstadisticas().sumarCobroDeAlquileres(importe);
+                // Actualizar rentabilidad de la casilla
+                c.sumarDineroGenerado(importe);
+
+                // Actualizar rentabilidad del grupo (si es un solar)
+                if (c.getGrupo() != null) {
+                    //c.getGrupo().sumarRentabilidad(importe);
+                    c.sumarRentabilidadGrupo(importe);
+                }
+                System.out.println(this.nombre + " ha pagado " + importe + " € a " + dueno.getNombre());
+            } else {
+                System.out.println(this.nombre + " no puede pagar el alquiler de " + importe + " €.");
             }
         }
     }
-
- */
-public void pagarAlquiler(Casilla c, int factor_pago) {
-    if (c == null) return;
-    Jugador dueno = c.getDueno();
-    if (dueno != null && dueno != this) {
-
-        int casas = c.getNumCasas();
-        int hoteles = c.getNumHoteles();
-        int piscinas = c.getNumPiscinas();
-        int pistas = c.getNumPistas();
-
-        int alquiler;
-        if (casas > 0 || hoteles > 0 || piscinas > 0 || pistas > 0) {
-            alquiler = 0;
-            if (casas   > 0) alquiler += casas    * c.getAlquilerCasa();        // 1 casa => 1x, 2 => 2x.
-            if (hoteles > 0) alquiler += hoteles  * c.getAlquilerHotel();       // normalmente 1
-            if (piscinas> 0) alquiler += piscinas * c.getAlquilerPiscina();     // piscina
-            if (pistas  > 0) alquiler += pistas   * c.getAlquilerPistaDeporte();// pista
-        } else {
-            alquiler = c.getAlquiler(); // sin edificios: alquiler base
-        }
-
-        int importe = factor_pago * alquiler;
-        boolean ok = this.sumarGastos(importe);
-        if (ok) {
-            this.estadisticas.sumarPagoDeAlquileres(importe);
-            dueno.sumarFortuna(importe);
-            dueno.getEstadisticas().sumarCobroDeAlquileres(importe);
-            // Actualizar rentabilidad de la casilla
-            c.sumarDineroGenerado(importe);
-
-            // Actualizar rentabilidad del grupo (si es un solar)
-            if (c.getGrupo() != null) {
-                //c.getGrupo().sumarRentabilidad(importe);
-                c.sumarRentabilidadGrupo(importe);
-            }
-            System.out.println(this.nombre + " ha pagado " + importe + " € a " + dueno.getNombre());
-        } else {
-            System.out.println(this.nombre + " no puede pagar el alquiler de " + importe + " €.");
-        }
-    }
-}
-
-
-    public void pagarImpuesto(int valor) {
-        if (valor <= 0) {
-            System.out.println("Precio del impuesto no válido");
-            return;
-        }
-        boolean ok = this.sumarGastos(valor); //  restamos
-        if (ok) {
-            this.estadisticas.sumarPagoTasasImpuestos(valor);
-            System.out.println(nombre + " paga un impuesto de " + (long)valor + "€");
-        } else {
-            System.out.println(nombre + " no tiene dinero suficiente para pagar el impuesto");
-        }
-    }
-
-
 }

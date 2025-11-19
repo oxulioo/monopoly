@@ -58,9 +58,6 @@ public class Casilla {
     private int vecesVisitada = 0;     // veces que cae un jugador
 
 
-    //Juego juego = new Juego();
-
-
     //Vamos a añadir getters y setters
     public String getNombre() {
         return nombre;
@@ -97,6 +94,9 @@ public class Casilla {
     }
     public ArrayList<Avatar>getAvatares(){
         return avatares;
+    }
+    public int getHipoteca() {
+        return hipoteca;
     }
 
     //Dado que el metodo evaluar casilla no tiene como parámetro el tablero, no puedo modificar la casilla parking cuando se pagan impuestos, por lo que necesito estos getters y setters
@@ -243,9 +243,9 @@ public class Casilla {
      * en caso de no cumplirlas.*/
     public void evaluarCasilla(Jugador actual, Juego juego, int suma) {
         if(actual==null) return;
-        //En el caso de que el jugador esté en una casilla de las mencionadas (de momento no se aplica pagos en suerte y comunidad) el jugador de primeras no tiene que pagar nada
+        //Cada vez que se pasa por una casilla se incrementa dicho atributo para cuando se quieran ver las estadísticas
         this.incrementarVisita();
-
+        //Si es suerte o comunidad, se procesa la carta correspondiente
         if (TSUERTE.equals(tipo)) {
             System.out.println(actual.getNombre() + " cae en Suerte.");
             juego.procesarCasillaEspecial(actual, tipo);
@@ -278,11 +278,11 @@ public class Casilla {
                 actual.getEstadisticas().sumarPremiosInversionesOBote(bote);
                 this.valor=0;
 
-                // AÑADE ESTA LÍNEA
+
                 System.out.println(actual.getNombre() + " cae en el Parking y se lleva el bote de " + bote + "€.");
 
             } else {
-                // (Opcional) Añade esto para que no sea confuso si cae y no hay nada
+                // (Opcional) Por si cae en parking, para que quede claro que no hay bote
                 System.out.println(actual.getNombre() + " cae en el Parking, pero el bote está a 0€.");
             }
             return;
@@ -295,7 +295,9 @@ public class Casilla {
             //Acumulamos ahora el bote del Parking, como el esqueleto no permite meter como parámetro Tablero, hay que usar una variable estática
             boolean ok = actual.sumarGastos(cantidad);
             if (ok) {
+                //El jugador incrementa el atributo de pago de tasas e impuestos (para cuando se pidan las estadísticas)
                 actual.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
+                //Se mete al bote del parking
                 Casilla.getParkingReferencia().sumarValor(cantidad);
                 System.out.println("Dinero añadido al parking. Bote actual: "+ getParkingReferencia().getValor());
             }
@@ -373,13 +375,10 @@ public class Casilla {
             System.out.println(solicitante.getNombre() + " no tiene suficiente dinero para comprar " + this.nombre);
             return;
         }
-
         //Se añade la propiedad al solicitante.
-        //Esta función (anadirPropiedad) se encargará de poner al 'solicitante' como dueño.
+        //Esta función se encargará de poner al solicitante como dueño.
         solicitante.anadirPropiedad(this);
 
-        // El mensaje de éxito se mueve a Juego.comprar(),
-        // pero también podría ir aquí si lo prefieres.
     }
     /*Método para añadir valor a una casilla. Utilidad:
      * - Sumar valor a la casilla de parking.
@@ -528,21 +527,8 @@ public class Casilla {
 
     public void sumarRentabilidadGrupo(long importe) {
         if (this.grupo != null) {
-            // Como Casilla y Grupo están en el paquete 'monopoly',
-            // Casilla SÍ puede llamar a los métodos de Grupo.
             this.grupo.sumarRentabilidad(importe);
         }
-    }
-
-
-
-
-    /* Método para mostrar información de una casilla en venta.
-     * Valor devuelto: texto con esa información.
-     */
-
-    public int getHipoteca() {
-        return hipoteca;
     }
 
 

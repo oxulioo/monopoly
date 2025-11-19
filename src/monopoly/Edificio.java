@@ -8,16 +8,16 @@ public final class Edificio {
     private final Tipo tipo;
     private final Casilla solar;
     private final Jugador propietario;
-//    private final int turnoConstrucción;
+
 
     public Edificio(long id, Tipo tipo, Casilla solar, Jugador propietario) {
-        this.id = id; this.tipo = tipo; this.solar = solar; this.propietario = propietario; // this.turnoConstruccion = turno;
+        this.id = id; this.tipo = tipo; this.solar = solar; this.propietario = propietario;
     }
     public long getId() { return id; }
     public Tipo getTipo() { return tipo; }
     public Casilla getSolar() { return solar; }
     public Jugador getPropietario() { return propietario; }
-    // public int getTurnoConstruccion() { return turnoConstruccion; }
+
 
     public void eliminar() {
         Casilla s = getSolar();

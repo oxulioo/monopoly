@@ -12,15 +12,7 @@ class Grupo {
     private final int numCasillas; //Número de casillas del grupo.
     private long rentabilidad = 0;
 
-
-    public Grupo() {
-        //Inicializo con estos valores (defensivo)
-        this.miembros=new ArrayList<>();
-        this.colorGrupo="";
-        this.numCasillas=0;
-    }
-
-    /*Constructor para cuando el grupo está formado por DOS CASILLAS:
+    /*Constructor para cuando el grupo está formado por 2 casiilas:
     * Requiere como parámetros las dos casillas miembro y el color del grupo.
      */
     public Grupo(Casilla cas1, Casilla cas2, String colorGrupo) {
