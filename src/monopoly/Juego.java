@@ -713,7 +713,7 @@ public class Juego {
         Casilla carcel = tablero.encontrar_casilla("Cárcel");
         if (carcel == null) carcel = tablero.encontrar_casilla("Carcel"); // por si no hay tilde
         j.encarcelar();
-        j.getEstadisticas().incrementarVecesEnLaCarcel();
+
         try {
             Avatar a = j.getAvatar();
             if (a != null) a.setPosicion(carcel);
