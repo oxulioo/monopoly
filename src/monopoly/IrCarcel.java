@@ -10,6 +10,7 @@ public class IrCarcel extends Especial {
 
     @Override
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
+        this.incrementarVisita();
         // LÓGICA MOVIDA DE CASILLA.JAVA (Caso IrCarcel)
         // "Si caes en la casilla IrCarcel, vas directo a la carcel"
         actual.encarcelar();

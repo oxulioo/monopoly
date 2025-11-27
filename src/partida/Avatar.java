@@ -59,7 +59,7 @@ public class Avatar {
 
         // Comprobacion previa
         if(casillas==null||this.lugar==null){
-            System.out.println("No se puede mover el avatar, el tablero o la posición es nulo");
+            Juego.consola.imprimir("No se puede mover el avatar, el tablero o la posición es nulo");
             return;
         }
 
@@ -78,7 +78,7 @@ public class Avatar {
             jugador.sumarFortuna(Valor.SUMA_VUELTA);//Uso la constante definida para la vuelta
             jugador.getEstadisticas().sumarPasarPorSalida(Valor.SUMA_VUELTA);
             jugador.setVueltas(jugador.getVueltas()+1);
-            System.out.println("El jugador " + jugador.getNombre() + " pasa por salida y recibe 2.000.000€.");
+            Juego.consola.imprimir("El jugador " + jugador.getNombre() + " pasa por salida y recibe 2.000.000€.");
         }
         int nuevaPosicionActual=nuevaPosicion+1;
         Casilla nuevaCasilla = null;
@@ -96,9 +96,9 @@ public class Avatar {
         if(nuevaCasilla != null) {
             //Actualizo la lista de avatares (para imprimir en el tablero)
             setPosicion(nuevaCasilla);
-            System.out.println("El avatar " + this.id + " avanza " + valorTirada + " casillas desde la casilla "+anteriorCasilla.getNombre()+" hasta la casilla " + nuevaCasilla.getNombre() + ".");
+            Juego.consola.imprimir("El avatar " + this.id + " avanza " + valorTirada + " casillas desde la casilla "+anteriorCasilla.getNombre()+" hasta la casilla " + nuevaCasilla.getNombre() + ".");
         }else {
-            System.out.println("No se encuentra la casilla pedida.");
+            Juego.consola.imprimir("No se encuentra la casilla pedida.");
         }
     }
 

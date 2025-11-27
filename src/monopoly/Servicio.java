@@ -5,7 +5,8 @@ import partida.Jugador;
 public class Servicio extends Propiedad {
 
     public Servicio(String nombre, int posicion, int valor, int hipoteca, Jugador dueno) {
-        super(nombre, posicion, valor, hipoteca, dueno);
+        // AÑADIMOS Casilla.TSERVICIOS
+        super(nombre, Casilla.TSERVICIOS, posicion, valor, hipoteca, dueno);
     }
 
     @Override
@@ -17,17 +18,14 @@ public class Servicio extends Propiedad {
 
     @Override
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
-        // LÓGICA MOVIDA DE CASILLA.JAVA (Caso TSERVICIOS)
+        this.incrementarVisita();
 
-        // 1. Si tiene dueño y no soy yo -> Pagar
-        if (this.dueno != null && !this.dueno.equals(actual) && !this.dueno.getNombre().equals("Banca")) {
-            int factor_pago = 4 * tirada; // Usamos la tirada (suma) pasada como argumento
+        if(this.dueno != null && !this.dueno.equals(actual) && !this.dueno.getNombre().equals("Banca")){
+            int factor_pago = 4 * tirada; // Usamos la tirada
             actual.pagarAlquiler(this, factor_pago);
         }
-        // 2. Si no tiene dueño -> Info (como en Propiedad)
         else if (dueno == null || dueno.getNombre().equals("Banca")) {
-            System.out.println("Estás en " + nombre + ". Pertenece a la Banca.");
-            System.out.println("Valor de compra: " + valor);
+            Juego.consola.imprimir("Estás en " + nombre + ". Valor: " + valor);
         }
     }
 

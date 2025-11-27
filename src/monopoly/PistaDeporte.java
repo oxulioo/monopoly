@@ -1,27 +1,23 @@
-/*package monopoly;
+package monopoly;
 import partida.Jugador;
 
 public class PistaDeporte extends Edificio {
-
-    public PistaDeporte(long id, Casilla solar, Jugador propietario) {
-        super(id, solar, propietario);
+    public PistaDeporte(String id, Solar solar, Jugador propietario) {
+        super(id, Tipo.PISTA, solar, propietario);
     }
 
     @Override
-    public long getPrecioCompra() {
-        // Obtenemos el precio de la Pista del Solar asociado
-        return getSolar().getPrecioPistaDeporte();
+    public long getCosteConstruccion() {
+        return solar.getPrecioPistaDeporte();
     }
 
     @Override
-    protected void decrementarContadorSolar(Casilla solar) {
-        // Decrementa el contador de pistas del solar
-        if (solar.getNumPistas() > 0) solar.setNumPistas(solar.getNumPistas() - 1);
+    public long getAlquiler() {
+        return solar.getAlquilerPistaDeporte();
     }
 
     @Override
-    public String getTipoNombre() {
-        return "PistaDeporte";
+    public String toString() {
+        return "PistaDeporte{id='" + id + "', solar=" + solar.getNombre() + "}";
     }
-    // toString() se hereda de Edificio.java
-}*/
+}

@@ -11,12 +11,12 @@ public abstract class Propiedad extends Casilla {
     protected int hipoteca;
     protected int hipotecada; // Mantengo tu int hipotecada (0 o 1) en vez de boolean
 
-    public Propiedad(String nombre, int posicion, int valor, int hipoteca, Jugador dueno) {
-        super(nombre, posicion);
+    public Propiedad(String nombre, String tipo, int posicion, int valor, int hipoteca, Jugador dueno) {
+        super(nombre, tipo, posicion); // ¡Ahora sí le pasamos el tipo a Casilla!
         this.valor = valor;
         this.hipoteca = hipoteca;
         this.dueno = dueno;
-        this.hipotecada = 0; // Inicializamos a 0 como tenías
+        this.hipotecada = 0;
         this.grupo = null;
     }
 
@@ -67,6 +67,7 @@ public abstract class Propiedad extends Casilla {
     // Requisito 26: abstract boolean alquiler() y abstract float valor()
     // Los definimos abstractos para que Solar los implemente con TU lógica
     public abstract boolean alquiler(Jugador j);
+
     public abstract float valor(); // El PDF pide float, aunque tú usas int. Lo convertiremos al devolver.
 
     // MOVIDO: Tu método comprarCasilla (renombrado a comprar por el PDF)
@@ -84,17 +85,18 @@ public abstract class Propiedad extends Casilla {
 
     // Implementación base de evaluarCasilla para Propiedades
     // Usa TU lógica original de Casilla.java para cuando no tiene dueño
-    @Override
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
-        // Si tiene dueño y no soy yo y no es la banca -> Alquiler
+        this.incrementarVisita(); // Tu línea original
+
+        // TU LÓGICA: Si tiene dueño y no soy yo -> Pagar
         if (dueno != null && !dueno.equals(actual) && !dueno.getNombre().equals("Banca")) {
-            // Llamamos al método abstracto alquiler que implementará Solar/Transporte con tu código
+            // Llama al método alquiler() específico de cada hijo (Solar/Transporte)
             alquiler(actual);
         }
-        // Si no tiene dueño (o es banca) -> Info de compra (como tenías en Casilla, aunque allí no imprimía nada explícito salvo en debug, aquí lo dejamos listo para comprar)
+        // TU LÓGICA: Si no tiene dueño -> Info
         else if (dueno == null || dueno.getNombre().equals("Banca")) {
-            // Tu código original no hacía print aquí, solo esperaba al comando "comprar".
-            // Lo dejamos vacío para respetar tu flujo, o pones un sysout si quieres.
+            System.out.println("Estás en " + nombre + ". Pertenece a la Banca.");
+            System.out.println("Valor de compra: " + valor);
         }
     }
 }

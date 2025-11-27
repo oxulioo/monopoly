@@ -2,8 +2,10 @@ package monopoly;
 
 import partida.Jugador;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Solar extends Propiedad {
+
 
     // MOVIDO TAL CUAL DESDE CASILLA.JAVA (Atributos de edificios)
     private int numCasas=0;
@@ -30,8 +32,9 @@ public class Solar extends Propiedad {
 
     public Solar(String nombre, int posicion, int valor, int hipoteca, Jugador dueno,
                  int precioCasa, int precioHotel, int precioPiscina, int precioPistaDeporte,
-                 int alquilerBase) { // Añado alquilerBase al constructor
-        super(nombre, posicion, valor, hipoteca, dueno);
+                 int alquilerBase) {
+
+        super(nombre, Casilla.TSOLAR, posicion, valor, hipoteca, dueno);
         this.precioCasa = precioCasa;
         this.precioHotel = precioHotel;
         this.precioPiscina = precioPiscina;
@@ -106,19 +109,6 @@ public class Solar extends Propiedad {
         return false;
     }
 
-    // --- Requisito: void edificar(String tipo) ---
-    // Aquí deberíamos mover la lógica que tienes en JUEGO.JAVA (edificarCasa, edificarHotel...)
-    // Como pediste "solo mover", vamos a unificar esos métodos aquí.
-
-    public void edificar(String tipo) {
-        // Nota: Para mover completamente la lógica de Juego.java aquí necesitamos acceso a 'Juego' para 'nextEdificioId' y estadísticas.
-        // Por ahora dejo la estructura, pero idealmente copiaríamos el contenido de Juego.edificarCasa aquí dentro.
-        // Dado que Juego gestiona los IDs globales de edificios, es mejor llamar desde Juego a Solar o viceversa.
-        // Para cumplir estrictamente con "deja los métodos como están", mantendremos la lógica en Juego y llamaremos desde allí a setters,
-        // O movemos el bloque de código de Juego aquí.
-
-        // Moveré la lógica básica de comprobación de Juego.java aquí para cumplir con el PDF:
-    }
 
     // Requisito: hipotecar()
     // TU lógica de hipotecar estaba en Juego.hipotecar.
@@ -137,7 +127,7 @@ public class Solar extends Propiedad {
     public String toString() {
         return infoCasilla(); // Reutiliza tu infoCasilla si la traes, o reimplementamos el string
     }
-
+/*
     // Método auxiliar para usar tu infoCasilla original
     public String infoCasilla() {
         // COPIA PEGA DE TU INFO CASILLA (parte Solar)
@@ -161,5 +151,77 @@ public class Solar extends Propiedad {
                 + "alquiler pista de deporte: " + alquilerPistaDeporte + ",\n"
                 + "}";
     }
+*/
+    // ... (Tu código termina aquí)
+
+    // Método auxiliar para usar tu infoCasilla original
+    public String infoCasilla() {
+        // COPIA PEGA DE TU INFO CASILLA (parte Solar)
+        String grupoStr = (this.grupo != null) ? this.grupo.getColorGrupo() : "-";
+        String propietario = (this.dueno == null) ? "Banca" : this.dueno.getNombre();
+
+        String estadoHipoteca = this.gethipotecada() == 1 ? "Sí" : "No";
+
+        // Se han añadido las variables de contador de edificios y el estado de hipoteca al JSON
+        return "{\n"
+                + "nombre: " + nombre + ",\n"
+                + "tipo: solar,\n"
+                + "grupo: " + grupoStr + ",\n"
+                + "propietario: " + propietario + ",\n"
+                + "hipotecada: " + estadoHipoteca + ",\n"
+                + "valor: " + this.valor + ",\n"
+                + "alquiler: " + this.alquilerBase + ",\n"
+                + "num_casas: " + this.getNumCasas() + ",\n"
+                + "num_hoteles: " + this.getNumHoteles() + ",\n"
+                + "num_piscinas: " + this.getNumPiscinas() + ",\n"
+                + "num_pistas: " + this.getNumPistas() + ",\n"
+                + "valor hotel: " + precioHotel + ",\n"
+                + "valor casa: " + precioCasa + ",\n"
+                + "valor piscina: " + precioPiscina + ",\n"
+                + "valor pista de deporte: " + precioPistaDeporte + ",\n"
+                + "alquiler casa: " + alquilerCasa + ",\n"
+                + "alquiler hotel: " + alquilerHotel + ",\n"
+                + "alquiler piscina: " + alquilerPiscina + ",\n"
+                + "alquiler pista de deporte: " + alquilerPistaDeporte + "\n"
+                + "}";
+    }
+
+    // --- IMPLEMENTACIÓN ADICIONAL PARA COMPLETAR EL REQUISITO DEL PDF (Solo al final) ---
+
+    // Complemento a hipotecar/estaHipotecada. Necesario para el flujo del juego.
+    public void deshipotecar() {
+        // La lógica de pago (hipoteca + interés) se debe manejar en Juego.java o Jugador.java.
+        // Esta implementación solo cambia el estado de la propiedad.
+        this.sethipotecada(0);
+    }
+
+    // Requisito 26: void edificar(String tipoEdificio)
+    public void edificar(String tipo) {
+        // NOTA: La lógica de control (comprobación de reglas, cobro, asignación de ID
+        // y la creación del objeto Edificio) se debe ejecutar en Juego.java.
+        // Este método asume que el objeto Edificio ya fue creado y añadido a la lista 'edificios'.
+
+        // Aquí solo actualizamos los contadores internos de Solar:
+        switch (tipo.toLowerCase()) {
+            case "casa":
+                this.setNumCasas(this.getNumCasas() + 1);
+                break;
+            case "hotel":
+                // Al construir hotel, se venden las casas (si hay).
+                this.setNumHoteles(this.getNumHoteles() + 1);
+                this.setNumCasas(0);
+                break;
+            case "piscina":
+                this.setNumPiscinas(this.getNumPiscinas() + 1);
+                break;
+            case "pista deporte":
+                this.setNumPistas(this.getNumPistas() + 1);
+                break;
+            default:
+                Juego.consola.imprimir("Error: Tipo de edificio '" + tipo + "' no reconocido.");
+        }
+    }
+
 }
+
 

@@ -10,8 +10,8 @@ public class CajaComunidad extends Accion {
 
     @Override
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
-        // LÓGICA MOVIDA DE CASILLA.JAVA (Caso TCOMUNIDAD)
-        System.out.println(actual.getNombre() + " cae en Caja de Comunidad.");
+        this.incrementarVisita();
+        Juego.consola.imprimir(actual.getNombre() + " cae en Caja de Comunidad.");
         // Delegamos en Juego la gestión de la carta
         juego.procesarCasillaEspecial(actual, "Comunidad");
     }

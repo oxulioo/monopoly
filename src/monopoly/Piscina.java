@@ -1,27 +1,23 @@
-/*package monopoly;
+package monopoly;
 import partida.Jugador;
 
 public class Piscina extends Edificio {
-
-    public Piscina(long id, Casilla solar, Jugador propietario) {
-        super(id, solar, propietario);
+    public Piscina(String id, Solar solar, Jugador propietario) {
+        super(id, Tipo.PISCINA, solar, propietario);
     }
 
     @Override
-    public long getPrecioCompra() {
-        // Obtenemos el precio de la Piscina del Solar asociado
-        return getSolar().getPrecioPiscina();
+    public long getCosteConstruccion() {
+        return solar.getPrecioPiscina();
     }
 
     @Override
-    protected void decrementarContadorSolar(Casilla solar) {
-        // Decrementa el contador de piscinas del solar
-        if (solar.getNumPiscinas() > 0) solar.setNumPiscinas(solar.getNumPiscinas() - 1);
+    public long getAlquiler() {
+        return solar.getAlquilerPiscina();
     }
 
     @Override
-    public String getTipoNombre() {
-        return "Piscina";
+    public String toString() {
+        return "Piscina{id='" + id + "', solar=" + solar.getNombre() + "}";
     }
-    // toString() se hereda de Edificio.java
-}*/
+}

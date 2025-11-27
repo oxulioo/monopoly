@@ -30,7 +30,7 @@ public class Menu {
             String resto = comando.substring("crear jugador ".length());
             int idx = resto.lastIndexOf(' ');
             if (idx <= 0 || idx == resto.length() - 1) {
-                System.out.println("Uso: crear jugador <Nombre> <tipoAvatar>");
+                Juego.consola.imprimir("Uso: crear jugador <Nombre> <tipoAvatar>");
                 return;
             }
             String nombre = resto.substring(0, idx);
@@ -73,7 +73,7 @@ public class Menu {
                     juego.lanzarDadosForzado(d1, d2);
                     return;
                 } catch (NumberFormatException nfe) {
-                    System.out.println("Uso: lanzar dados X+Y  (X e Y enteros)");
+                    Juego.consola.imprimir("Uso: lanzar dados X+Y  (X e Y enteros)");
                     return;
                 }
             }
@@ -181,7 +181,7 @@ public class Menu {
                 int cantidad = Integer.parseInt(partes[2]); // 3
                 juego.venderPropiedad(tipo, solar, cantidad);
             } else {
-                System.out.println("Formato incorrecto. Escriba: vender <tipo> <solar> <cantidad>");
+                Juego.consola.imprimir("Formato incorrecto. Escriba: vender <tipo> <solar> <cantidad>");
             }
         }
         if (comando.equals("estadisticas")) {
@@ -193,12 +193,34 @@ public class Menu {
         }
 
     }
+/*
+        if (comando.startsWith("trato ")) {
+            juego.proponerTrato(comando);
+            return;
+        }
 
+        if (comando.startsWith("aceptar trato")) { // ej: aceptar trato1
+            String id = comando.substring("aceptar ".length());
+            juego.aceptarTrato(id);
+            return;
+        }
+
+        if (comando.startsWith("eliminar trato")) {
+            // llamar a juego.eliminarTrato...
+            return;
+        }
+
+        if (comando.equals("tratos")) {
+            // juego.listarTratos(jugadorActual);
+            return;
+        }
+    }
+*/
     // Lector de comandos por consola
     public void run() {
         java.util.Scanner sc = new java.util.Scanner(System.in);
-        System.out.println("Monopoly listo. Escribe comandos. (\"salir\" para terminar)");
-        System.out.println("Ejemplos: ver tablero | crear jugador Ana coche | lanzar dados | comprar Solar1");
+        Juego.consola.imprimir("Monopoly listo. Escribe comandos. (\"salir\" para terminar)");
+        Juego.consola.imprimir("Ejemplos: ver tablero | crear jugador Ana coche | lanzar dados | comprar Solar1");
 
         while (true) {
             System.out.print("> ");
@@ -206,13 +228,13 @@ public class Menu {
             String linea = sc.nextLine().trim();
             if (linea.isEmpty()) continue;
             if (linea.equalsIgnoreCase("salir")) {
-                System.out.println("¡Hasta luego!");
+                Juego.consola.imprimir("¡Hasta luego!");
                 break;
             }
             try {
                 analizarComando(linea);
             } catch (Exception e) {
-                System.out.println("Error procesando comando: " + e.getMessage());
+                Juego.consola.imprimir("Error procesando comando: " + e.getMessage());
             }
         }
     }
@@ -220,7 +242,7 @@ public class Menu {
 
     private void ejecutarFichero(String ruta) {
         if (ruta == null) {
-            System.out.println("Error leyendo: " + ruta);
+            Juego.consola.imprimir("Error leyendo: " + ruta);
             return;
         }
         try (java.util.Scanner sc = new java.util.Scanner(new java.io.File(ruta))) {

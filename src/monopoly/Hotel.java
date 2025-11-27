@@ -1,27 +1,23 @@
-/*package monopoly;
+package monopoly;
 import partida.Jugador;
 
 public class Hotel extends Edificio {
-
-    public Hotel(long id, Casilla solar, Jugador propietario) {
-        super(id, solar, propietario);
+    public Hotel(String id, Solar solar, Jugador propietario) {
+        super(id, Tipo.HOTEL, solar, propietario);
     }
 
     @Override
-    public long getPrecioCompra() {
-        // Obtenemos el precio del Hotel del Solar asociado
-        return getSolar().getPrecioHotel();
+    public long getCosteConstruccion() {
+        return solar.getPrecioHotel();
     }
 
     @Override
-    protected void decrementarContadorSolar(Casilla solar) {
-        // Decrementa el contador de hoteles del solar
-        if (solar.getNumHoteles() > 0) solar.setNumHoteles(solar.getNumHoteles() - 1);
+    public long getAlquiler() {
+        return solar.getAlquilerHotel();
     }
 
     @Override
-    public String getTipoNombre() {
-        return "Hotel";
+    public String toString() {
+        return "Hotel{id='" + id + "', solar=" + solar.getNombre() + "}";
     }
-    // toString() se hereda de Edificio.java
-}*/
+}

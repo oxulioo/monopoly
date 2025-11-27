@@ -81,6 +81,9 @@ public abstract class Casilla {
     // Método de compatibilidad: Como 'Casilla' ya no tiene 'valor' (lo tiene Propiedad),
     // dejamos esto para que si alguien llama a casilla.getValor() devuelva 0 por defecto
     // y no rompa el código antiguo. Las hijas lo sobrescribirán.
-    public int getValor() { return 0; }
+    public int getValor() {
+        Juego.consola.imprimir("AQUI NO ES CHICOS ESTAIS LLAMANDO A ESTA QUE NO ES, EN CASILLA.JAVA ATENCION, MIRAR PARA SABER FALLOOOOOOOO;");
+        return 0;
+    }
     public void sumarValor(int cantidad) {} // Para que Parking pueda usarlo
 }

@@ -14,9 +14,9 @@ public class Impuesto extends Casilla {
     @Override
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
         // --- LÓGICA MOVIDA DE CASILLA.JAVA (Bloque TIMPUESTO) ---
-
+        this.incrementarVisita();
         int cantidad = (this.valor > 0) ? this.valor : Valor.IMPUESTO_FIJO;
-        System.out.println("Jugador actual: " + actual.getNombre() + " debe pagar: " + cantidad);
+        Juego.consola.imprimir("Jugador actual: " + actual.getNombre() + " debe pagar: " + cantidad);
 
         // Cobrar al jugador
         boolean ok = actual.sumarGastos(cantidad);
@@ -30,7 +30,7 @@ public class Impuesto extends Casilla {
             if (parking != null) {
                 parking.sumarValor(cantidad); // Esto funcionará cuando implementemos Parking
                 // Nota: getValor() en Casilla devuelve 0 por defecto, pero Parking lo sobrescribirá
-                System.out.println("Dinero añadido al parking. Bote actual: " + parking.getValor());
+                Juego.consola.imprimir("Dinero añadido al parking. Bote actual: " + parking.getValor());
             }
         }
     }

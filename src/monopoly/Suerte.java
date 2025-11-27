@@ -10,8 +10,8 @@ public class Suerte extends Accion {
 
     @Override
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
-        // LÓGICA MOVIDA DE CASILLA.JAVA (Caso TSUERTE)
-        System.out.println(actual.getNombre() + " cae en Suerte.");
+        this.incrementarVisita();
+        Juego.consola.imprimir(actual.getNombre() + " cae en Suerte.");
         // Delegamos en Juego la gestión de la carta, tal como tenías
         juego.procesarCasillaEspecial(actual, "Suerte");
     }

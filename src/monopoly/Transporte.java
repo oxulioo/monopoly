@@ -5,7 +5,8 @@ import partida.Jugador;
 public class Transporte extends Propiedad {
 
     public Transporte(String nombre, int posicion, int valor, int hipoteca, Jugador dueno) {
-        super(nombre, posicion, valor, hipoteca, dueno);
+
+        super(nombre, Casilla.TTRANSPORTE, posicion, valor, hipoteca, dueno);
     }
 
     @Override

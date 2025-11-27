@@ -13,15 +13,15 @@ public class Parking extends Accion {
 
     @Override
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
-        // LÓGICA MOVIDA DE CASILLA.JAVA (Caso Parking)
-        if (this.bote > 0) {
-            // Guardamos el valor para el mensaje antes de resetearlo
-            int premio = this.bote;
-
+        this.incrementarVisita();
+        // TU LÓGICA EXACTA DEL BLOQUE PARKING
+        if(this.getValor() > 0){ // getValor() devuelve el bote,, SINO THIS.BOTE
+            int premio = this.getValor();
             actual.sumarFortuna(premio);
             actual.getEstadisticas().sumarPremiosInversionesOBote(premio);
-            this.bote = 0; // Reseteamos el bote
-
+            // Resetear bote (necesitas un método para esto o setearlo a 0 si tienes acceso)
+            // Como el atributo bote es privado en Parking, lo manejamos aquí:
+            this.bote = 0;
             System.out.println(actual.getNombre() + " cae en el Parking y se lleva el bote de " + premio + "€.");
         } else {
             System.out.println(actual.getNombre() + " cae en el Parking, pero el bote está a 0€.");

@@ -1,3 +1,7 @@
+package monopoly;
+import partida.Jugador;
+
+
 public abstract class Edificio {
     public enum Tipo {
         CASA, HOTEL, PISCINA, PISTA
@@ -15,15 +19,16 @@ public abstract class Edificio {
         this.propietario = propietario;
     }
 
-    // Getters - mantienes toda tu lógica actual
     public String getId() { return id; }
     public Tipo getTipo() { return tipo; }
     public Solar getSolar() { return solar; }
     public Jugador getPropietario() { return propietario; }
 
-    // Métodos abstractos si necesitas comportamiento específico
     public abstract long getCosteConstruccion();
     public abstract long getAlquiler();
+
+    public void setSolar(Solar solar) { this.solar = solar; }
+    public void setPropietario(Jugador propietario) { this.propietario = propietario; }
 }
 
 
