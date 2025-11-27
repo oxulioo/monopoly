@@ -1208,7 +1208,7 @@ public class Juego {
                 c.setNumPiscinas(c.getNumPiscinas() - cantidad);
                 eliminarEdificiosDe(c, actual, Edificio.Tipo.PISCINA, 1);
                 break;
-
+// FIXME: TENEMOS QUE IMPLEMENTAR QUE SI TIENES UNA PISCINA NO PUEDES VENDER UN HOTEL SIN ANTES MODIFICAR EL NUMERO DE PISCINAS
             case "hoteles": //miramos el numero de las piscinas y comparamos con el que queremos vender
                 if(c.getNumHoteles()==0){
                     System.out.println("No hay Hoteles en esta propiedad");

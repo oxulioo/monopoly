@@ -5,7 +5,7 @@ edificar casa
 lanzar dados 6+6
 lanzar dados 5+6
 acabar turno
-lanzar dados 3+3 
+lanzar dados 3+3
 comprar Solar3
 edificar piscina
 lanzar dados 1+1
