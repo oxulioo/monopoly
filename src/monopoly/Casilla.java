@@ -2,534 +2,71 @@ package monopoly;
 
 import partida.Avatar;
 import partida.Jugador;
-
 import java.util.ArrayList;
 
-public class Casilla {
+public abstract class Casilla {
 
+    // Atributos comunes a TODAS las casillas
+    protected String nombre;
+    protected int posicion;
+    protected ArrayList<Avatar> avatares;
+    protected int vecesVisitada; // Para estadísticas
 
-    //Primero pongo los privados (da igual)
-    private final String nombre; //Nombre de la casilla
-    private final String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte e Impuesto).
-    private int valor; //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
-    private final int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
-    private Jugador dueno; //Dueño de la casilla (por defecto sería la banca).
-    private Grupo grupo; //Grupo al que pertenece la casilla (si es solar).
-    private int alquiler; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
-    private int hipoteca; //Valor otorgado por hipotecar una casilla
-    private final ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
-
-    private int hipotecada; //bandera para saber si hay
-
-    private static Casilla parkingReferencia;//Dado que el método evaluar casilla no tiene como parámetro el tablero, no puedo modificar la casilla parking cuando se pagan impuestos, por lo que creo esta variable
-
-    //Diferentes tipos de casilla, podría utilizar un tipo enumerado, pero como más adelante se modificará la práctica, trabajo con string
-    public static final String TSOLAR = "Solar";
-    public static final String TESPECIAL = "Especial";
-    public static final String TTRANSPORTE = "Transporte";
-    public static final String TSERVICIOS = "Servicios";
-    public static final String TCOMUNIDAD = "Comunidad";
-    public static final String TSUERTE = "Suerte";
-    public static final String TIMPUESTO = "Impuesto";
-
-    private int numCasas=0;
-    private int numHoteles=0;
-    private int numPiscinas=0;
-    private int numPistas=0;
-
-
-    private int precioCasa;
-    private int precioHotel;
-    private int precioPiscina;
-    private int precioPistaDeporte;
-
-    // Alquileres de edificios
-    private int alquilerCasa;
-    private int alquilerHotel;
-    private int alquilerPiscina;
-    private int alquilerPistaDeporte;
-
-    private final java.util.List<Edificio> edificios = new java.util.ArrayList<>();
-    public java.util.List<Edificio> getEdificios() { return java.util.Collections.unmodifiableList(edificios); }
-    public void anadirEdificio(Edificio e) { edificios.add(e); }
-    public void eliminarEdificio(Edificio e){ edificios.remove(e); }
-
-    private long dineroGenerado = 0;   // suma de alquileres cobrados
-    private int vecesVisitada = 0;     // veces que cae un jugador
-
-
-    //Vamos a añadir getters y setters
-    public String getNombre() {
-        return nombre;
-    }
-    public String getTipo() {
-        return tipo;
-    }
-    public int getPosicion() {
-        return posicion;
-    }
-    public int getValor() {
-        return valor;
-    }
-    public int getAlquiler() {
-        return alquiler;
-    }
-    public void setAlquiler(int imp) {
-        this.alquiler = imp;
-    }
-    public void setHipoteca(int hip) {
-        this.hipoteca = hip;
-    }
-    public Jugador getDueno() {
-        return dueno;
-    }
-    public void setDueno(Jugador d) {
-        this.dueno = d;
-    }
-    public Grupo getGrupo(){
-        return grupo;
-    }
-    public void setGrupo(Grupo g) {
-        this.grupo = g;
-    }
-    public ArrayList<Avatar>getAvatares(){
-        return avatares;
-    }
-    public int getHipoteca() {
-        return hipoteca;
-    }
-
-    //Dado que el metodo evaluar casilla no tiene como parámetro el tablero, no puedo modificar la casilla parking cuando se pagan impuestos, por lo que necesito estos getters y setters
-    public static Casilla getParkingReferencia() { return parkingReferencia;}
-    public static void setParkingReferencia(Casilla c) { parkingReferencia = c; }
-
-
-    public int gethipotecada(){return hipotecada;}
-    public void sethipotecada(int h){hipotecada=h;}
-
-    public int getNumCasas() { return Math.max(0,numCasas); }
-    public int getNumHoteles() { return numHoteles; }
-    public int getNumPiscinas() { return numPiscinas; }
-    public int getNumPistas() { return numPistas; }
-
-    public void setNumCasas(int n) { this.numCasas = n; }
-    public void setNumHoteles(int n) { this.numHoteles = n; }
-    public void setNumPiscinas(int n) { this.numPiscinas = n; }
-    public void setNumPistas(int n) { this.numPistas = n; }
-
-    public int getPrecioCasa() { return precioCasa; }
-    public int getPrecioHotel() { return precioHotel; }
-    public int getPrecioPiscina() { return precioPiscina; }
-    public int getPrecioPistaDeporte() { return precioPistaDeporte; }
-
-
-
-    public void setAlquilerCasa(int alquiler) { this.alquilerCasa = alquiler; }
-    public void setAlquilerHotel(int alquiler) { this.alquilerHotel = alquiler; }
-    public void setAlquilerPiscina(int alquiler) { this.alquilerPiscina = alquiler; }
-    public void setAlquilerPistaDeporte(int alquiler) { this.alquilerPistaDeporte = alquiler; }
-
-
-    public int getAlquilerCasa() { return alquilerCasa; }
-    public int getAlquilerHotel() { return alquilerHotel; }
-    public int getAlquilerPiscina() { return alquilerPiscina; }
-    public int getAlquilerPistaDeporte() { return alquilerPistaDeporte; }
-
-    public void sumarDineroGenerado(long cant) { dineroGenerado += cant; }
-    public long getDineroGenerado() { return dineroGenerado; }
-
-    public void incrementarVisita() { vecesVisitada++; }
-    public int getVecesVisitada() { return vecesVisitada; }
-
-
-    public Casilla(String nombre, String tipo, int posicion, int valor, Jugador dueno,
-                   int precioCasa, int precioHotel, int precioPiscina, int precioPistaDeporte) {
-
-        // Validaciones básicas
-        if (!(TSOLAR.equals(tipo) || TSERVICIOS.equals(tipo) || TTRANSPORTE.equals(tipo))) {
-            System.out.println("Tipo erróneo, debe ser 'Solar', 'Servicios' o 'Transporte'");
-        }
-        if (posicion < 1 || posicion > 40) {
-            System.out.println("La posición debe estar entre 1 y 40");
-        }
-
-        // Inicialización básica
-        this.nombre = nombre;
-        this.tipo = tipo;
-        this.posicion = posicion;
-        this.valor = Math.abs(valor);
-        this.dueno = dueno;
-        this.alquiler = 0;
-        this.hipoteca = 0;
-        this.grupo = null;
-        this.avatares = new ArrayList<>();
-
-        // Edificaciones (siempre empiezan en 0)
-        this.numCasas = 0;
-        this.numHoteles = 0;
-        this.numPiscinas = 0;
-        this.numPistas = 0;
-
-
-        this.precioCasa = precioCasa;
-        this.precioHotel = precioHotel;
-        this.precioPiscina = precioPiscina;
-        this.precioPistaDeporte = precioPistaDeporte;
-
-        // Alquileres de edificios (inicializar a 0 por ahora)
-        this.alquilerCasa = 0;
-        this.alquilerHotel = 0;
-        this.alquilerPiscina = 0;
-        this.alquilerPistaDeporte = 0;
-    }
-
-
-    /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
-     * Parámetros: nombre, posición en el tablero, impuesto establecido y dueño.
-     */
-    public Casilla(String nombre, int posicion, int valor) {
-        if (posicion < 1 || posicion > 40) {
-            System.out.println("La posición debe estar entre 1 y 40");//No hay más de 40 casillas, trato el caso en el que se introduzca un valor no válido
-        }
-        //Inicialuzo las variables
+    // Constructor base
+    public Casilla(String nombre, int posicion) {
         this.nombre = nombre;
         this.posicion = posicion;
-        this.tipo = TIMPUESTO;
-        //Inicializo el resto de valores (los que no son introducidos como parámetros)
-        this.valor = Math.abs(valor);
-        this.grupo = null;
         this.avatares = new ArrayList<>();
-        this.dueno=null;
-
+        this.vecesVisitada = 0;
     }
 
-    /*Constructor utilizado para crear las otras casillas (Suerte, Caja de comunidad y Especiales):
-     * Parámetros: nombre, tipo de la casilla (será uno de los que queda), posición en el tablero y dueño.
-     */
-    public Casilla(String nombre, int posicion, String tipo) {
-        if (!(TSUERTE.equals(tipo) || TCOMUNIDAD.equals(tipo) || TESPECIAL.equals(tipo))) {//Si no es una de las casillas mencionadas, da error
-            System.out.println("Tipo erróneo, debe ser 'Suerte', 'Comunidad' o 'Especial'");
-        }
-        if (posicion < 1 || posicion > 40) {
-            System.out.println("La posición debe estar entre 1 y 40");
-        }
-        //Inicializo los campos
-        this.nombre = nombre;
-        this.tipo = tipo;
-        this.posicion = posicion;
-        //Inicializo el resto de valores que no han sido introducidos como parámetros
-        this.grupo = null;
-        this.avatares = new ArrayList<>();
+    // --- Métodos requeridos por el PDF (Requisito 26) ---
 
-        this.dueno=null;
-
+    // Devuelve true si el avatar está en esta casilla
+    public boolean estaAvatar(Avatar avatar) {
+        return avatares.contains(avatar);
     }
 
-    //Método utilizado para añadir un avatar al array de avatares en casilla.
+    // Devuelve la frecuencia de visita
+    public int frecuenciaVisita() {
+        return vecesVisitada;
+    }
+
+    // Método abstracto: cada tipo de casilla definirá su propia salida por pantalla
+    @Override
+    public abstract String toString();
+
+    // --- Métodos comunes de gestión ---
+
+    public void incrementarVisita() {
+        this.vecesVisitada++;
+    }
+
     public void anhadirAvatar(Avatar av) {
-        this.avatares.add(av);
+        if (av != null) {
+            this.avatares.add(av);
+        }
     }
 
-    //Método utilizado para eliminar un avatar del array de avatares en casilla.
     public void eliminarAvatar(Avatar av) {
         this.avatares.remove(av);
     }
 
-    /*Método para evaluar qué hacer en una casilla concreta. Parámetros:
-     * - Jugador cuyo avatar está en esa casilla.
-     * - La banca (para ciertas comprobaciones).
-     * - El valor de la tirada: para determinar impuesto a pagar en casillas de servicios.
-     * Valor devuelto: true en caso de ser solvente (es decir, de cumplir las deudas), y false
-     * en caso de no cumplirlas.*/
-    public void evaluarCasilla(Jugador actual, Juego juego, int suma) {
-        if(actual==null) return;
-        //Cada vez que se pasa por una casilla se incrementa dicho atributo para cuando se quieran ver las estadísticas
-        this.incrementarVisita();
-        //Si es suerte o comunidad, se procesa la carta correspondiente
-        if (TSUERTE.equals(tipo)) {
-            System.out.println(actual.getNombre() + " cae en Suerte.");
-            juego.procesarCasillaEspecial(actual, tipo);
-            return; // La acción de la carta se encarga del resto
-        }
-        if (TCOMUNIDAD.equals(tipo)) {
-            System.out.println(actual.getNombre() + " cae en Caja de Comunidad.");
-            juego.procesarCasillaEspecial(actual, tipo);
-            return; // La acción de la carta se encarga del resto
-        }
-        if (TESPECIAL.equals(tipo) && ("Cárcel".equalsIgnoreCase(nombre) || "Salida".equalsIgnoreCase(nombre))) {
-            return; // Visita a la cárcel o paso por salida (gestionado en moverAvatar)
-        }
-        //Si caes en la casilla IrCarcel, vas directo a la carcel con el método encarcelar
-        if(TESPECIAL.equals(tipo)&&"IrCarcel".equalsIgnoreCase(nombre)){
-            actual.encarcelar();
-            return;
-        }
-        //Si la casilla a la que caes es el parking, te llevas la fortuna acumulada en la casilla
-        //Si la fortuna es >0, llamas al método sumarFortuna, y se restaura a 0 el bote del parking
-
-        // CÓDIGO CORREGIDO (en Casilla.java)
-
-        if(TESPECIAL.equals(tipo)&&"Parking".equalsIgnoreCase(nombre)){
-            if(this.valor>0){
-                // Guardamos el valor para el mensaje antes de resetearlo
-                int bote = this.valor;
-
-                actual.sumarFortuna(bote);
-                actual.getEstadisticas().sumarPremiosInversionesOBote(bote);
-                this.valor=0;
-
-
-                System.out.println(actual.getNombre() + " cae en el Parking y se lleva el bote de " + bote + "€.");
-
-            } else {
-                // (Opcional) Por si cae en parking, para que quede claro que no hay bote
-                System.out.println(actual.getNombre() + " cae en el Parking, pero el bote está a 0€.");
-            }
-            return;
-        }
-
-        //Si caes en una casilla de impuesto, se cobra al jugador
-        if(TIMPUESTO.equals(tipo)){
-            int cantidad=(this.valor>0)?this.valor:Valor.IMPUESTO_FIJO;
-            System.out.println("Jugador actual: "+actual.getNombre() + " debe pagar: "+cantidad);
-            //Acumulamos ahora el bote del Parking, como el esqueleto no permite meter como parámetro Tablero, hay que usar una variable estática
-            boolean ok = actual.sumarGastos(cantidad);
-            if (ok) {
-                //El jugador incrementa el atributo de pago de tasas e impuestos (para cuando se pidan las estadísticas)
-                actual.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
-                //Se mete al bote del parking
-                Casilla.getParkingReferencia().sumarValor(cantidad);
-                System.out.println("Dinero añadido al parking. Bote actual: "+ getParkingReferencia().getValor());
-            }
-
-        }
-        //Si caes en una casilla de tipo transporte, y tiene dueño y no es el jugador que está en la casilla,
-        //como en la primera entrega no se tienen en cuenta el número de casillas de transportes, entonces
-        //se calcula la cantidad a pagar (Valor.ALQUILER_TRANSPORTE), se comprueba si puede pagar y se da el dinero al dueño
-
-
-        if(TTRANSPORTE.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()){
-
-                actual.pagarAlquiler(this, 1);
-                return;
-            }
-            return;
-        }
-        //Si caes en una casilla de tipo servicio con dueño, que no eres tú, entonces calculas la cantidad a pagar,
-        //compruebas que tiene suficiente dinero y pagas, dándole al dueño lo que le corresponde
-
-
-
-        if(TSERVICIOS.equals(tipo)){
-            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()){
-                int factor_pago = 4*suma;
-                actual.pagarAlquiler(this, factor_pago);
-                return;
-            }
-            return;
-        }
-        //Si caes en un solar con dueño que no eres tú
-
-
-        // CÓDIGO CORREGIDO
-        if(TSOLAR.equals(tipo)){
-
-            // Si el dueño tiene el grupo entero
-            if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()&&this.grupo.esDuenoGrupo(this.dueno)){
-                if(this.hipotecada==0) {
-
-                    // CORRECCIÓN: Comprobamos si hay edificios
-                    boolean hayEdificios = (this.numCasas > 0 || this.numHoteles > 0 || this.numPiscinas > 0 || this.numPistas > 0);
-
-                    if (hayEdificios) {
-                        // Si hay edificios, el alquiler de edificio YA incluye el monopolio. El factor es 1.
-                        actual.pagarAlquiler(this, 1);
-                    } else {
-                        // Si NO hay edificios, se paga el alquiler base DOBLE.
-                        actual.pagarAlquiler(this, 2);
-                    }
-                }
-
-                // Si no tiene el grupo entero (propiedad normal)
-            }else if(this.dueno!=null&&!this.dueno.equals(actual)&&this.dueno!=juego.getBanca()){
-                if(this.hipotecada==0) {
-                    // El alquiler es simple. Factor 1.
-                    actual.pagarAlquiler(this, 1);
-                }
-            }
-        }
+    // Getters básicos
+    public String getNombre() {
+        return nombre;
     }
 
-    /*Método usado para comprar una casilla determinada. Parámetros:
-     * - Jugador que solicita la compra de la casilla.
-     * - Banca del monopoly (es el dueño de las casillas no compradas aún).*/
-
-    public void comprarCasilla(Jugador solicitante, Jugador banca) {
-
-        //Se toma el valor y se comprueba que el que quiere comprar tiene dinero suficiente
-        int precio = Math.max(0, this.valor);
-
-        if (!solicitante.sumarGastos(precio)) {
-            // sumarGastos ya imprime el mensaje de bancarrota si ocurre
-            System.out.println(solicitante.getNombre() + " no tiene suficiente dinero para comprar " + this.nombre);
-            return;
-        }
-        //Se añade la propiedad al solicitante.
-        //Esta función se encargará de poner al solicitante como dueño.
-        solicitante.anadirPropiedad(this);
-
-    }
-    /*Método para añadir valor a una casilla. Utilidad:
-     * - Sumar valor a la casilla de parking.
-     * - Sumar valor a las casillas de solar al no comprarlas tras cuatro vueltas de todos los jugadores.
-     * Este método toma como argumento la cantidad a añadir del valor de la casilla.*/
-    public void sumarValor(int suma) {
-        this.valor += suma; //verificar mayor que 0
+    public int getPosicion() {
+        return posicion;
     }
 
-    /*Método para mostrar información sobre una casilla.
-     * Devuelve una cadena con información específica de cada tipo de casilla.*/
-    public String infoCasilla() {
-        String nombre = (this.nombre == null) ? "" : this.nombre.trim();
-        String tipoRaw = (this.tipo == null) ? "" : this.tipo.trim();
-        String propietario = (this.dueno == null) ? "Banca" : this.dueno.getNombre();
-
-        String tlc = tipoRaw.toLowerCase();
-        String nlc = nombre.toLowerCase();
-
-        if ("solar".equals(tlc)) {
-            String grupoStr = (this.grupo != null) ? this.grupo.getColorGrupo() : "-";
-
-            int vCasa = this.precioCasa;
-            int vHotel = this.precioHotel;
-            int vPiscina = this.precioPiscina;
-            int vPista = this.precioPistaDeporte;
-
-            // Usar los atributos de alquileres de edificios
-            int aCasa = this.alquilerCasa;
-            int aHotel = this.alquilerHotel;
-            int aPiscina = this.alquilerPiscina;
-            int aPista = this.alquilerPistaDeporte;
-
-            return "{\n"
-                    + "nombre: " + nombre + ",\n"
-                    + "tipo: solar,\n"
-                    + "grupo: " + grupoStr + ",\n"
-                    + "propietario: " + propietario + ",\n"
-                    + "valor: " + this.valor + ",\n"
-                    + "alquiler: " + this.alquiler + ",\n"
-                    + "valor hotel: " + vHotel + ",\n"
-                    + "valor casa: " + vCasa + ",\n"
-                    + "valor piscina: " + vPiscina + ",\n"
-                    + "valor pista de deporte: " + vPista + ",\n"
-                    + "alquiler casa: " + aCasa + ",\n"
-                    + "alquiler hotel: " + aHotel + ",\n"
-                    + "alquiler piscina: " + aPiscina + ",\n"
-                    + "alquiler pista de deporte: " + aPista + ",\n"
-                    + "}";
-        }
-        //Si es casilla de impuesto, imprime lo siguiente
-
-        if ("impuesto".equals(tlc)) {
-            int aPagar = (this.alquiler > 0) ? this.alquiler : this.valor;
-            return "{\n"
-                    + "tipo: impuesto,\n"
-                    + "Tasa: " + aPagar + "\n"
-                    + "}";
-        }
-
-        if ("especial".equals(tlc) || "parking".equals(nlc) || "salida".equals(nlc) || "cárcel".equals(nlc) || "carcel".equals(nlc) || "ircarcel".equals(nlc)) {
-            //Si es casilla especial de tipo parking, imprime lo siguiente
-            switch (nlc) {
-                case "parking" -> {
-                    StringBuilder jugadores = getStringBuilder();
-                    //Imprimo descripción de parking con el valor (bote)
-                    return "{\n"
-                            + "bote: " + this.valor + ",\n"
-                            + "jugadores: [" + jugadores + "]\n"
-                            + "}";
-                }
-
-                //Si es casilla especial de tipo parking, imprime lo siguiente
-                case "cárcel", "carcel" -> {
-                    int salir = Valor.PRECIO_SALIR_CARCEL;
-                    StringBuilder jugadores = new StringBuilder();
-                    if (this.avatares != null && !this.avatares.isEmpty()) {
-                        for (int i = 0; i < this.avatares.size(); i++) {
-                            Jugador j = this.avatares.get(i).getJugador();
-                            String nom = (j == null) ? "-" : j.getNombre();
-                            if (i > 0) jugadores.append(" ");
-                            jugadores.append("[").append(nom).append("]");
-                        }
-                    } else {
-                        jugadores.append("[]");
-                    }
-
-                    return "{\n"
-                            + "salir: " + salir + ",\n"
-                            + "jugadores: " + jugadores + "\n"
-                            + "}";
-                }
-
-                //Si la casilla es la salida, imprime el cobro al pasar por ella
-                case "salida" -> {
-                    return """
-                            {
-                            tipo: salida
-                            }""";
-                }
-            }
-
-            return "{\n"
-                    + "tipo: especial,\n"
-                    + "nombre: " + (nombre.isEmpty() ? "-" : nombre) + "\n"
-                    + "}";
-        }
-
-        return switch (tlc) {
-            case "suerte" -> """
-                    {
-                    tipo: suerte
-                    }""";
-
-            //Casilla caja
-            case "comunidad" -> """
-                    {
-                    tipo: comunidad
-                    }""";
-
-            //Casilla servicios (transporte y servicios)
-            case "servicios", "servicio", "transporte" -> "{\n"
-                    + "tipo: " + tlc + ",\n"
-                    + "valor: " + this.valor + "\n"
-                    + "}";
-            default -> "{\n"
-                    + "tipo: " + (tlc.isEmpty() ? "-" : tlc) + "\n"
-                    + "}";
-        };
-
+    public ArrayList<Avatar> getAvatares() {
+        return avatares;
     }
 
-    private StringBuilder getStringBuilder() {
-        StringBuilder jugadores = new StringBuilder();
-        //Si hay avatares en la casilla, los mete
-        if (this.avatares != null && !this.avatares.isEmpty()) {
-            for (int i = 0; i < this.avatares.size(); i++) {
-                Jugador j = this.avatares.get(i).getJugador();
-                String nom = (j == null) ? "-" : j.getNombre();
-                if (i > 0) jugadores.append(", ");
-                jugadores.append(nom);
-            }
-        }
-        return jugadores;
-    }
-
-    public void sumarRentabilidadGrupo(long importe) {
-        if (this.grupo != null) {
-            this.grupo.sumarRentabilidad(importe);
-        }
-    }
-
+    // --- Método CLAVE para el polimorfismo ---
+    // Sustituye al antiguo switch gigante. Cada subclase implementará su lógica aquí.
+    public abstract void evaluarCasilla(Jugador actual, Juego juego, int tirada);
 
 }
