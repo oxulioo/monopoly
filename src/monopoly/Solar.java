@@ -1,4 +1,4 @@
-ppackage monopoly;
+package monopoly;
 
 import partida.Jugador;
 import java.util.ArrayList;
