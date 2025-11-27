@@ -694,26 +694,29 @@ public class Juego {
 
 
     public void edificarCasa(){
-        if(!hayJugadores()){return;}
-        if (turno < 0) turno = 0;
+        if(!hayJugadores()){return;}//Si no hay jugadores no se puede edificar
+        if (turno < 0) turno = 0;//Si le turno está mal ajustado se reinicia o se ajusta
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
         Jugador actual = jugadores.get(turno);
         //Sacamos la casilla a la que pertenece el avatar
         Casilla pos = actual.getAvatar().getPosicion();
+        //Si no es solar no se puede edificar
         if(!Casilla.TSOLAR.equals(pos.getTipo())) {
             System.out.println("Sólo se puede edificar en casillas de tipo solar.\n");
             return;
         }
+        //Si el que quiere edificar no es dueño del grupo completo de la casilla no puede edificar
         if(!pos.getGrupo().esDuenoGrupo(actual)){
             System.out.println("No se puede edificar una casilla de un grupo que no es del jugador\n");
             return;
         }
-
+        //Si pasa el máximo de casas no puede
         if (pos.getNumCasas()>=4){
             System.out.println("Ya tienes el máximo de casas en este solar. Prueba a construir un hotel!\n");
             return;
 
         }
+        //Cojo el precio, compruebo que tiene suficiente dinero
         int precio = pos.getPrecioCasa();
         if (actual.getFortuna() < precio) {
             System.out.println("No tienes suficiente dinero para construir una casa");
@@ -721,20 +724,21 @@ public class Juego {
         }
 
 
-        // Restar dinero
+        // Restar dinero de la fortuna
         actual.sumarGastos(precio);
         // Actualizar estadísticas de inversión
         actual.getEstadisticas().sumarDineroInvertido(precio);
+        //Actualizar numero de casas
         pos.setNumCasas(pos.getNumCasas() + 1);
 
         // Crear y registrar el edificio
-        Edificio.Tipo tipo = Edificio.Tipo.CASA;
-        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual);
-        pos.anadirEdificio(e);
-        actual.anadirEdificio(e);
+        Edificio.Tipo tipo = Edificio.Tipo.CASA; //Establece el tipo (enum) a edificar, casa
+        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual); //Crea una nueva instancia de Edificio con su constructor
+        pos.anadirEdificio(e);//Añade el edificio a la lista de edificios de la propiedad
+        actual.anadirEdificio(e);//Añade el edificio a la lista de edificios del jugador
 
         // Asigna número de casa
-        numeroPorEdificio.put(e.getId(), nextNumTipo(tipo));
+        numeroPorEdificio.put(e.getId(), nextNumTipo(tipo));//Mapa que asigna el Id con el numero secuencial unico para cada edificio
 
         System.out.println("Se ha edificado una casa en " + pos.getNombre() + ". La fortuna de " + actual.getNombre() + " se reduce en " + precio + "€.");
     }
@@ -766,28 +770,29 @@ public class Juego {
         }
         actual.sumarGastos(precio);
         // elimina 4 casas de ese solar y jugador
-        java.util.List<Edificio> borrar = new java.util.ArrayList<>();
-        for (Edificio ed : pos.getEdificios()) {
+        java.util.List<Edificio> borrar = new java.util.ArrayList<>();//Lista temporal borrar que almacena los edificios a borrar
+        for (Edificio ed : pos.getEdificios()) {//Recorro todos los edificios de la propiedad actual
             if (ed.getTipo() == Edificio.Tipo.CASA && ed.getSolar() == pos && ed.getPropietario() == actual) { //comprobamos que estamos iterando sobre el solar y con dicho propietario correctamente
-                borrar.add(ed); //borramos la casa si construimos un hotel
+                borrar.add(ed); //borramos la casa si construimos un hotel (la añadimos a la lista de eliminacion)
                 if (borrar.size() == 4) break; //borra hasta 4 casas que es el maximo
             }
         }
+        //Recorro la lista de edificios a borrar y los borro
         for (Edificio ed : borrar) { // borramos las casas
             pos.eliminarEdificio(ed);
             actual.eliminarEdificio(ed);
             numeroPorEdificio.remove(ed.getId()); // borramos el numero asociado al edificio
         }
-
+        //Reestablezco el numero de casas
         pos.setNumCasas(0);
 
         pos.setNumHoteles(pos.getNumHoteles() + 1);
 
-
+        //Asigno tipo hotel del enum
         Edificio.Tipo tipo = Edificio.Tipo.HOTEL;
-        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual);
-        pos.anadirEdificio(e);
-        actual.anadirEdificio(e);
+        Edificio e = new Edificio(nextEdificioId(), tipo, pos, actual);//Creo la nueva instancia
+        pos.anadirEdificio(e);//Añado a lista de edificios de la propiedad
+        actual.anadirEdificio(e);//Añado a lista de edificios del jugador
 
 
 
@@ -894,19 +899,21 @@ public class Juego {
     public void listarEdificios(String color) {
         //listar edificios sin color
         if (color == null) {
+            //Si no se especifica color, se recolectan todos los edificios del juego en el array
             java.util.List<Edificio> todos = new java.util.ArrayList<>();
             if (jugadores != null) {
                 for (Jugador j : jugadores) {
                     if (j != null && j.getMisEdificios() != null) todos.addAll(j.getMisEdificios());
                 }
             }
-
+            //Si no hay edificios
             if (todos.isEmpty()) {
                 System.out.println("{}");
                 return;
             }
 
             for (int i = 0; i < todos.size(); i++) {
+                //Recorro todos los edificios cogiendo sus propiedades a imprimir y las imprimo
                 Edificio e = todos.get(i);
                 String tipo = e.getTipo().name().toLowerCase(); // casa, hotel, piscina, pista
                 int numTipo = numeroPorEdificio.getOrDefault(e.getId(), 0); // coge o el numero o si no puede un numero por defecto que se asigno como 0
@@ -944,7 +951,7 @@ public class Juego {
             }
         }
 
-    // banderas
+    // banderas (para después imprimir lo que se podría y lo que no se podría construir)
         boolean puedeCasa = true;
         boolean puedeHotel = true;
         boolean puedePiscina = true;
@@ -1155,8 +1162,12 @@ public class Juego {
     public void venderPropiedad(String tipo, String solar,  int cantidad){
         Jugador actual = jugadores.get(turno);
         Casilla c = this.tablero.encontrar_casilla(solar);
-        if (c == null) { System.out.println("No existe la casilla: " + solar); return; }
-        if (!(c.getDueno().equals(actual))) { System.out.println("No se pueden vender " + tipo + " en " + c.getNombre() + ". Esta propiedad no pertenece a " + actual.getNombre() + "."); return; }
+        if (c == null) {
+            System.out.println("No existe la casilla: " + solar);
+            return;
+        }
+        if (!(c.getDueno().equals(actual))) {
+            System.out.println("No se pueden vender " + tipo + " en " + c.getNombre() + ". Esta propiedad no pertenece a " + actual.getNombre() + "."); return; }
 
         String t = tipo.toLowerCase();
         switch (t) { //filtramos por tipo
