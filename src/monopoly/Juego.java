@@ -1226,13 +1226,14 @@ public class Juego {
                     return;
                 }
                 if (cantidad>1 && c.getNumHoteles()==1){
-                    System.out.println("Solamente se puede vender 1 piscina, recibiendo "+c.getPrecioHotel());
+                    System.out.println("Solamente se puede vender 1 hotel, recibiendo "+c.getPrecioHotel());
+                    c.setNumHoteles(c.getNumHoteles()-1);
                 }
                 if (c.getNumHoteles()==1){
                     System.out.println("Vendiendo 1 hoteles, recibiendo "+c.getPrecioHotel());
+                    c.setNumHoteles(c.getNumHoteles() - 1);
                 }
                 actual.sumarFortuna(c.getPrecioHotel());
-                c.setNumHoteles(c.getNumHoteles() - cantidad);
                 eliminarEdificiosDe(c, actual, Edificio.Tipo.HOTEL, 1);
                 break;
             default:
