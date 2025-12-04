@@ -15,7 +15,11 @@ public class CajaComunidad extends Accion {
         this.incrementarVisita();
         Juego.consola.imprimir(actual.getNombre() + " cae en Caja de Comunidad.");
         // Delegamos en Juego la gestión de la carta
-        juego.procesarCasillaEspecial(actual, "Comunidad");
+        try {
+            juego.procesarCasillaEspecial(actual, "Comunidad");
+        } catch (MonopolyEtseException e) {
+            return;
+        }
     }
 
     @Override

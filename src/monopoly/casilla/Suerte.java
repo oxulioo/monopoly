@@ -11,11 +11,15 @@ public class Suerte extends Accion {
     }
 
     @Override
-    public void evaluarCasilla(Jugador actual, Juego juego, int tirada) throws MonopolyEtseException {
+    public void evaluarCasilla(Jugador actual, Juego juego, int tirada)  {
         this.incrementarVisita();
         Juego.consola.imprimir(actual.getNombre() + " cae en Suerte.");
         // Delegamos en Juego la gestión de la carta, tal como tenías
-        juego.procesarCasillaEspecial(actual, "Suerte");
+       try {
+           juego.procesarCasillaEspecial(actual, "Suerte");
+       } catch (MonopolyEtseException e){
+           return;
+       }
     }
 
     @Override
