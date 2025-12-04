@@ -1,12 +1,13 @@
 package monopoly;
 import partida.*;
 import java.util.ArrayList;
+import monopoly.exceptions.*;
 
-public class Juego implements Comando { // <-- Añadir implements Comando (ver punto 2)
+public class Juego implements Comando {
 
     // Atributo estático requerido por el PDF para input/output
     public static final Consola consola = new ConsolaNormal();
-
+    private final java.util.Map<String, Trato> tratosRecibidos = new java.util.HashMap<>();
 
     private ArrayList<Jugador> jugadores;
     private ArrayList<Avatar> avatares;
@@ -20,6 +21,7 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
     private final Jugador banca;
     private final java.util.EnumMap<Edificio.Tipo, Integer> secTipo = new java.util.EnumMap<>(Edificio.Tipo.class);
     private final java.util.Map<Long, Integer> numeroPorEdificio = new java.util.HashMap<>();
+    private Baraja baraja;
 
     public Juego() {
         this.banca = new Jugador();
@@ -50,13 +52,32 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         secTipo.put(t, n);
         return n;
     }
+    public void recibirTrato(Trato t){
+        tratosRecibidos.put(t.getId(), t);
+    }
+    public void eliminarTrato(String idTrato){
+        tratosRecibidos.remove(idTrato);
+    }
 
+    public void listarTratos(){
+        consola.imprimir("Tratos recibidos:");
+    }
+
+    public Trato getTrato(String idTrato){
+        return tratosRecibidos.get(idTrato);
+    }
+    public java.util.Collection<Trato> getListaTratos(){
+        return tratosRecibidos.values();
+    }
+    public void aceptarTrato(String idTrato){
+        tratosRecibidos.remove(idTrato);
+    }
     public void verTablero() {
         if (tablero == null) {
             Juego.consola.imprimir("No hay tablero cargado.");
             return;
         }
-        System.out.print(tablero);
+        Juego.consola.imprimir(tablero.toString());
     }
 
     public void iniciarPartida() {
@@ -68,6 +89,8 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         dado1 = new Dado();
         dado2 = new Dado();
         tablero = new Tablero(this.banca);
+        this.baraja = new Baraja(); // <-- Reiniciar baraja al iniciar nueva partida
+        this.baraja.barajar();
     }
 
     public void mostrarJugadorActual() {
@@ -80,30 +103,23 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         Juego.consola.imprimir("Tiene el turno: " + actual.getNombre());
     }
 
-    public void crearJugador(String nombre, String tipoAvatar) {
+    public void crearJugador(String nombre, String tipoAvatar) throws MonopolyEtseException {
         Casilla salida;
-        try {
-            salida = tablero.encontrar_casilla("Salida");
-        } catch (Exception e) {
-            Juego.consola.imprimir("No se pudo localizar la casilla 'Salida'.");
-            return;
-        }
+        salida = tablero.encontrar_casilla("Salida");
         if (salida == null) {
-            Juego.consola.imprimir("No se encontró 'Salida' en el tablero.");
-            return;
+            throw new AccionInvalidaException("Error crítico: No se encontró la casilla 'Salida' en el tablero.");
         }
 
         Jugador j;
-        try {
-            j = new Jugador(nombre, tipoAvatar, salida, avatares);
-        } catch (Exception e) {
-            Juego.consola.imprimir("Error creando jugador: " + e.getMessage());
-            return;
+        j = new Jugador(nombre, tipoAvatar, salida, avatares);
+        if (j.getNombre() == null) {
+            throw new AccionInvalidaException("Error creando jugador");
         }
+
         jugadores.add(j);
         Juego.consola.imprimir("Creado jugador '" + nombre + "' con avatar '" + tipoAvatar + "' en Salida.");
         try {
-            Juego.consola.imprimir(tablero);
+            Juego.consola.imprimir(tablero.toString());
         } catch (Throwable ignored) {
         }
     }
@@ -117,10 +133,9 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         }
     }
 
-    public void descJugador(String nombreBuscado) {
+    public void descJugador(String nombreBuscado) throws MonopolyEtseException{
         if (nombreBuscado == null || nombreBuscado.isEmpty()) {
-            Juego.consola.imprimir("Uso: describir jugador <Nombre>");
-            return;
+            throw new AccionInvalidaException("Uso: describir jugador <Nombre>");
         }
         if (!hayJugadores()) {
             return;
@@ -134,8 +149,7 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
             }
         }
         if (j == null) {
-            Juego.consola.imprimir("No existe el jugador: " + nombreBuscado);
-            return;
+            throw new AccionInvalidaException("Este jugador no existe");
         }
 
         String nombre = j.getNombre();
@@ -206,10 +220,10 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         Juego.consola.imprimir("  Hipotecas: " + hipotecadas);
         Juego.consola.imprimir("  Edificios:" + edificiosLista);
         Juego.consola.imprimir("  En cárcel: " + enCarcel);
-        Juego.consola.imprimir();
+        Juego.consola.imprimir("");
     }
 
-    public void descAvatar(String ID) {
+    public void descAvatar(String ID) throws MonopolyEtseException {
         if (ID == null || ID.isEmpty()) return;
         if (avatares == null || avatares.isEmpty()) return;
 
@@ -222,8 +236,8 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
             }
         }
         if (encontrado == null) {
-            Juego.consola.imprimir("No existe el avatar con ID: " + idBuscado);
-            return;
+            throw new AccionInvalidaException ("No existe el avatar con ese ID");
+
         }
 
         String tipo = encontrado.getTipo();
@@ -239,32 +253,27 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         Juego.consola.imprimir("  Tipo: " + tipo);
         Juego.consola.imprimir("  Jugador: " + jugadorNombre);
         Juego.consola.imprimir("  Posición: " + pos);
-        Juego.consola.imprimir();
+        Juego.consola.imprimir("");
     }
 
-    public void descCasilla(String nombre) {
+    public void descCasilla(String nombre) throws MonopolyEtseException{
         if (nombre == null || nombre.isEmpty()) return;
         Casilla c = null;
-        try {
-            c = tablero.encontrar_casilla(nombre);
-        } catch (Throwable ignore) {
-        }
-
+        c = tablero.encontrar_casilla(nombre);
         if (c == null) {
-            Juego.consola.imprimir("No se encontró la casilla: " + nombre);
-            return;
+            throw new AccionInvalidaException ("No existe la casilla con ese nombre");
         }
         // Casilla.toString() ya hace lo correcto en las hijas
         Juego.consola.imprimir(c.toString());
     }
 
-    public void lanzarDados() {
+    public void lanzarDados() throws MonopolyEtseException{
         if (!hayJugadores()) {
             return;
         }
         if (lanzamientos == 1) {
-            Juego.consola.imprimir("Ya has tirado una vez, no puedes volver a tirar.");
-            return;
+            // Ya no hacemos imprimir + return, sino que lanzamos la excepción
+            throw new AccionInvalidaException("Ya has tirado una vez, no puedes volver a tirar.");
         }
         Jugador actual = jugadores.get(turno);
 
@@ -303,7 +312,7 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
             doblesConsecutivos = 0;
             tirado = true;
         }
-
+//FIX ME: ME QUEDE AQUI
         try {
             Avatar a = actual.getAvatar();
             a.moverAvatar(tablero.getPosiciones(), suma);
@@ -321,7 +330,7 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
             Juego.consola.imprimir("(Aviso) Error en movimiento: " + e.getMessage());
             return;
         }
-        Juego.consola.imprimir(tablero);
+        Juego.consola.imprimir(tablero.toString());
 
         if (esDoble) {
             Juego.consola.imprimir(actual.getNombre() + " ha sacado dobles y puede volver a lanzar.");
@@ -364,7 +373,7 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         }
 
         try {
-            Juego.consola.imprimir(tablero);
+            Juego.consola.imprimir(tablero.toString());
         } catch (Throwable ignore) {
         }
         if (esDoble) tirado = false;
@@ -416,7 +425,7 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         }
         Juego.consola.imprimir(actual.getNombre() + " compra '" + prop.getNombre() + "' por " + precio + ".");
         Juego.consola.imprimir("La fortuna actual de " + actual.getNombre() + " es: " + actual.getFortuna() + ".");
-        Juego.consola.imprimir(tablero);
+        Juego.consola.imprimir(tablero.toString());
     }
 
     public void salirCarcel() {
@@ -437,7 +446,7 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         actual.salirCarcel();
         Juego.consola.imprimir(actual.getNombre() + " paga y sale de la cárcel.");
         try {
-            Juego.consola.imprimir(tablero);
+            Juego.consola.imprimir(tablero.toString());
         } catch (Throwable ignored) {
         }
     }
@@ -661,16 +670,16 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
                 Juego.consola.imprimir("propiedad: " + s.getNombre() + ",");
 
                 // Listar edificios por tipo (delegando al método auxiliar)
-                System.out.print("  casas: ");
+                Juego.consola.imprimirSinSalto("  casas: ");
                 listarEdificiosPorTipo(s, Edificio.Tipo.CASA);
 
-                System.out.print("  hoteles: ");
+                Juego.consola.imprimirSinSalto("  hoteles: ");
                 listarEdificiosPorTipo(s, Edificio.Tipo.HOTEL);
 
-                System.out.print("  piscinas: ");
+                Juego.consola.imprimirSinSalto("  piscinas: ");
                 listarEdificiosPorTipo(s, Edificio.Tipo.PISCINA);
 
-                System.out.print("  pistasDeDeporte: ");
+                Juego.consola.imprimirSinSalto("  pistasDeDeporte: ");
                 listarEdificiosPorTipo(s, Edificio.Tipo.PISTA);
 
                 // Calcular alquiler actual manualmente para mostrarlo
@@ -937,6 +946,11 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         }
     }
 
+    @Override
+    public void estadisticasJugador(String nombre) {
+        consola.imprimir("holamundo");
+    }
+
     // Método auxiliar actualizado para aceptar 'Solar' en vez de 'Casilla'
     private void eliminarEdificiosDe(Solar s, Jugador propietario, Edificio.Tipo tipo, int n) {
         if (n <= 0) return;
@@ -960,8 +974,15 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
         }
     }
 
+    // Antes llamaba a Carta.sacarCarta (estático)
+    // Ahora llama a this.baraja.sacarCarta (instancia)
     public void procesarCasillaEspecial(Jugador jugador, String tipoCasilla) {
-        Carta.sacarCarta(tipoCasilla).ejecutar(jugador, this);
+        Carta c = this.baraja.sacarCarta(tipoCasilla); // Usamos nuestra instancia
+        if (c != null) {
+            c.accion(jugador, this);
+        } else {
+            Juego.consola.imprimir("Error: No hay cartas disponibles de tipo " + tipoCasilla);
+        }
     }
 
     public void moverJugadorACasilla(Jugador jugador, String nombreCasilla, boolean cobrarSalida) {
@@ -1099,6 +1120,13 @@ public class Juego implements Comando { // <-- Añadir implements Comando (ver p
             }
         }
         return total;
+    }
+    public void proponerTrato(String comando){
+        try{
+            if(!hayJugadores()) return;
+            Jugador proponente = jugadores.get(turno);
+
+        }
     }
 }
 

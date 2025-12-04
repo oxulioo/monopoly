@@ -22,9 +22,10 @@ public class Parking extends Accion {
             // Resetear bote (necesitas un método para esto o setearlo a 0 si tienes acceso)
             // Como el atributo bote es privado en Parking, lo manejamos aquí:
             this.bote = 0;
-            System.out.println(actual.getNombre() + " cae en el Parking y se lleva el bote de " + premio + "€.");
+
+            Juego.consola.imprimir(actual.getNombre() + " cae en el Parking y se lleva el bote de " + premio + "€.");
         } else {
-            System.out.println(actual.getNombre() + " cae en el Parking, pero el bote está a 0€.");
+            Juego.consola.imprimir(actual.getNombre() + " cae en el Parking, pero el bote está a 0€.");
         }
     }
 

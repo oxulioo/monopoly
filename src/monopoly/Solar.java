@@ -1,8 +1,6 @@
 package monopoly;
 
 import partida.Jugador;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Solar extends Propiedad {
 
@@ -127,32 +125,6 @@ public class Solar extends Propiedad {
     public String toString() {
         return infoCasilla(); // Reutiliza tu infoCasilla si la traes, o reimplementamos el string
     }
-/*
-    // Método auxiliar para usar tu infoCasilla original
-    public String infoCasilla() {
-        // COPIA PEGA DE TU INFO CASILLA (parte Solar)
-        String grupoStr = (this.grupo != null) ? this.grupo.getColorGrupo() : "-";
-        String propietario = (this.dueno == null) ? "Banca" : this.dueno.getNombre();
-
-        return "{\n"
-                + "nombre: " + nombre + ",\n"
-                + "tipo: solar,\n"
-                + "grupo: " + grupoStr + ",\n"
-                + "propietario: " + propietario + ",\n"
-                + "valor: " + this.valor + ",\n"
-                + "alquiler: " + this.alquilerBase + ",\n" // Ojo: alquilerBase
-                + "valor hotel: " + precioHotel + ",\n"
-                + "valor casa: " + precioCasa + ",\n"
-                + "valor piscina: " + precioPiscina + ",\n"
-                + "valor pista de deporte: " + precioPistaDeporte + ",\n"
-                + "alquiler casa: " + alquilerCasa + ",\n"
-                + "alquiler hotel: " + alquilerHotel + ",\n"
-                + "alquiler piscina: " + alquilerPiscina + ",\n"
-                + "alquiler pista de deporte: " + alquilerPistaDeporte + ",\n"
-                + "}";
-    }
-*/
-    // ... (Tu código termina aquí)
 
     // Método auxiliar para usar tu infoCasilla original
     public String infoCasilla() {
@@ -186,41 +158,82 @@ public class Solar extends Propiedad {
                 + "}";
     }
 
-    // --- IMPLEMENTACIÓN ADICIONAL PARA COMPLETAR EL REQUISITO DEL PDF (Solo al final) ---
-
-    // Complemento a hipotecar/estaHipotecada. Necesario para el flujo del juego.
     public void deshipotecar() {
         // La lógica de pago (hipoteca + interés) se debe manejar en Juego.java o Jugador.java.
         // Esta implementación solo cambia el estado de la propiedad.
         this.sethipotecada(0);
     }
 
-    // Requisito 26: void edificar(String tipoEdificio)
-    public void edificar(String tipo) {
-        // NOTA: La lógica de control (comprobación de reglas, cobro, asignación de ID
-        // y la creación del objeto Edificio) se debe ejecutar en Juego.java.
-        // Este método asume que el objeto Edificio ya fue creado y añadido a la lista 'edificios'.
+    private String generarIdEdificio(String prefijo) {
+        return prefijo + "-" + (this.edificios.size() + 1);
+    }
 
-        // Aquí solo actualizamos los contadores internos de Solar:
+    public void edificar(String tipo) {
+        // Validación básica (el resto de validaciones de dinero/grupo están en Juego.java)
+        // Aquí solo instanciamos y guardamos.
+
+        Edificio nuevoEdificio = null;
+        Jugador propietario = this.getDueno();
+
         switch (tipo.toLowerCase()) {
             case "casa":
+                nuevoEdificio = new Casa(generarIdEdificio("casa"), this, propietario);
                 this.setNumCasas(this.getNumCasas() + 1);
                 break;
+
             case "hotel":
-                // Al construir hotel, se venden las casas (si hay).
+                // Regla: Al poner un hotel, se quitan las casas previas
+                // Debemos borrar las casas de la lista 'edificios'
+                eliminarCasasParaHotel();
+
+                nuevoEdificio = new Hotel(generarIdEdificio("hotel"), this, propietario);
+                this.setNumCasas(0); // Reset contador casas
                 this.setNumHoteles(this.getNumHoteles() + 1);
-                this.setNumCasas(0);
                 break;
+
             case "piscina":
+                nuevoEdificio = new Piscina(generarIdEdificio("piscina"), this, propietario);
                 this.setNumPiscinas(this.getNumPiscinas() + 1);
                 break;
+
             case "pista deporte":
+            case "pista":
+                nuevoEdificio = new PistaDeporte(generarIdEdificio("pista"), this, propietario);
                 this.setNumPistas(this.getNumPistas() + 1);
                 break;
+
             default:
-                Juego.consola.imprimir("Error: Tipo de edificio '" + tipo + "' no reconocido.");
+                // Si el tipo no existe, salimos
+                return;
+        }
+
+        if (nuevoEdificio != null) {
+            this.edificios.add(nuevoEdificio); // ¡IMPORTANTE! Añadimos a la lista
+            // También deberíamos añadirlo a la lista del jugador si la tiene
+            if (propietario != null) {
+                propietario.anadirEdificio(nuevoEdificio);
+            }
         }
     }
+
+    // Método auxiliar para limpiar casas al construir hotel
+    private void eliminarCasasParaHotel() {
+        // Usamos un iterador para borrar de forma segura mientras recorremos
+        java.util.Iterator<Edificio> iter = edificios.iterator();
+        int casasBorradas = 0;
+        while (iter.hasNext() && casasBorradas < 4) {
+            Edificio e = iter.next();
+            if (e instanceof Casa) {
+                iter.remove();
+                // También quitar de la lista del jugador
+                if (e.getPropietario() != null) {
+                    e.getPropietario().eliminarEdificio(e);
+                }
+                casasBorradas++;
+            }
+        }
+    }
+
 
 }
 

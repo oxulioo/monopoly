@@ -1,5 +1,7 @@
 package monopoly;
 import partida.*;
+import monopoly.exceptions.*;
+import monopoly.exceptions.MonopolyEtseException;
 
 
 public class Menu {
@@ -15,7 +17,7 @@ public class Menu {
     /*Método que interpreta el comando introducido y toma la acción correspondiente.
      * Parámetro: cadena de caracteres (el comando).
      */
-    public void analizarComando(String comando) {
+    public void analizarComando(String comando) throws MonopolyEtseException {
         if (comando == null) return;
         if (comando.isEmpty()) return;
 
@@ -30,8 +32,7 @@ public class Menu {
             String resto = comando.substring("crear jugador ".length());
             int idx = resto.lastIndexOf(' ');
             if (idx <= 0 || idx == resto.length() - 1) {
-                Juego.consola.imprimir("Uso: crear jugador <Nombre> <tipoAvatar>");
-                return;
+                throw new AccionInvalidaException("Formato incorrecto. Uso: crear jugador <Nombre> <tipoAvatar>");
             }
             String nombre = resto.substring(0, idx);
             String tipo = resto.substring(idx + 1);
@@ -73,8 +74,7 @@ public class Menu {
                     juego.lanzarDadosForzado(d1, d2);
                     return;
                 } catch (NumberFormatException nfe) {
-                    Juego.consola.imprimir("Uso: lanzar dados X+Y  (X e Y enteros)");
-                    return;
+                    throw new AccionInvalidaException("Los dados deben ser números enteros. Uso: lanzar dados X+Y");
                 }
             }
             // si no trae '+', dejará pasar al caso normal (lanzar dados)
@@ -175,13 +175,18 @@ public class Menu {
 
             String[] partes = comando.substring(7).split(" ");//Elimino los 7 primeros caracteres, es decir, "vender ", quedando la información
             //El split(" "); Lo que hace es, con el resto que queda, separarlo por espacios
-            if (partes.length >= 3) {//Si no hay tres partes en la entrada, no es válida
+            if (partes.length < 3) {
+                throw new AccionInvalidaException("Faltan datos. Uso: vender <tipo> <solar> <cantidad>");
+            } else {//Si no hay tres partes en la entrada, no es válida
                 String tipo = partes[0]; //"casas" por ejemplo
                 String solar = partes[1]; //"Solar1" por ejemplo
                 int cantidad = Integer.parseInt(partes[2]); // 3
+                try {
+                    cantidad = Integer.parseInt(partes[2]);
+                } catch (NumberFormatException e) {
+                    throw new AccionInvalidaException("La cantidad debe ser un número entero.");
+                }
                 juego.venderPropiedad(tipo, solar, cantidad);
-            } else {
-                Juego.consola.imprimir("Formato incorrecto. Escriba: vender <tipo> <solar> <cantidad>");
             }
         }
         if (comando.equals("estadisticas")) {
@@ -192,40 +197,42 @@ public class Menu {
             juego.estadisticasJugador(nombreJugador);
         }
 
-    }
-/*
+
         if (comando.startsWith("trato ")) {
+            String propuesta = comando.substring("trato ".length());
             juego.proponerTrato(comando);
             return;
         }
 
         if (comando.startsWith("aceptar trato")) { // ej: aceptar trato1
-            String id = comando.substring("aceptar ".length());
+            String id = comando.substring("aceptar trato".length()).trim();
             juego.aceptarTrato(id);
             return;
         }
 
         if (comando.startsWith("eliminar trato")) {
-            // llamar a juego.eliminarTrato...
+            String idtrato = comando.substring("eliminar trato".length()).trim();
+            juego.eliminarTrato(idtrato);
             return;
         }
 
         if (comando.equals("tratos")) {
-            // juego.listarTratos(jugadorActual);
+            juego.listarTratos();
             return;
         }
     }
-*/
+
     // Lector de comandos por consola
-    public void run() {
-        java.util.Scanner sc = new java.util.Scanner(System.in);
+    public void run() throws MonopolyEtseException {
+        //java.util.Scanner sc = new java.util.Scanner(System.in);
         Juego.consola.imprimir("Monopoly listo. Escribe comandos. (\"salir\" para terminar)");
         Juego.consola.imprimir("Ejemplos: ver tablero | crear jugador Ana coche | lanzar dados | comprar Solar1");
 
         while (true) {
-            System.out.print("> ");
-            if (!sc.hasNextLine()) break;
-            String linea = sc.nextLine().trim();
+            String linea = Juego.consola.leer("> ");
+            //Juego.consola.imprimir("> ");
+            if (linea == null) break;
+            linea = linea.trim();
             if (linea.isEmpty()) continue;
             if (linea.equalsIgnoreCase("salir")) {
                 Juego.consola.imprimir("¡Hasta luego!");
@@ -233,8 +240,30 @@ public class Menu {
             }
             try {
                 analizarComando(linea);
+            } catch (SaldoInsuficienteException e) { //bancarrota
+                // CASO 1: Problemas de dinero (Requisito 29: tratada diferente)
+                // Podrías ponerlo en rojo, o sugerir hipotecar
+                Juego.consola.imprimir("[!] PROBLEMA DE FONDOS: " + e.getMessage());
+
+            } catch (CompraNoPermitidaException e) {
+                // CASO 2: Error específico de compras
+                Juego.consola.imprimir("[!] COMPRA RECHAZADA: " + e.getMessage());
+
+            } catch (EdificacionNoPermitidaException e) {
+                // CASO 3: Error al edificar
+                Juego.consola.imprimir("[!] NO PUEDES CONSTRUIR: " + e.getMessage());
+
+            } catch (AccionInvalidaException e) {
+                // CASO 4: Otros errores de reglas (turno, moverse, etc)
+                Juego.consola.imprimir("[!] Acción no válida: " + e.getMessage());
+
+            } catch (MonopolyEtseException e) {
+                // CASO 5: Cualquier otra excepción propia que se nos haya olvidado
+                Juego.consola.imprimir("Error del juego: " + e.getMessage());
+
             } catch (Exception e) {
-                Juego.consola.imprimir("Error procesando comando: " + e.getMessage());
+                // Error inesperado de Java (Bugs, NullPointer, etc)
+                Juego.consola.imprimir("Ocurrió un error interno: " + e.toString());
             }
         }
     }
@@ -248,7 +277,33 @@ public class Menu {
         try (java.util.Scanner sc = new java.util.Scanner(new java.io.File(ruta))) {
             while (sc.hasNextLine()) {
                 String linea = sc.nextLine();
-                analizarComando(linea);
+                try {
+                    analizarComando(linea);
+                } catch (SaldoInsuficienteException e) { //bancarrota
+                    // CASO 1: Problemas de dinero (Requisito 29: tratada diferente)
+                    // Podrías ponerlo en rojo, o sugerir hipotecar
+                    Juego.consola.imprimir("[!] PROBLEMA DE FONDOS: " + e.getMessage());
+
+                } catch (CompraNoPermitidaException e) {
+                    // CASO 2: Error específico de compras
+                    Juego.consola.imprimir("[!] COMPRA RECHAZADA: " + e.getMessage());
+
+                } catch (EdificacionNoPermitidaException e) {
+                    // CASO 3: Error al edificar
+                    Juego.consola.imprimir("[!] NO PUEDES CONSTRUIR: " + e.getMessage());
+
+                } catch (AccionInvalidaException e) {
+                    // CASO 4: Otros errores de reglas (turno, moverse, etc)
+                    Juego.consola.imprimir("[!] Acción no válida: " + e.getMessage());
+
+                } catch (MonopolyEtseException e) {
+                    // CASO 5: Cualquier otra excepción propia que se nos haya olvidado
+                    Juego.consola.imprimir("Error del juego: " + e.getMessage());
+
+                } catch (Exception e) {
+                    // Error inesperado de Java (Bugs, NullPointer, etc)
+                    Juego.consola.imprimir("Ocurrió un error interno: " + e.toString());
+                }
             }
         } catch (Exception _) {
         }

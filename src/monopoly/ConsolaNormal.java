@@ -11,9 +11,14 @@ public class ConsolaNormal implements Consola {
     }
 
     @Override
+    public void imprimirSinSalto(String mensaje){
+        System.out.print(mensaje);
+    }
+
+    @Override
     public String leer(String descripcion) {
         if (descripcion != null) {
-            System.out.print(descripcion);
+            Juego.consola.imprimirSinSalto(descripcion);
         }
         return sc.nextLine();
     }

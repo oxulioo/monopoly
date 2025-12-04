@@ -36,39 +36,25 @@ public class Tablero {
 
         int hipoteca = valor / 2;
 
-        switch (nombre) {
-            case "Solar1": return new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 20000);
-            case "Solar2": return new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 40000);
-
-            case "Solar3": return new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 60000);
-            case "Solar4": return new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 60000);
-            case "Solar5": return new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 80000);
-
-            case "Solar6": return new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 100000);
-            case "Solar7": return new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 100000);
-            case "Solar8": return new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 120000);
-
-            case "Solar9": return new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 140000);
-            case "Solar10": return new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 140000);
-            case "Solar11": return new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 160000);
-
-            case "Solar12": return new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 180000);
-            case "Solar13": return new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 180000);
-            case "Solar14": return new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 200000);
-
-            case "Solar15": return new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 220000);
-            case "Solar16": return new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 220000);
-            case "Solar17": return new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 240000);
-
-            case "Solar18": return new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 260000);
-            case "Solar19": return new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 260000);
-            case "Solar20": return new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 280000);
-
-            case "Solar21": return new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 350000);
-            case "Solar22": return new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 500000);
-
-            default: return null;
-        }
+        return switch (nombre) {
+            case "Solar1" -> new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 20000);
+            case "Solar2" -> new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 40000);
+            case "Solar3", "Solar4" -> new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 60000);
+            case "Solar5" -> new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 80000);
+            case "Solar6", "Solar7" -> new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 100000);
+            case "Solar8" -> new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 120000);
+            case "Solar9", "Solar10" -> new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 140000);
+            case "Solar11" -> new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 160000);
+            case "Solar12", "Solar13" -> new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 180000);
+            case "Solar14" -> new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 200000);
+            case "Solar15", "Solar16" -> new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 220000);
+            case "Solar17" -> new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 240000);
+            case "Solar18", "Solar19" -> new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 260000);
+            case "Solar20" -> new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 280000);
+            case "Solar21" -> new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 350000);
+            case "Solar22" -> new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 500000);
+            default -> null;
+        };
     }
 
     private Casilla crearServicio(String nombre, int pos) {
@@ -91,7 +77,7 @@ public class Tablero {
     }
 
     private void insertarLadoSur() {
-        ArrayList<Casilla> sur = posiciones.get(0);
+        ArrayList<Casilla> sur = posiciones.getFirst();
         sur.add(new Salida(1)); // Antes: new Casilla("Salida", 1, TESPECIAL)
         sur.add(crearSolar("Solar1", 2, 600000));
         sur.add(new CajaComunidad(3)); // Antes: new Casilla("Caja", 3, TCOMUNIDAD)

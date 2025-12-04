@@ -95,8 +95,8 @@ public abstract class Propiedad extends Casilla {
         }
         // TU LÓGICA: Si no tiene dueño -> Info
         else if (dueno == null || dueno.getNombre().equals("Banca")) {
-            System.out.println("Estás en " + nombre + ". Pertenece a la Banca.");
-            System.out.println("Valor de compra: " + valor);
+            Juego.consola.imprimir("Estás en " + nombre + ". Pertenece a la Banca.");
+            Juego.consola.imprimir("Valor de compra: " + valor);
         }
     }
 }
