@@ -1,5 +1,14 @@
 package monopoly;
-import partida.*;
+import monopoly.carta.Baraja;
+import monopoly.carta.Carta;
+import monopoly.casilla.*;
+import monopoly.consola.Comando;
+import monopoly.consola.Consola;
+import monopoly.consola.ConsolaNormal;
+import monopoly.edificios.Edificio;
+import monopoly.jugador.Jugador;
+import monopoly.jugador.Trato;
+import monopoly.partida.*;
 import java.util.ArrayList;
 import monopoly.exceptions.*;
 
@@ -89,7 +98,7 @@ public class Juego implements Comando {
         dado1 = new Dado();
         dado2 = new Dado();
         tablero = new Tablero(this.banca);
-        this.baraja = new Baraja(); // <-- Reiniciar baraja al iniciar nueva partida
+        this.baraja = new Baraja(); // <-- Reiniciar baraja al iniciar nueva monopoly.partida
         this.baraja.barajar();
     }
 

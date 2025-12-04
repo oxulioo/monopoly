@@ -1,5 +1,4 @@
 package monopoly;
-import partida.*;
 import monopoly.exceptions.*;
 import monopoly.exceptions.MonopolyEtseException;
 
@@ -199,7 +198,6 @@ public class Menu {
 
 
         if (comando.startsWith("trato ")) {
-            String propuesta = comando.substring("trato ".length());
             juego.proponerTrato(comando);
             return;
         }
