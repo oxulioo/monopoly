@@ -1,6 +1,7 @@
 package monopoly.casilla;
 
 import monopoly.Juego;
+import monopoly.exceptions.MonopolyEtseException;
 import monopoly.jugador.Jugador;
 
 public class CajaComunidad extends Accion {

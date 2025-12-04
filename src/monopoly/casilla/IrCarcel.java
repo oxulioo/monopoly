@@ -1,6 +1,7 @@
 package monopoly.casilla;
 
 import monopoly.Juego;
+import monopoly.exceptions.MonopolyEtseException;
 import monopoly.jugador.Jugador;
 
 public class IrCarcel extends Especial {
@@ -10,10 +11,8 @@ public class IrCarcel extends Especial {
     }
 
     @Override
-    public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
+    public void evaluarCasilla(Jugador actual, Juego juego, int tirada) throws MonopolyEtseException {
         this.incrementarVisita();
-        // Nota: El movimiento físico del avatar lo suele hacer Juego tras llamar a esto,
-        // o si usas el método enviarACarcel de Juego que también mueve el avatar.
         juego.enviarACarcel(actual);
     }
 

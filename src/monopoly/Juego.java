@@ -148,6 +148,7 @@ public class Juego implements Comando {
         }
         if (j == null) {
             throw new AccionInvalidaException("Este jugador no existe");
+
         }
 
         String nombre = j.getNombre();
@@ -224,9 +225,11 @@ public class Juego implements Comando {
     public void descAvatar(String ID) throws MonopolyEtseException {
         if (ID == null || ID.isEmpty()) {
             throw new AccionInvalidaException("Debes especificar un ID de avatar");
+
         }
         if (avatares == null || avatares.isEmpty()) {
             throw new AccionInvalidaException("No hay avatares creados");
+
         }
 
         char idBuscado = ID.charAt(0);
@@ -239,6 +242,7 @@ public class Juego implements Comando {
         }
         if (encontrado == null) {
             throw new AccionInvalidaException ("No existe el avatar con ese ID");
+
 
         }
 
@@ -261,11 +265,13 @@ public class Juego implements Comando {
     public void descCasilla(String nombre) throws MonopolyEtseException{
         if (nombre == null || nombre.isEmpty()){
             throw new AccionInvalidaException("Debes especificar un nombre de casilla");
+
         }
         Casilla c = null;
         c = tablero.encontrar_casilla(nombre);
         if (c == null) {
             throw new AccionInvalidaException ("No existe la casilla con ese nombre");
+
         }
         // Casilla.toString() ya hace lo correcto en las hijas
         Juego.consola.imprimir(c.toString());
@@ -274,9 +280,11 @@ public class Juego implements Comando {
     public void lanzarDados() throws MonopolyEtseException{
         if (!hayJugadores()) {
             throw new AccionInvalidaException("No hay jugadores");
+
         }
         if (lanzamientos == 1) {
             throw new AccionInvalidaException("Ya has tirado una vez, no puedes volver a tirar.");
+
         }
         Jugador actual = jugadores.get(turno);
 
@@ -372,6 +380,7 @@ public class Juego implements Comando {
             if (c != null) c.evaluarCasilla(actual, this, suma);
             else {
                 throw new AccionInvalidaException("No hay casilla para mover el avatar");
+
             }
 
 
@@ -385,6 +394,7 @@ public class Juego implements Comando {
     public void comprar(String nombre) throws MonopolyEtseException{
         if (!hayJugadores()) {
             throw new AccionInvalidaException("No hay jugadores");
+
         }
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
@@ -393,6 +403,7 @@ public class Juego implements Comando {
         Casilla cas = tablero.encontrar_casilla(nombre);
         if (cas == null) {
            throw new AccionInvalidaException ("No existe la casilla con ese nombre");
+
         }
 
         // CORRECCIÓN: Check Propiedad
@@ -430,6 +441,7 @@ public class Juego implements Comando {
     public void salirCarcel() throws MonopolyEtseException{
         if (!hayJugadores()) {
             throw new AccionInvalidaException("No hay jugadores");
+
         }
         Jugador actual = jugadores.get(turno);
         if (!actual.isEnCarcel()) {
@@ -545,7 +557,17 @@ public class Juego implements Comando {
         if (!(pos instanceof Solar)) {
             throw new EdificacionNoPermitidaException("Solo se puede edificar propiedades.");
         }
+
+
         Solar s = (Solar) pos;
+        // VALIDACIÓN: No puedes construir casas si ya hay edificios superiores
+        if (s.getNumHoteles() > 0 || s.getNumPiscinas() > 0 || s.getNumPistas() > 0) {
+            throw new EdificacionNoPermitidaException("No puedes edificar casas porque ya has mejorado esta propiedad (Hotel/Piscina/Pista).");
+        }
+        // VALIDACIÓN: Límite de 4 casas
+        if (s.getNumCasas() >= 4) {
+            throw new EdificacionNoPermitidaException("Límite de casas alcanzado (4). Debes evolucionar a Hotel.");
+        }
 
         // CORRECCIÓN: Grupo es Propiedad, pero Solar lo tiene.
         if (s.getGrupo() == null || !s.getGrupo().esDuenoGrupo(actual)) {
@@ -569,6 +591,15 @@ public class Juego implements Comando {
         if (!(pos instanceof Solar)){
             throw new EdificacionNoPermitidaException("Solo se puede edificar propiedades.");
         }
+        Solar s = (Solar) pos;
+        // VALIDACIÓN: No puedes construir hotel si ya lo tienes o tienes mejoras superiores
+        if (s.getNumHoteles() > 0 || s.getNumPiscinas() > 0 || s.getNumPistas() > 0) {
+            throw new EdificacionNoPermitidaException("Ya tienes un hotel (o una mejora superior) en esta propiedad.");
+        }
+        // VALIDACIÓN: Requisito previo (4 casas)
+        if (s.getNumCasas() != 4) {
+            throw new EdificacionNoPermitidaException("Necesitas tener exactamente 4 casas para poder edificar un hotel.");
+        }
         ((Solar) pos).edificar("hotel");
     }
 
@@ -578,8 +609,18 @@ public class Juego implements Comando {
         }
         Jugador actual = jugadores.get(turno);
         Casilla pos = actual.getAvatar().getPosicion();
+
         if (!(pos instanceof Solar)) {
             throw new EdificacionNoPermitidaException("Solo se puede edificar propiedades.");
+        }
+        // VALIDACIÓN: Requisito previo (Tener Hotel)
+        Solar s = (Solar) pos;
+        if (s.getNumHoteles() == 0) {
+            throw new EdificacionNoPermitidaException("No puedes edificar una piscina sin tener previamente un hotel.");
+        }
+        // VALIDACIÓN: No puedes construir piscina si ya tienes una o algo superior
+        if (s.getNumPiscinas() > 0 || s.getNumPistas() > 0) {
+            throw new EdificacionNoPermitidaException("Ya tienes una piscina (o una mejora superior) en esta propiedad.");
         }
         ((Solar) pos).edificar("piscina");
     }
@@ -592,6 +633,15 @@ public class Juego implements Comando {
         Casilla pos = actual.getAvatar().getPosicion();
         if (!(pos instanceof Solar)){
             throw new EdificacionNoPermitidaException("Solo se puede edificar propiedades.");
+        }
+        Solar s = (Solar) pos;
+        // VALIDACIÓN: Requisitos previos (Hotel y Piscina)
+        if (s.getNumHoteles() == 0 || s.getNumPiscinas() == 0) {
+            throw new EdificacionNoPermitidaException("Para edificar una pista necesitas tener un hotel y una piscina.");
+        }
+        // VALIDACIÓN: Límite (Máximo 1 pista)
+        if (s.getNumPistas() > 0) {
+            throw new EdificacionNoPermitidaException("Ya hay una pista de deporte construida en esta propiedad.");
         }
         ((Solar) pos).edificar("pista");
     }
@@ -744,10 +794,9 @@ public class Juego implements Comando {
     }
 
     // Método auxiliar corregido con casteo
-    private void listarEdificiosPorTipo(Casilla c, Edificio.Tipo tipo)  {
+    private void listarEdificiosPorTipo(Casilla c, Edificio.Tipo tipo) throws MonopolyEtseException {
         if (!(c instanceof Solar)) {
-            Juego.consola.imprimir("-");
-            return;
+            throw new AccionInvalidaException("Solo se puede listar por grupo de color.");
         }
 
         Solar s = (Solar) c; // Casteo
@@ -768,8 +817,10 @@ public class Juego implements Comando {
         }
     }
 
-    public long costeConstruccion(Casilla c, Edificio.Tipo t) {
-        if (!(c instanceof Solar)) return 0;
+    public long costeConstruccion(Casilla c, Edificio.Tipo t) throws MonopolyEtseException {
+        if (!(c instanceof Solar)){
+            throw new AccionInvalidaException("Solo se puede listar por grupo de color y solar.");
+        };
         Solar s = (Solar) c;
         return switch (t) {
             case CASA -> s.getPrecioCasa();
@@ -780,10 +831,12 @@ public class Juego implements Comando {
     }
 
     // --- HIPOTECAS ---
-    public void hipotecar(String nombreProp) {
+    public void hipotecar(String nombreProp) throws MonopolyEtseException{
         Jugador actual = jugadores.get(turno);
         Casilla c = this.tablero.encontrar_casilla(nombreProp);
-        if (!(c instanceof Propiedad)) return;
+        if (!(c instanceof Propiedad)) {
+            throw new HipotecaNoPermitidaException("Solo se puede hipotecar propiedades.");
+        }
         Propiedad p = (Propiedad) c;
 
         if (!(p.getDueno().equals(actual))) return;
@@ -799,34 +852,30 @@ public class Juego implements Comando {
         }
     }
 
-    public void deshipotecar(String nombreSolar) {
+    public void deshipotecar(String nombreSolar) throws MonopolyEtseException{
         Jugador actual = jugadores.get(turno);
         Casilla c = this.tablero.encontrar_casilla(nombreSolar);
 
         // 1. Verificar si existe
         if (c == null) {
-            Juego.consola.imprimir("No existe la casilla: " + nombreSolar);
-            return;
+            throw new AccionInvalidaException("La casilla " + nombreSolar + " no existe.");
         }
 
         // 2. Verificar si es una Propiedad (Solar, Transporte, Servicio)
         if (!(c instanceof Propiedad)) {
-            Juego.consola.imprimir("La casilla " + c.getNombre() + " no es una propiedad y no se puede deshipotecar.");
-            return;
+            throw new HipotecaNoPermitidaException("La casilla " + c.getNombre() + " no es una propiedad y no se puede deshipotecar.");
         }
 
         Propiedad p = (Propiedad) c; // Casteo seguro
 
         // 3. Verificar dueño
         if (!p.perteneceAJugador(actual)) {
-            Juego.consola.imprimir(actual.getNombre() + " no puede deshipotecar " + p.getNombre() + ". No es su propiedad.");
-            return;
+            throw new HipotecaNoPermitidaException(actual.getNombre() + " no puede deshipotecar " + p.getNombre() + ". No es su propiedad.");
         }
 
         // 4. Verificar si está hipotecada
         if (p.gethipotecada() == 0) {
-            Juego.consola.imprimir(actual.getNombre() + " no puede deshipotecar " + p.getNombre() + ". No está hipotecada.");
-            return;
+            throw new HipotecaNoPermitidaException(actual.getNombre() + " no puede deshipotecar " + p.getNombre() + ". No está hipotecada.");
         }
 
         // 5. Calcular coste (Hipoteca + 10% de interés)
@@ -835,7 +884,7 @@ public class Juego implements Comando {
         // 6. Verificar solvencia y ejecutar
         if (actual.getFortuna() < coste) {
             Juego.consola.imprimir("No tienes dinero suficiente para deshipotecar " + p.getNombre() + ". Coste: " + coste + "€");
-            return;
+            throw new SaldoInsuficienteException(actual.getNombre(), coste- actual.getFortuna());
         }
 
         // Pagar y cambiar estado
@@ -849,27 +898,27 @@ public class Juego implements Comando {
     }
 
     // --- VENDER ---
-    public void venderPropiedad(String tipo, String solarName, int cantidad) {
+    public void venderPropiedad(String tipo, String solarName, int cantidad) throws MonopolyEtseException{
         Jugador actual = jugadores.get(turno);
         Casilla c = this.tablero.encontrar_casilla(solarName);
 
         // 1. Validaciones básicas
         if (c == null) {
-            Juego.consola.imprimir("No existe la casilla: " + solarName);
-            return;
+            throw new AccionInvalidaException("La casilla " + solarName + " no existe.");
+
         }
 
         // 2. Validación de tipo: Solo los Solares se pueden vender por partes (edificios)
         if (!(c instanceof Solar)) {
-            Juego.consola.imprimir("La casilla " + solarName + " no es un Solar, no se puede vender " + tipo + ".");
-            return;
+            throw new AccionInvalidaException("La casilla " + solarName + " no es un Solar, no se puede vender " + tipo + ".");
+
         }
         Solar s = (Solar) c; // Casteo a Solar para acceder a sus métodos
 
         // 3. Validación de dueño
         if (!s.getDueno().equals(actual)) {
-            Juego.consola.imprimir("No se pueden vender " + tipo + " en " + s.getNombre() + ". Esta propiedad no pertenece a " + actual.getNombre() + ".");
-            return;
+            throw new AccionInvalidaException("No se pueden vender " + tipo + " en " + s.getNombre() + ". Esta propiedad no pertenece a " + actual.getNombre() + ".");
+
         }
 
         String t = tipo.toLowerCase();
@@ -879,8 +928,8 @@ public class Juego implements Comando {
             case "casas":
                 int vendidas = Math.min(cantidad, s.getNumCasas());
                 if (s.getNumCasas() == 0) {
-                    Juego.consola.imprimir("No hay casas en esta propiedad.");
-                    return;
+                    throw new AccionInvalidaException("No hay casas en " + s.getNombre() + ".");
+
                 }
                 if (s.getNumCasas() < cantidad) {
                     Juego.consola.imprimir("No hay suficientes casas en esta propiedad. Se venderán " + s.getNumCasas() + " casas. Recibiendo " + s.getNumCasas() * s.getPrecioCasa());
@@ -899,8 +948,8 @@ public class Juego implements Comando {
 
             case "pista":
                 if (s.getNumPistas() == 0) {
-                    Juego.consola.imprimir("No hay Pistas en esta propiedad");
-                    return;
+                   throw new AccionInvalidaException("No hay pistas en " + s.getNombre() + ".");
+
                 }
                 if (cantidad > 1 && s.getNumPistas() == 1) {
                     Juego.consola.imprimir("Solamente se puede vender 1 pista, recibiendo " + s.getPrecioPistaDeporte());
@@ -916,8 +965,8 @@ public class Juego implements Comando {
 
             case "piscina":
                 if (s.getNumPiscinas() == 0) {
-                    Juego.consola.imprimir("No hay Piscinas en esta propiedad");
-                    return;
+                    throw new AccionInvalidaException("No hay piscinas en " + s.getNombre() + ".");
+
                 }
                 if (cantidad > 1 && s.getNumPiscinas() == 1) {
                     Juego.consola.imprimir("Solamente se puede vender 1 piscina, recibiendo " + s.getPrecioPiscina());
@@ -933,8 +982,8 @@ public class Juego implements Comando {
 
             case "hoteles":
                 if (s.getNumHoteles() == 0) {
-                    Juego.consola.imprimir("No hay Hoteles en esta propiedad");
-                    return;
+                   throw new AccionInvalidaException("No hay hoteles en " + s.getNombre() + ".");
+
                 }
                 if (cantidad > 1 && s.getNumHoteles() == 1) {
                     Juego.consola.imprimir("Solamente se puede vender 1 hotel, recibiendo " + s.getPrecioHotel());
@@ -958,7 +1007,7 @@ public class Juego implements Comando {
 
     @Override
     public void estadisticasJugador(String nombre) {
-        consola.imprimir("holamundo");
+        consola.imprimir("holamundo COPIAR Y PEGAR DE GITHUBBBBBBB BUSCAR VERSION ANTARIORE");
     }
 
     // Método auxiliar actualizado para aceptar 'Solar' en vez de 'Casilla'
@@ -987,16 +1036,16 @@ public class Juego implements Comando {
 
     // Antes llamaba a Carta.sacarCarta (estático)
     // Ahora llama a this.baraja.sacarCarta (instancia)
-    public void procesarCasillaEspecial(Jugador jugador, String tipoCasilla) {
+    public void procesarCasillaEspecial(Jugador jugador, String tipoCasilla) throws MonopolyEtseException {
         Carta c = this.baraja.sacarCarta(tipoCasilla); // Usamos nuestra instancia
         if (c != null) {
             c.accion(jugador, this);
         } else {
-            Juego.consola.imprimir("Error: No hay cartas disponibles de tipo " + tipoCasilla);
+            throw new AccionInvalidaException("No hay cartas de " + tipoCasilla + " disponibles.");
         }
     }
 
-    public void moverJugadorACasilla(Jugador jugador, String nombreCasilla, boolean cobrarSalida) {
+    public void moverJugadorACasilla(Jugador jugador, String nombreCasilla, boolean cobrarSalida) throws MonopolyEtseException {
         Casilla destino = tablero.encontrar_casilla(nombreCasilla);
         if (destino != null) {
             if (cobrarSalida && pasaPorSalida(jugador.getAvatar().getPosicion(), destino)) {
@@ -1004,17 +1053,27 @@ public class Juego implements Comando {
                 jugador.getEstadisticas().sumarPasarPorSalida();
             }
             jugador.getAvatar().setPosicion(destino);
-            destino.evaluarCasilla(jugador, this, 0);
+            try {
+                destino.evaluarCasilla(jugador, this, 0);
+            } catch (MonopolyEtseException e) {
+                Juego.consola.imprimir("Error al evaluar la casilla destino: " + e.getMessage());
+                throw e;
+            }
         }
     }
 
     // funcion analoga a la anterior pero mueve hacia atras
-    public void moverJugadorAPosicion(Jugador jugador, int posicion) {
+    public void moverJugadorAPosicion(Jugador jugador, int posicion) throws MonopolyEtseException {
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
             for (Casilla c : lado) {
                 if (c.getPosicion() == posicion) {
                     jugador.getAvatar().setPosicion(c);
-                    c.evaluarCasilla(jugador, this, 0);
+                    try {
+                        c.evaluarCasilla(jugador, this, 0);
+                    } catch (MonopolyEtseException e) {
+                        Juego.consola.imprimir("Error al evaluar la casilla tras mover: " + e.getMessage());
+                        throw e;
+                    }
                     return;
                 }
             }
@@ -1170,16 +1229,16 @@ public class Juego implements Comando {
     }
     @Override
     // --- REQUISITO 32: PROPONER TRATO ---
-    public void proponerTrato(String comando) {
+    public void proponerTrato(String comando) throws MonopolyEtseException{
         try {
-            if (!hayJugadores()) return;
+            if (!hayJugadores()) {
+                throw new AccionInvalidaException("No hay jugadores en el juego.");
+            };
             Jugador proponente = jugadores.get(turno);
 
-            // 1. Validar formato y extraer partes
+            // --- 1. PARSEO BÁSICO DEL COMANDO ---
             int posDosPuntos = comando.indexOf(':');
-            if (posDosPuntos == -1) {
-                throw new AccionInvalidaException("Formato incorrecto. Falta ':'. Uso: trato <Jugador>: cambiar (...)");
-            }
+            if (posDosPuntos == -1) throw new AccionInvalidaException("Formato incorrecto. Falta ':'.");
 
             String nombreDestino = comando.substring(6, posDosPuntos).trim();
             String resto = comando.substring(posDosPuntos + 1).trim();
@@ -1188,52 +1247,49 @@ public class Juego implements Comando {
                 throw new AccionInvalidaException("Formato incorrecto. Debe ser: cambiar (lo_que_das, lo_que_pides)");
             }
 
+            // Quitamos "cambiar (" y ")" y separamos por la coma
             String contenido = resto.substring(9, resto.length() - 1);
-            String[] partes = contenido.split(",");
+            String[] lados = contenido.split(",");
 
-            if (partes.length != 2) {
-                throw new AccionInvalidaException("Debes separar oferta y demanda con una coma.");
-            }
+            if (lados.length != 2) throw new AccionInvalidaException("Debes separar oferta y demanda con una coma.");
 
-            // 2. Identificar Jugador y validar roles
+            // --- 2. JUGADORES ---
             Jugador propuesto = buscarJugador(nombreDestino);
             if (propuesto == null) throw new AccionInvalidaException("El jugador " + nombreDestino + " no existe.");
             if (propuesto == proponente) throw new AccionInvalidaException("No puedes proponerte tratos a ti mismo.");
 
-            // 3. Interpretar elementos
-            Object[] oferta = parsearElementosTrato(partes[0].trim());
-            Object[] demanda = parsearElementosTrato(partes[1].trim());
+            // --- 3. USAMOS LOS MÉTODOS SIMPLES ---
+            // Lado 0: Lo que OFRECE el proponente
+            Propiedad propOfrece = sacarPropiedad(lados[0]);
+            int dineroOfrece = sacarDinero(lados[0]);
 
-            Propiedad propOfrece = (Propiedad) oferta[0];
-            int dineroOfrece = (int) oferta[1];
-            Propiedad propPide = (Propiedad) demanda[0];
-            int dineroPide = (int) demanda[1];
+            // Lado 1: Lo que PIDE (demanda)
+            Propiedad propPide = sacarPropiedad(lados[1]);
+            int dineroPide = sacarDinero(lados[1]);
 
-            // 4. Validaciones de Reglas (Usando tus Excepciones)
+            // --- 4. VALIDACIONES DE REGLAS ---
             if (propOfrece != null && !propOfrece.perteneceAJugador(proponente)) {
-                throw new AccionInvalidaException("No puedes proponer el trato: " + propOfrece.getNombre() + " no te pertenece.");
+                throw new AccionInvalidaException("No puedes ofrecer " + propOfrece.getNombre() + " porque no es tuya.");
             }
-
             if (dineroOfrece > 0 && proponente.getFortuna() < dineroOfrece) {
                 throw new SaldoInsuficienteException(proponente.getNombre(), dineroOfrece - proponente.getFortuna());
             }
-
             if (propPide != null && !propPide.perteneceAJugador(propuesto)) {
                 throw new AccionInvalidaException("No puedes pedir " + propPide.getNombre() + " porque no pertenece a " + propuesto.getNombre());
             }
 
-            // 5. Crear y registrar el trato (Asegúrate de que Jugador.java tiene recibirTrato)
+            // --- 5. CREAR Y GUARDAR ---
             Trato nuevoTrato = new Trato(proponente, propuesto, propOfrece, dineroOfrece, propPide, dineroPide);
 
             propuesto.recibirTrato(nuevoTrato);
-            proponente.recibirTrato(nuevoTrato); // Para que el proponente pueda eliminarlo
+            proponente.recibirTrato(nuevoTrato);
 
             Juego.consola.imprimir("Trato propuesto con éxito: " + nuevoTrato.getId());
 
         } catch (MonopolyEtseException e) {
-            Juego.consola.imprimir("Error al proponer trato: " + e.getMessage());
+            Juego.consola.imprimir("Error: " + e.getMessage());
         } catch (Exception e) {
-            Juego.consola.imprimir("Error interno. Revisa el formato de la propuesta.");
+            Juego.consola.imprimir("Error de formato. Ejemplo: trato Ana: cambiar (Solar1, 5000)");
         }
     }
 
@@ -1258,21 +1314,21 @@ public class Juego implements Comando {
 
     // --- REQUISITO 33: ACEPTAR TRATO ---
     @Override
-    public void aceptarTrato(String idTrato) {
-        if (!hayJugadores()) return;
+    public void aceptarTrato(String idTrato) throws MonopolyEtseException{
+        if (!hayJugadores()) throw new AccionInvalidaException("No hay jugadores en el juego.");
         Jugador aceptante = jugadores.get(turno);
 
         // Asumo que Jugador tiene getTrato(id)
         Trato t = aceptante.getTrato(idTrato);
 
         if (t == null) {
-            Juego.consola.imprimir("No se encontró el trato " + idTrato + " en tu lista.");
-            return;
+            throw new AccionInvalidaException("No se encontró el trato " + idTrato + " en tu lista.");
+
         }
 
         if (t.getProponente() == aceptante) {
-            Juego.consola.imprimir("No puedes aceptarte un trato a ti mismo.");
-            return;
+            throw new AccionInvalidaException("No puedes aceptar tu propio trato.");
+
         }
 
         Jugador proponente = t.getProponente();
@@ -1329,20 +1385,19 @@ public class Juego implements Comando {
 
     // --- REQUISITO 35: ELIMINAR TRATO ---
     @Override
-    public void eliminarTrato(String idTrato) {
-        if (!hayJugadores()) return;
+    public void eliminarTrato(String idTrato) throws MonopolyEtseException{
+        if (!hayJugadores()) throw new AccionInvalidaException("No hay jugadores en el juego.");
         Jugador actual = jugadores.get(turno);
 
         Trato t = actual.getTrato(idTrato);
         if (t == null) {
-            Juego.consola.imprimir("No se encontró el trato " + idTrato);
-            return;
+            throw new AccionInvalidaException("No se encontró el trato " + idTrato);
+
         }
 
         // Regla: Solo el que propone puede eliminar
         if (t.getProponente() != actual) {
-            Juego.consola.imprimir("No puedes eliminar un trato que te han propuesto. Solo puedes aceptarlo o ignorarlo.");
-            return;
+            throw new AccionInvalidaException("No puedes eliminar este trato porque no lo propones.Solo puedes aceptarlo o ignorarlo.");
         }
 
         // Eliminar de ambos jugadores involucrados
@@ -1352,6 +1407,34 @@ public class Juego implements Comando {
         otro.eliminarTrato(idTrato);
 
         Juego.consola.imprimir("Se ha eliminado el trato " + idTrato);
+    }
+    // Método simple 1: Busca si hay dinero en el texto (ej: "Solar1 y 5000")
+    private int sacarDinero(String texto) {
+        // Separamos por " y "
+        String[] partes = texto.split(" y ");
+        for (String parte : partes) {
+            try {
+                // Si se puede convertir a número, es el dinero. Lo devolvemos.
+                return Integer.parseInt(parte.trim());
+            } catch (NumberFormatException e) {
+                // Si falla, no era número, seguimos buscando
+            }
+        }
+        return 0; // Si no encontramos dinero, devolvemos 0
+    }
+
+    // Método simple 2: Busca si hay una propiedad en el texto
+    private Propiedad sacarPropiedad(String texto) {
+        String[] partes = texto.split(" y ");
+        for (String parte : partes) {
+            // Buscamos si el texto coincide con una casilla
+            Casilla c = tablero.encontrar_casilla(parte.trim());
+            // Si existe y es una Propiedad, la devolvemos
+            if (c instanceof Propiedad) {
+                return (Propiedad) c;
+            }
+        }
+        return null; // Si no encontramos propiedad, devolvemos null
     }
 
 }

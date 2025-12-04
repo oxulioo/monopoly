@@ -1,6 +1,7 @@
 package monopoly.casilla;
 
 import monopoly.Juego;
+import monopoly.exceptions.MonopolyEtseException;
 import monopoly.jugador.Jugador;
 
 public class Suerte extends Accion {
@@ -10,7 +11,7 @@ public class Suerte extends Accion {
     }
 
     @Override
-    public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
+    public void evaluarCasilla(Jugador actual, Juego juego, int tirada) throws MonopolyEtseException {
         this.incrementarVisita();
         Juego.consola.imprimir(actual.getNombre() + " cae en Suerte.");
         // Delegamos en Juego la gestión de la carta, tal como tenías

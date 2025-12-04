@@ -1,6 +1,7 @@
 package monopoly.carta;
 
 import monopoly.Juego;
+import monopoly.exceptions.MonopolyEtseException;
 import monopoly.jugador.Jugador;
 
 public abstract class Carta {
@@ -16,5 +17,5 @@ public abstract class Carta {
     public String getDescripcion() { return descripcion; }
 
     // Método abstracto: cada hija definirá qué hace
-    public abstract void accion(Jugador jugador, Juego juego);
+    public abstract void accion(Jugador jugador, Juego juego) throws MonopolyEtseException;
 }

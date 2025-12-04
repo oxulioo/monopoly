@@ -28,17 +28,17 @@ public interface Comando {
     void edificarPiscina() throws MonopolyEtseException;
     void edificarPista() throws MonopolyEtseException;
     void listarEdificios(String color) throws MonopolyEtseException;
-    void hipotecar(String nombre);
-    void deshipotecar(String nombre);
-    void venderPropiedad(String tipo, String solar, int cantidad);
+    void hipotecar(String nombre) throws MonopolyEtseException;
+    void deshipotecar(String nombre) throws MonopolyEtseException;
+    void venderPropiedad(String tipo, String solar, int cantidad) throws MonopolyEtseException;
 
     // --- Comandos Estadísticas ---
     void estadisticasJugador(String nombre);
     void estadisticasJuego();
 
     // --- Nuevos métodos de la Parte 3 (Tratos) ---
-    void proponerTrato(String comando);
-    void aceptarTrato(String idTrato);
+    void proponerTrato(String comando) throws MonopolyEtseException;
+    void aceptarTrato(String idTrato)throws MonopolyEtseException;
     void listarTratos();
-    void eliminarTrato(String idTrato);
+    void eliminarTrato(String idTrato) throws MonopolyEtseException;
 }

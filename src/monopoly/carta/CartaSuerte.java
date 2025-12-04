@@ -2,6 +2,7 @@ package monopoly.carta;
 
 import monopoly.casilla.Casilla;
 import monopoly.Juego;
+import monopoly.exceptions.MonopolyEtseException;
 import monopoly.jugador.Jugador;
 
 public class CartaSuerte extends Carta {
@@ -11,7 +12,7 @@ public class CartaSuerte extends Carta {
     }
 
     @Override
-    public void accion(Jugador jugador, Juego juego) {
+    public void accion(Jugador jugador, Juego juego) throws MonopolyEtseException{
         Juego.consola.imprimir("Carta de Suerte: " + descripcion);
 
         switch(id) {
@@ -61,7 +62,7 @@ public class CartaSuerte extends Carta {
         // IMPLEMENTA TU LÓGICA AQUÍ
     }
 
-    private void retrocederCasillas(Jugador jugador, Juego juego, int casillas) {
+    private void retrocederCasillas(Jugador jugador, Juego juego, int casillas) throws MonopolyEtseException {
         Casilla actual = jugador.getAvatar().getPosicion();
         int nuevaPos = (actual.getPosicion() - casillas - 1 + 40) % 40 + 1;
         juego.moverJugadorAPosicion(jugador, nuevaPos);

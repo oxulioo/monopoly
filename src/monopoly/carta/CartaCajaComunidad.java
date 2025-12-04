@@ -2,6 +2,7 @@ package monopoly.carta;
 
 import monopoly.casilla.Casilla;
 import monopoly.Juego;
+import monopoly.exceptions.MonopolyEtseException;
 import monopoly.jugador.Jugador;
 
 public class CartaCajaComunidad extends Carta {
@@ -11,7 +12,7 @@ public class CartaCajaComunidad extends Carta {
     }
 
     @Override
-    public void accion(Jugador jugador, Juego juego) {
+    public void accion(Jugador jugador, Juego juego) throws MonopolyEtseException {
         Juego.consola.imprimir("Carta de Comunidad: " + descripcion);
 
         switch(id) {

@@ -83,7 +83,7 @@ public abstract class Propiedad extends Casilla {
         int precio = Math.max(0, this.valor);
 
         if (!solicitante.sumarGastos(precio)) {
-            System.out.println(solicitante.getNombre() + " no tiene suficiente dinero para comprar " + this.nombre);
+            Juego.consola.imprimir(solicitante.getNombre() + " no tiene suficiente dinero para comprar " + this.nombre);
             return;
         }
         // Se añade la propiedad al solicitante.
