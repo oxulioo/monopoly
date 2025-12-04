@@ -12,10 +12,10 @@ public class Solar extends Propiedad {
     private int numPiscinas=0;
     private int numPistas=0;
 
-    private int precioCasa;
-    private int precioHotel;
-    private int precioPiscina;
-    private int precioPistaDeporte;
+    private final int precioCasa;
+    private final int precioHotel;
+    private final int precioPiscina;
+    private final int precioPistaDeporte;
 
     // Alquileres de edificios
     private int alquilerCasa;
@@ -43,7 +43,7 @@ public class Solar extends Propiedad {
 
     // --- GETTERS Y SETTERS MOVIDOS DE CASILLA.JAVA ---
 
-    public int getNumCasas() { return Math.max(0,numCasas); }
+    public int getNumCasas() { return numCasas; }
     public int getNumHoteles() { return numHoteles; }
     public int getNumPiscinas() { return numPiscinas; }
     public int getNumPistas() { return numPistas; }
@@ -58,17 +58,12 @@ public class Solar extends Propiedad {
     public int getPrecioPiscina() { return precioPiscina; }
     public int getPrecioPistaDeporte() { return precioPistaDeporte; }
 
-    public void setAlquilerCasa(int alquiler) { this.alquilerCasa = alquiler; }
-    public void setAlquilerHotel(int alquiler) { this.alquilerHotel = alquiler; }
-    public void setAlquilerPiscina(int alquiler) { this.alquilerPiscina = alquiler; }
-    public void setAlquilerPistaDeporte(int alquiler) { this.alquilerPistaDeporte = alquiler; }
 
     public int getAlquilerCasa() { return alquilerCasa; }
     public int getAlquilerHotel() { return alquilerHotel; }
     public int getAlquilerPiscina() { return alquilerPiscina; }
     public int getAlquilerPistaDeporte() { return alquilerPistaDeporte; }
 
-    public void setAlquilerBase(int a) { this.alquilerBase = a; }
     public int getAlquilerBase() { return this.alquilerBase; }
 
     public java.util.List<Edificio> getEdificios() { return java.util.Collections.unmodifiableList(edificios); }
@@ -78,8 +73,8 @@ public class Solar extends Propiedad {
     // --- IMPLEMENTACIÓN DE MÉTODOS (Lógica extraída de Casilla.java) ---
 
     @Override
-    public float valor() {
-        return (float)this.valor;
+    public int valor() {
+        return this.valor;
     }
 
     @Override

@@ -6,16 +6,16 @@ public interface Comando {
     // --- Comandos Parte 1 (Creación y Movimiento) ---
     void crearJugador(String nombre, String tipoAvatar) throws MonopolyEtseException;
     void lanzarDados() throws MonopolyEtseException;
-    void lanzarDadosForzado(int d1, int d2); // Faltaba este (Requisito 7)
+    void lanzarDadosForzado(int d1, int d2) throws MonopolyEtseException; // Faltaba este (Requisito 7)
     void acabarTurno();
-    void salirCarcel();
+    void salirCarcel() throws MonopolyEtseException;
 
     // --- Comandos Parte 1 (Acciones y Consultas) ---
-    void comprar(String nombre);
+    void comprar(String nombre) throws MonopolyEtseException;
     void verTablero();
-    void listarJugadores();
-    void listarAvatares();
-    void listarVenta();
+    void listarJugadores() throws MonopolyEtseException;
+    void listarAvatares() throws MonopolyEtseException;
+    void listarVenta() throws MonopolyEtseException;
 
     // --- Métodos de Descripción (Faltaban estos para que Menu.java funcione bien) ---
     void descJugador(String nombre) throws MonopolyEtseException; // Para "describir jugador X"
@@ -23,11 +23,11 @@ public interface Comando {
     void descCasilla(String nombre) throws MonopolyEtseException; // Para "describir SolarX"
 
     // --- Comandos Parte 2 (Edificios e Hipotecas) ---
-    void edificarCasa();
-    void edificarHotel();
-    void edificarPiscina();
-    void edificarPista();
-    void listarEdificios(String color);
+    void edificarCasa() throws MonopolyEtseException;
+    void edificarHotel() throws MonopolyEtseException;
+    void edificarPiscina() throws MonopolyEtseException;
+    void edificarPista() throws MonopolyEtseException;
+    void listarEdificios(String color) throws MonopolyEtseException;
     void hipotecar(String nombre);
     void deshipotecar(String nombre);
     void venderPropiedad(String tipo, String solar, int cantidad);

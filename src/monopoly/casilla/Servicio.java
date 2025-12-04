@@ -26,13 +26,13 @@ public class Servicio extends Propiedad {
             actual.pagarAlquiler(this, factor_pago);
         }
         else if (dueno == null || dueno.getNombre().equals("Banca")) {
-            Juego.consola.imprimir("Estás en " + nombre + ". Valor: " + valor);
+            Juego.consola.imprimir("Estás en " + nombre + ". Precio: " + valor);
         }
     }
 
     @Override
-    public float valor() {
-        return (float)this.valor;
+    public int valor() {
+        return this.valor;
     }
 
     @Override

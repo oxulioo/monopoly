@@ -1,7 +1,6 @@
 package monopoly.casilla;
 
 import monopoly.Juego;
-import monopoly.carta.Accion;
 import monopoly.jugador.Jugador;
 
 public class CajaComunidad extends Accion {

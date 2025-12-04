@@ -33,7 +33,7 @@ public class Grupo {
         if(miembro==null) return;
         // Mantenemos tu comprobación de tipo
         if(!Casilla.TSOLAR.equals(miembro.getTipo())){
-            Juego.consola.imprimir("En este diseño solo tiene sentido agrupar solares");
+            Juego.consola.imprimir("El atributo grupo solo puede ser aplicado a casillas del tipo solar.");
             return;
         }
         if(!miembros.contains(miembro)){
@@ -50,7 +50,6 @@ public class Grupo {
             return false;
         }
         for (Casilla c : miembros) {
-            // CORRECCIÓN: Casteamos a Propiedad para ver el dueño
             if (c instanceof Propiedad) {
                 Jugador d = ((Propiedad)c).getDueno();
                 if (d == null || d != jugador) {

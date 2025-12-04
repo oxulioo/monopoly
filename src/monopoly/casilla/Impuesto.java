@@ -15,7 +15,6 @@ public class Impuesto extends Casilla {
 
     @Override
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
-        // --- LÓGICA MOVIDA DE CASILLA.JAVA (Bloque TIMPUESTO) ---
         this.incrementarVisita();
         int cantidad = (this.valor > 0) ? this.valor : Valor.IMPUESTO_FIJO;
         Juego.consola.imprimir("Jugador actual: " + actual.getNombre() + " debe pagar: " + cantidad);
@@ -39,7 +38,6 @@ public class Impuesto extends Casilla {
 
     @Override
     public String toString() {
-        // --- LÓGICA MOVIDA DE infoCasilla (Bloque impuesto) ---
         return "{\n"
                 + "tipo: impuesto,\n"
                 + "Tasa: " + this.valor + "\n"

@@ -77,7 +77,7 @@ public class Avatar {
 
         if(posActual + valorTirada >= totalPosiciones){
             jugador.sumarFortuna(Valor.SUMA_VUELTA);//Uso la constante definida para la vuelta
-            jugador.getEstadisticas().sumarPasarPorSalida(Valor.SUMA_VUELTA);
+            jugador.getEstadisticas().sumarPasarPorSalida();
             jugador.setVueltas(jugador.getVueltas()+1);
             Juego.consola.imprimir("El jugador " + jugador.getNombre() + " pasa por salida y recibe 2.000.000€.");
         }

@@ -1,6 +1,5 @@
-package monopoly.carta;
+package monopoly.casilla;
 
-import monopoly.casilla.Casilla;
 import monopoly.Juego;
 import monopoly.jugador.Jugador;
 

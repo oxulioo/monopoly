@@ -27,7 +27,6 @@ public class CartaSuerte extends Carta {
                 break;
             case 4: // Pagar a todos
                 pagarATodos(jugador, juego, 250000);
-                // Nota: Asumimos que juego.getJugadoresNum() existe, si no usa juego.getJugadores().size()
                 jugador.getEstadisticas().sumarPagoTasasImpuestos(250000L * juego.getJugadoresNum());
                 break;
             case 5: // Retroceder 3

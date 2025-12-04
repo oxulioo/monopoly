@@ -11,7 +11,13 @@ public abstract class Propiedad extends Casilla {
     protected Grupo grupo;
     protected int hipoteca;
     protected int hipotecada; // Mantengo tu int hipotecada (0 o 1) en vez de boolean
-
+    protected long dineroGenerado=0;
+    public long getDineroGenerado(){
+        return dineroGenerado;
+    }
+    public void sumarDineroGenerado(long cantidad){
+        this.dineroGenerado+=cantidad;
+    }
     public Propiedad(String nombre, String tipo, int posicion, int valor, int hipoteca, Jugador dueno) {
         super(nombre, tipo, posicion); // ¡Ahora sí le pasamos el tipo a Casilla!
         this.valor = valor;
@@ -69,9 +75,9 @@ public abstract class Propiedad extends Casilla {
     // Los definimos abstractos para que Solar los implemente con TU lógica
     public abstract boolean alquiler(Jugador j);
 
-    public abstract float valor(); // El PDF pide float, aunque tú usas int. Lo convertiremos al devolver.
+    public abstract int valor();
 
-    // MOVIDO: Tu método comprarCasilla (renombrado a comprar por el PDF)
+    // MOVIDO: Tu método comprarCasilla
     // Lógica idéntica a tu Casilla.java
     public void comprar(Jugador solicitante) {
         int precio = Math.max(0, this.valor);

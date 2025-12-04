@@ -1,5 +1,7 @@
 package monopoly.jugador;
 
+import monopoly.partida.Valor;
+
 public class EstadisticasJugador {
     private long dineroInvertido;
     private long pagoTasasImpuestos;
@@ -33,7 +35,7 @@ public class EstadisticasJugador {
     public void sumarPagoTasasImpuestos(long cantidad) { this.pagoTasasImpuestos += cantidad; }
     public void sumarPagoDeAlquileres(long cantidad) { this.pagoDeAlquileres += cantidad; }
     public void sumarCobroDeAlquileres(long cantidad) { this.cobroDeAlquileres += cantidad; }
-    public void sumarPasarPorSalida(long cantidad) { this.pasarPorCasillaDeSalida += cantidad; }
+    public void sumarPasarPorSalida() { this.pasarPorCasillaDeSalida += Valor.SUMA_VUELTA; }
     public void sumarPremiosInversionesOBote(long cantidad) { this.premiosInversionesOBote += cantidad; }
     public void incrementarVecesEnLaCarcel() { this.vecesEnLaCarcel++; }
 }

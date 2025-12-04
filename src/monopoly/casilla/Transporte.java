@@ -18,8 +18,8 @@ public class Transporte extends Propiedad {
     }
 
     @Override
-    public float valor() {
-        return (float)this.valor;
+    public int valor() {
+        return this.valor;
     }
 
     @Override

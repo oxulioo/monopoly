@@ -1,6 +1,7 @@
 package monopoly.casilla;
 
 import monopoly.Juego;
+import monopoly.exceptions.MonopolyEtseException;
 import monopoly.partida.Avatar;
 import monopoly.jugador.Jugador;
 import java.util.ArrayList;
@@ -34,23 +35,12 @@ public abstract class Casilla {
         this.avatares = new ArrayList<>();
     }
 
-    // --- MÉTODOS DEL PDF (REQUISITO 26) ---
-
-    // 1. boolean estaAvatar(Avatar avatar)
-    public boolean estaAvatar(Avatar avatar) {
-        return avatares.contains(avatar);
-    }
-
-    // 2. int Frecuencia Visita()
     public int frecuenciaVisita() {
         return vecesVisitada;
     }
 
-    // 3. String toString() -> Abstracto, cada hija define su JSON
     @Override
     public abstract String toString();
-
-    // --- OTROS MÉTODOS DE GESTIÓN (Movidos tal cual) ---
 
     public void anhadirAvatar(Avatar av) {
         this.avatares.add(av);
@@ -77,13 +67,12 @@ public abstract class Casilla {
     // --- MÉTODOS ABSTRACTOS O DE COMPATIBILIDAD ---
 
     // Este es el método clave que reemplaza tu switch gigante
-    public abstract void evaluarCasilla(Jugador actual, Juego juego, int tirada);
+    public abstract void evaluarCasilla(Jugador actual, Juego juego, int tirada) throws MonopolyEtseException;
 
     // Método de compatibilidad: Como 'Casilla' ya no tiene 'valor' (lo tiene Propiedad),
     // dejamos esto para que si alguien llama a casilla.getValor() devuelva 0 por defecto
     // y no rompa el código antiguo. Las hijas lo sobrescribirán.
     public int getValor() {
-        Juego.consola.imprimir("AQUI NO ES CHICOS ESTAIS LLAMANDO A ESTA QUE NO ES, EN CASILLA.JAVA ATENCION, MIRAR PARA SABER FALLOOOOOOOO;");
         return 0;
     }
     public void sumarValor(int cantidad) {} // Para que Parking pueda usarlo

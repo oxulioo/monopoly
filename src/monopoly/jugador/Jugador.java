@@ -173,4 +173,32 @@ public class Jugador {
             }
         }
     }
+    // Atributo: El buzón de mensajes
+    private final java.util.Map<String, Trato> tratosRecibidos = new java.util.HashMap<>();
+
+    // Meter una carta en el buzón
+    public void recibirTrato(Trato t) {
+        if (t != null) tratosRecibidos.put(t.getId(), t);
+    }
+
+    // Sacar una carta del buzón (borrarla)
+    public void eliminarTrato(String idTrato) {
+        tratosRecibidos.remove(idTrato);
+    }
+
+    // Leer una carta específica
+    public Trato getTrato(String idTrato) {
+        return tratosRecibidos.get(idTrato);
+    }
+
+    // Ver todas las cartas
+    public java.util.Collection<Trato> getListaTratos() {
+        return tratosRecibidos.values();
+    }
+    // Método necesario para completar el intercambio de propiedades en los Tratos
+    public void eliminarPropiedad(Casilla casilla) {
+        if (casilla != null) {
+            propiedades.remove(casilla);
+        }
+    }
 }

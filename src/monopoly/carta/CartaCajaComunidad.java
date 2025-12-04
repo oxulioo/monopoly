@@ -22,9 +22,8 @@ public class CartaCajaComunidad extends Carta {
                 juego.enviarACarcel(jugador);
                 break;
             case 3: // Salida
-                juego.moverJugadorACasilla(jugador, "Salida", false);
-                jugador.sumarFortuna(2000000);
-                jugador.getEstadisticas().sumarPasarPorSalida(2000000);
+                juego.moverJugadorACasilla(jugador, "Salida", true);
+                jugador.getEstadisticas().sumarPasarPorSalida();
                 break;
             case 4: // Hacienda
                 jugador.sumarFortuna(500000);
