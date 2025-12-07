@@ -533,6 +533,14 @@ public class Juego implements Comando {
         tirado = false;
         Jugador actual = jugadores.get(turno);
         Juego.consola.imprimir("Nuevo turno para: " + actual.getNombre());
+
+        if (!actual.getListaTratos().isEmpty()) {
+            Juego.consola.imprimir("\n------------------------------------------------");
+            Juego.consola.imprimir("¡ATENCIÓN " + actual.getNombre().toUpperCase() + "! TIENES TRATOS PENDIENTES:");
+            this.listarTratos(); // Reutilizamos tu método, que ya lista los del jugador actual
+            Juego.consola.imprimir("Usa 'aceptar tratoX' para aceptarlos o ignorarlos.");
+            Juego.consola.imprimir("------------------------------------------------\n");
+        }
     }
 
     public void enviarACarcel(Jugador j) throws MonopolyEtseException{
@@ -1227,6 +1235,9 @@ public class Juego implements Comando {
         }
         return new Object[]{prop, dinero};
     }
+
+
+
     @Override
     // --- REQUISITO 32: PROPONER TRATO ---
     public void proponerTrato(String comando) throws MonopolyEtseException{
@@ -1314,43 +1325,42 @@ public class Juego implements Comando {
 
     // --- REQUISITO 33: ACEPTAR TRATO ---
     @Override
-    public void aceptarTrato(String idTrato) throws MonopolyEtseException{
+    public void aceptarTrato(String idTrato) throws MonopolyEtseException {
         if (!hayJugadores()) throw new AccionInvalidaException("No hay jugadores en el juego.");
-        Jugador aceptante = jugadores.get(turno);
 
-        // Asumo que Jugador tiene getTrato(id)
+        Jugador aceptante = jugadores.get(turno);
         Trato t = aceptante.getTrato(idTrato);
 
         if (t == null) {
             throw new AccionInvalidaException("No se encontró el trato " + idTrato + " en tu lista.");
-
         }
 
         if (t.getProponente() == aceptante) {
             throw new AccionInvalidaException("No puedes aceptar tu propio trato.");
-
         }
 
         Jugador proponente = t.getProponente();
 
         try {
-            // 1. RE-VALIDACIÓN DE ESTADO (Fondos y Propiedades)
+            // --- 1. RE-VALIDACIÓN DE ESTADO ---
 
+            // Verificar propiedades
             if (t.getPropiedadOfrecida() != null && !t.getPropiedadOfrecida().perteneceAJugador(proponente))
                 throw new AccionInvalidaException("El trato no puede ser aceptado: la propiedad ofrecida ya no pertenece al proponente.");
 
             if (t.getPropiedadDeseada() != null && !t.getPropiedadDeseada().perteneceAJugador(aceptante))
                 throw new AccionInvalidaException("El trato no puede ser aceptado: la propiedad solicitada ya no te pertenece.");
 
+            // Verificar dinero
             if (proponente.getFortuna() < t.getDineroOfrecido())
                 throw new SaldoInsuficienteException(proponente.getNombre(), t.getDineroOfrecido() - proponente.getFortuna());
 
             if (aceptante.getFortuna() < t.getDineroDeseado())
                 throw new SaldoInsuficienteException(aceptante.getNombre(), t.getDineroDeseado() - aceptante.getFortuna());
 
-            // 2. EJECUCIÓN DEL INTERCAMBIO
 
-            // Dinero
+            // --- 2. EJECUCIÓN DEL INTERCAMBIO (Dinero) ---
+
             if (t.getDineroOfrecido() > 0) {
                 proponente.sumarGastos(t.getDineroOfrecido());
                 aceptante.sumarFortuna(t.getDineroOfrecido());
@@ -1360,19 +1370,42 @@ public class Juego implements Comando {
                 proponente.sumarFortuna(t.getDineroDeseado());
             }
 
-            // Propiedades (Usamos los métodos de Jugador y Propiedad)
+
+            // --- 3. EJECUCIÓN DEL INTERCAMBIO (Propiedades) [CORREGIDO] ---
+
+            // A) Propiedad que el Proponente da al Aceptante
             if (t.getPropiedadOfrecida() != null) {
-                t.getPropiedadOfrecida().getDueno().eliminarPropiedad(t.getPropiedadOfrecida());
-                aceptante.anadirPropiedad(t.getPropiedadOfrecida());
-                t.getPropiedadOfrecida().setDueno(aceptante);
-            }
-            if (t.getPropiedadDeseada() != null) {
-                t.getPropiedadDeseada().getDueno().eliminarPropiedad(t.getPropiedadDeseada());
-                proponente.anadirPropiedad(t.getPropiedadDeseada());
-                t.getPropiedadDeseada().setDueno(proponente);
+                Propiedad pOfrecida = t.getPropiedadOfrecida();
+                Jugador antiguoDueno = pOfrecida.getDueno(); // Es el proponente
+
+                // 1. Quitar de la lista del antiguo dueño
+                antiguoDueno.eliminarPropiedad(pOfrecida);
+
+                // 2. CAMBIO IMPORTANTE: Asignar nuevo dueño antes de añadir a la lista
+                // Esto evita que 'anadirPropiedad' falle por seguridad
+                pOfrecida.setDueno(aceptante);
+
+                // 3. Añadir a la lista del nuevo dueño
+                aceptante.anadirPropiedad(pOfrecida);
             }
 
-            // 3. LIMPIEZA
+            // B) Propiedad que el Aceptante da al Proponente
+            if (t.getPropiedadDeseada() != null) {
+                Propiedad pDeseada = t.getPropiedadDeseada();
+                Jugador antiguoDueno = pDeseada.getDueno(); // Es el aceptante
+
+                // 1. Quitar de la lista del antiguo dueño
+                antiguoDueno.eliminarPropiedad(pDeseada);
+
+                // 2. CAMBIO IMPORTANTE: Asignar nuevo dueño antes de añadir a la lista
+                pDeseada.setDueno(proponente);
+
+                // 3. Añadir a la lista del nuevo dueño
+                proponente.anadirPropiedad(pDeseada);
+            }
+
+
+            // --- 4. LIMPIEZA ---
             proponente.eliminarTrato(idTrato);
             aceptante.eliminarTrato(idTrato);
 
@@ -1435,6 +1468,10 @@ public class Juego implements Comando {
             }
         }
         return null; // Si no encontramos propiedad, devolvemos null
+    }
+
+    public ArrayList<Jugador> getJugadores() {
+        return this.jugadores;
     }
 
 }

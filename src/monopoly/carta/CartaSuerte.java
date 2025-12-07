@@ -5,11 +5,15 @@ import monopoly.Juego;
 import monopoly.exceptions.MonopolyEtseException;
 import monopoly.jugador.Jugador;
 
+import java.util.ArrayList;
+
 public class CartaSuerte extends Carta {
 
     public CartaSuerte(int id, String descripcion) {
         super(id, descripcion);
     }
+
+
 
     @Override
     public void accion(Jugador jugador, Juego juego) throws MonopolyEtseException{
@@ -60,6 +64,21 @@ public class CartaSuerte extends Carta {
         }
         */
         // IMPLEMENTA TU LÓGICA AQUÍ
+        // Obtenemos la lista de jugadores usando el método que acabamos de crear en Juego
+        java.util.List<Jugador> jugadores = juego.getJugadores();
+
+        for (Jugador otro : jugadores) {
+            if (!otro.equals(jugador) && !otro.getNombre().equals("Banca")) {
+                if (jugador.sumarGastos(cantidad)) {
+                    jugador.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
+                    otro.sumarFortuna(cantidad);
+                    otro.getEstadisticas().sumarCobroDeAlquileres(cantidad);
+                    Juego.consola.imprimir(jugador.getNombre() + " paga " + cantidad + "€ a " + otro.getNombre());
+                } else {
+                    Juego.consola.imprimir(jugador.getNombre() + " no tiene dinero para pagar a " + otro.getNombre());
+                }
+            }
+        }
     }
 
     private void retrocederCasillas(Jugador jugador, Juego juego, int casillas) throws MonopolyEtseException {
@@ -78,7 +97,45 @@ public class CartaSuerte extends Carta {
         }
     }
 
-    private void avanzarTransporteMasCercano(Jugador jugador, Juego juego) {
-        // PEGA AQUÍ TU MÉTODO DE TRANSPORTE COMPLETO
+    private void avanzarTransporteMasCercano(Jugador jugador, Juego juego) throws MonopolyEtseException {
+        Casilla actual;
+        actual = jugador.getAvatar().getPosicion();
+        int posActual = actual.getPosicion();
+
+        // Las posiciones de los transportes son fijas en el tablero estándar
+        int[] transportes = {6, 16, 26, 36};
+
+        int mejorTransporte = -1;
+        int menorDistancia = 100; // Un número grande inicial
+
+        // 1. Calcular cuál es el más cercano (mirando en ambas direcciones)
+        for (int t : transportes) {
+            int distAdelante = (t - posActual + 40) % 40;
+            int distAtras = (posActual - t + 40) % 40;
+            int distanciaReal = Math.min(distAdelante, distAtras); // El que esté más cerca físicamente
+
+            if (distanciaReal < menorDistancia) {
+                menorDistancia = distanciaReal;
+                mejorTransporte = t;
+            }
+        }
+
+        Juego.consola.imprimir("El transporte más cercano está en la casilla " + mejorTransporte);
+
+        // 2. "Avanzar" hasta él (siempre movimiento hacia adelante según reglas, pasando por Salida si hace falta)
+        juego.moverJugadorAPosicion(jugador, mejorTransporte);
+
+        // 3. Regla especial: Cobrar doble si tiene dueño
+        Casilla nuevaCasilla = jugador.getAvatar().getPosicion();
+        if (nuevaCasilla instanceof monopoly.casilla.Transporte trans) {
+            Jugador dueno = trans.getDueno();
+
+            // Si tiene dueño y no somos nosotros ni la banca
+            if (dueno != null && !dueno.equals(jugador) && !dueno.getNombre().equals("Banca")) {
+                Juego.consola.imprimir("Al llegar por Carta de Suerte, el alquiler es DOBLE.");
+                jugador.pagarAlquiler(trans, 2); // Factor 2 para duplicar el pago
+            }
+        }
     }
+
 }

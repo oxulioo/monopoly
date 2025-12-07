@@ -197,7 +197,7 @@ public class Jugador {
     }
     // Método necesario para completar el intercambio de propiedades en los Tratos
     public void eliminarPropiedad(Casilla casilla) {
-        if (casilla != null) {
+        if (casilla != null && propiedades != null) {
             propiedades.remove(casilla);
         }
     }

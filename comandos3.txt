@@ -1,0 +1,27 @@
+crear jugador Pedro pelota
+crear jugador Maria coche
+lanzar dados 1+1
+comprar Solar2
+acabar turno
+lanzar dados 1+2
+comprar Solar3
+acabar turno
+lanzar dados 2+2
+comprar Solar4
+acabar turno
+lanzar dados 2+3
+comprar Solar5
+acabar turno
+listar jugadores
+trato Maria Solar2 Solar3
+listar jugadores
+trato Maria Solar4 500
+listar jugadores
+acabar turno
+trato Pedro 600 Solar5
+listar jugadores
+aceptar trato
+listar jugadores
+acabar turno
+estadisticas
+salir
