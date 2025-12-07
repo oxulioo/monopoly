@@ -11,9 +11,19 @@ public class Transporte extends Propiedad {
 
     @Override
     public boolean alquiler(Jugador actual) {
-        // LÓGICA MOVIDA DE CASILLA.JAVA (Caso TTRANSPORTE)
-        // En tu código original: actual.pagarAlquiler(this, 1);
-        actual.pagarAlquiler(this, 1);
+        if (this.dueno == null) return false;
+
+        // 1. Contar cuántos transportes tiene el dueño
+        int numTransportes = 0;
+        for (Casilla c : this.dueno.getPropiedades()) {
+            if (c instanceof Transporte) {
+                numTransportes++;
+            }
+        }
+
+        // 2. El alquiler es 250.000 * número de transportes
+        // Usamos el factor_pago para multiplicar el precio base
+        actual.pagarAlquiler(this, numTransportes);
         return true;
     }
 

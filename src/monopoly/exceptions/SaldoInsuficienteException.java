@@ -1,8 +1,14 @@
 package monopoly.exceptions;
 
 public class SaldoInsuficienteException extends FinancialException {
-    public SaldoInsuficienteException(String nombreJugador, long cantidadFaltante) {
-        super("El jugador " + nombreJugador + " no tiene saldo suficiente. Le faltan " + cantidadFaltante + "€.");
+    private final int nivelBancarrota;
+
+    public SaldoInsuficienteException(String nombre, long falta, int bancarrota) {
+        super("El jugador " + nombre + " no tiene saldo. Faltan " + falta + "€.");
+        this.nivelBancarrota = bancarrota;
     }
 
+    public boolean esDeBancarrota() {
+        return nivelBancarrota == 1;
+    }
 }
