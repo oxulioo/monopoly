@@ -18,7 +18,7 @@ public class Suerte extends Accion {
        try {
            juego.procesarCasillaEspecial(actual, "Suerte");
        } catch (MonopolyEtseException e){
-           return;
+           Juego.consola.imprimir("Error en carta: " + e.getMessage());
        }
     }
 

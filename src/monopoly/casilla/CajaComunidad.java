@@ -18,7 +18,7 @@ public class CajaComunidad extends Accion {
         try {
             juego.procesarCasillaEspecial(actual, "Comunidad");
         } catch (MonopolyEtseException e) {
-            return;
+            Juego.consola.imprimir("Error en carta: " + e.getMessage());
         }
     }
 
