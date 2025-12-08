@@ -1039,8 +1039,32 @@ public class Juego implements Comando {
     }
 
     @Override
-    public void estadisticasJugador(String nombre) {
-        consola.imprimir("holamundo COPIAR Y PEGAR DE GITHUBBBBBBB BUSCAR VERSION ANTARIORE");
+    public void estadisticasJugador(String nombreJugador) {
+        if(!hayJugadores()){return;}
+        Jugador jugador=null;
+        for(Jugador j:jugadores){
+            if(j.getNombre().equals(nombreJugador)){
+                jugador=j;
+                break;
+            }
+        }
+        if(jugador==null){
+            System.out.println("No existe el jugador: "+nombreJugador);
+            return;
+        }
+
+        //imprimimos por pantalla todas las banderas que pusimos por pantalla
+        EstadisticasJugador estadisticas=jugador.getEstadisticas();
+        System.out.println("estadísticas " + nombreJugador);
+        System.out.println("{");
+        System.out.println("    dineroInvertido: " + estadisticas.getDineroInvertido() + ",");
+        System.out.println("    pagoTasasImpuestos: " + estadisticas.getPagoTasasImpuestos() + ",");
+        System.out.println("    pagoDeAlquileres: " + estadisticas.getPagoDeAlquileres() + ",");
+        System.out.println("    cobroDeAlquileres: " + estadisticas.getCobroDeAlquileres() + ",");
+        System.out.println("    pasarPorCasillaDeSalida: " + estadisticas.getPasarPorCasillaDeSalida() + ",");
+        System.out.println("    premiosInversionesOBote: " + estadisticas.getPremiosInversionesOBote() + ",");
+        System.out.println("    vecesEnLaCarcel: " + estadisticas.getVecesEnLaCarcel());
+        System.out.println("}");
     }
 
     // Método auxiliar actualizado para aceptar 'Solar' en vez de 'Casilla'

@@ -2,8 +2,11 @@ package monopoly.carta;
 
 import monopoly.casilla.Casilla;
 import monopoly.Juego;
+import monopoly.casilla.Propiedad;
+import monopoly.exceptions.AccionInvalidaException;
 import monopoly.exceptions.MonopolyEtseException;
 import monopoly.jugador.Jugador;
+import monopoly.partida.Valor;
 
 public class CartaSuerte extends Carta {
 
@@ -12,10 +15,10 @@ public class CartaSuerte extends Carta {
     }
 
     @Override
-    public void accion(Jugador jugador, Juego juego) throws MonopolyEtseException{
+    public void accion(Jugador jugador, Juego juego) throws MonopolyEtseException {
         Juego.consola.imprimir("Carta de Suerte: " + descripcion);
 
-        switch(id) {
+        switch (id) {
             case 1: // Viaje a Solar19
                 juego.moverJugadorACasilla(jugador, "Solar19", true);
                 break;
@@ -78,7 +81,79 @@ public class CartaSuerte extends Carta {
         }
     }
 
-    private void avanzarTransporteMasCercano(Jugador jugador, Juego juego) {
-        // PEGA AQUÍ TU MÉTODO DE TRANSPORTE COMPLETO
+    private void avanzarTransporteMasCercano(Jugador jugador, Juego juego) throws AccionInvalidaException {
+        // Buscar primer transporte
+        String[] transportes = {"Trans1", "Trans2", "Trans3", "Trans4"};
+        for (String trans : transportes) {
+            if (juego.getTablero().encontrar_casilla(trans) != null) {
+                try {
+                    avanzarACasilla(jugador, juego, trans, true);
+                } catch (MonopolyEtseException e) {
+                   throw new AccionInvalidaException("No se ha podido avanzar");
+                }
+
+                // Posiciones fijas de las casillas de Transporte
+                final int[] posTransportes = {6, 16, 26, 36};
+                final String[] nomTransportes = {"Trans1", "Trans2", "Trans3", "Trans4"};
+
+                Casilla actual = jugador.getAvatar().getPosicion();
+                int minDistancia = 1000; // iniciamos un número muy grande para que no se encuentre nunca
+                String transporteMasCercano = nomTransportes[0];
+                int posDestinoFinal = posTransportes[0];
+
+                // 1. Calcular la casilla más cercana
+                for (int i = 0; i < posTransportes.length; i++) {
+                    int posDestino = posTransportes[i];
+                    int distancia;
+
+                    if (posDestino > actual.getPosicion()) {
+                        distancia = posDestino - actual.getPosicion(); // Movimiento hacia adelante
+                    } else {
+                        distancia = (40 - actual.getPosicion()) + posDestino; // Dando la vuelta
+                    }
+
+                    if (distancia < minDistancia) {
+                        minDistancia = distancia;
+                        transporteMasCercano = nomTransportes[i];
+                        posDestinoFinal = posDestino;
+                    }
+                }
+
+                // 2. Mover al jugador y gestionar pago
+                Propiedad destino = (Propiedad) juego.getTablero().encontrar_casilla(transporteMasCercano);
+                if (destino == null) return;
+
+                System.out.println("Avanzando al transporte más cercano: " + destino.getNombre());
+
+                // 3. Comprobar si pasa por Salida (antes de mover)
+                boolean cobraSalida = posDestinoFinal < actual.getPosicion();
+                if (cobraSalida) {
+                    jugador.sumarFortuna(Valor.SUMA_VUELTA);
+                    jugador.getEstadisticas().sumarPasarPorSalida();
+                    jugador.setVueltas(jugador.getVueltas() + 1);
+                    System.out.println(jugador.getNombre() + " pasa por salida y recibe " + Valor.SUMA_VUELTA + "€.");
+                }
+
+                // 4. Mover el avatar (sin llamar a evaluarCasilla)
+                jugador.getAvatar().setPosicion(destino);
+                destino.incrementarVisita(); // Importante: registrar la visita manualmente
+
+                // 5. Lógica de pago de la carta (REUTILIZANDO pagarAlquiler)
+                Jugador dueno = destino.getDueno();
+                if (dueno != null && dueno != juego.getBanca() && dueno != jugador) {
+                    // "paga al dueño el doble de la operación indicada"
+                    System.out.println("La casilla pertenece a " + dueno.getNombre() + ". ¡Pagas el doble de alquiler!");
+
+                    // Reutilizamos el método existente con factor 2
+                    jugador.pagarAlquiler(destino, 2);
+
+                } else if (dueno == null || dueno == juego.getBanca()) {
+                    System.out.println("La casilla no tiene dueño. Puedes comprarla en tu turno.");
+                }
+            }
+        }
+    }
+    private void avanzarACasilla(Jugador jugador, Juego juego, String casilla, boolean cobrarSalida) throws MonopolyEtseException {
+        juego.moverJugadorACasilla(jugador, casilla, cobrarSalida);
     }
 }
