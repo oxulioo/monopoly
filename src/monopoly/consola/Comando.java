@@ -1,6 +1,7 @@
 package monopoly.consola;
 
 import monopoly.exceptions.MonopolyEtseException;
+import monopoly.jugador.Jugador;
 
 public interface Comando {
     // --- Comandos Parte 1 (Creación y Movimiento) ---
@@ -41,4 +42,5 @@ public interface Comando {
     void aceptarTrato(String idTrato)throws MonopolyEtseException;
     void listarTratos();
     void eliminarTrato(String idTrato) throws MonopolyEtseException;
+    void declararBancarrota(Jugador deudor);
 }

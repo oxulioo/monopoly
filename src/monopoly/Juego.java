@@ -279,24 +279,38 @@ public class Juego implements Comando {
 
     public void declararBancarrota(Jugador deudor) {
         Juego.consola.imprimir("\n!!! BANCARROTA !!!");
-        Juego.consola.imprimir("El jugador " + deudor.getNombre() + " no puede hacer frente a sus pagos obligatorios.");
-        Juego.consola.imprimir("Todas sus propiedades pasan a la Banca (o al acreedor, simplificado a Banca/Eliminación).");
-        Juego.consola.imprimir("El jugador es eliminado del juego.");
+        Juego.consola.imprimir("El jugador " + deudor.getNombre() + " cae en bancarrota y abandona la partida.");
+        Juego.consola.imprimir("Sus propiedades vuelven a la Banca y sus edificios son demolidos.");
 
-        // Lógica simple de eliminación
-        deudor.getAvatar().setPosicion(null); // Quitar del tablero
-        jugadores.remove(deudor);
+        Avatar av = deudor.getAvatar();
+        if (av != null) {
+            if (av.getPosicion() != null) {
+                av.getPosicion().eliminarAvatar(av);
+            }
+            avatares.remove(av);
+        }
+        java.util.List<Casilla> props = new ArrayList<>(deudor.getPropiedades());
+        for (Casilla c : props) {
+            if (c instanceof Propiedad) {
+                Propiedad p = (Propiedad) c;
+                p.setDueno(banca);
+                p.sethipotecada(0);
+                if (p instanceof Solar) {
+                    Solar s = (Solar) p;
+                    java.util.List<Edificio> listaEdificios = new ArrayList<>(s.getEdificios());
+                    for (Edificio ed : listaEdificios) {
 
-        // Devolver propiedades a la banca para que se puedan comprar de nuevo
-        for (Casilla prop : deudor.getPropiedades()) {
-            if (prop instanceof Propiedad) {
-                ((Propiedad)prop).setDueno(banca);
-                // Opcional: eliminar edificios, resetear hipotecas...
+                        s.eliminarEdificio(ed);
+                    }
+                    s.setNumCasas(0);
+                    s.setNumHoteles(0);
+                    s.setNumPiscinas(0);
+                    s.setNumPistas(0);
+                }
             }
         }
-
-        // Ajustar turno si es necesario para no saltar al siguiente erróneamente
-        if (turno >= jugadores.size()) turno = 0;
+        deudor.getPropiedades().clear();
+        jugadores.remove(deudor);
     }
 
     public void lanzarDados() throws MonopolyEtseException{
@@ -357,7 +371,6 @@ public class Juego implements Comando {
             if (c != null) {
                try{ c.evaluarCasilla(actual, this, suma);
                } catch (SaldoInsuficienteException e){
-                   declararBancarrota(actual);
                    throw new SaldoInsuficienteException(actual.getNombre(), suma-actual.getFortuna(), 1);
                }
             }
@@ -471,7 +484,6 @@ public class Juego implements Comando {
             throw new AccionInvalidaException(actual.getNombre() + " no está en la cárcel.");
         }
         if (actual.getFortuna() < Valor.PRECIO_SALIR_CARCEL) {
-            declararBancarrota(actual);
             throw new SaldoInsuficienteException(actual.getNombre(), Valor.PRECIO_SALIR_CARCEL - actual.getFortuna(),1);
         }
         boolean ok = actual.sumarGastos(Valor.PRECIO_SALIR_CARCEL);
@@ -549,14 +561,30 @@ public class Juego implements Comando {
         if (!hayJugadores()) {
             return;
         }
-        if (turno < 0) turno = 0;
-        if (turno >= jugadores.size()) turno = turno % jugadores.size();
+
+        Jugador actual = jugadores.get(turno);
+
+        if (actual.getFortuna() < 0) {
+            declararBancarrota(actual);
+            if (turno >= jugadores.size()) {
+                turno = 0;
+            }
+
+        } else {
+
+            turno = (turno + 1) % jugadores.size();
+        }
         lanzamientos = 0;
-        turno = (turno + 1) % jugadores.size();
         doblesConsecutivos = 0;
         tirado = false;
-        Jugador actual = jugadores.get(turno);
-        Juego.consola.imprimir("Nuevo turno para: " + actual.getNombre());
+
+        if (hayJugadores()) {
+            Jugador siguiente = jugadores.get(turno);
+            Juego.consola.imprimir("Nuevo turno para: " + siguiente.getNombre());
+            Juego.consola.imprimir("Fortuna: " + siguiente.getFortuna() + "€");
+        } else {
+            Juego.consola.imprimir("La partida ha terminado. No quedan jugadores.");
+        }
     }
 
     public void enviarACarcel(Jugador j) throws MonopolyEtseException{

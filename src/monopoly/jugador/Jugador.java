@@ -103,13 +103,11 @@ public class Jugador {
 
     public void sumarFortuna(int valor) { this.fortuna += valor; }
 
-    public boolean sumarGastos(int valor) {
+    public void sumarGastos(int valor) {
         if (this.fortuna < valor) {
             Juego.consola.imprimir("No tienes suficiente dinero.");
-            return false;
         }
         this.fortuna -= valor;
-        return true;
     }
 
     public void encarcelar() {

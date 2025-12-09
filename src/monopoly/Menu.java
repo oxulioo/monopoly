@@ -140,7 +140,6 @@ public class Menu {
 
         }
 
-
         if (comando.equals("edificar casa")) {
             juego.edificarCasa();
         }
