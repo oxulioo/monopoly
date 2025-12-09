@@ -86,7 +86,7 @@ public class Juego implements Comando {
         dado2 = new Dado();
         tablero = new Tablero(this.banca);
         this.baraja = new Baraja(); // <-- Reiniciar baraja al iniciar nueva monopoly.partida
-        this.baraja.barajar();
+      //  this.baraja.barajar();
     }
 
     public void mostrarJugadorActual() throws MonopolyEtseException{
@@ -486,8 +486,8 @@ public class Juego implements Comando {
         if (actual.getFortuna() < Valor.PRECIO_SALIR_CARCEL) {
             throw new SaldoInsuficienteException(actual.getNombre(), Valor.PRECIO_SALIR_CARCEL - actual.getFortuna(),1);
         }
-        boolean ok = actual.sumarGastos(Valor.PRECIO_SALIR_CARCEL);
-        if (ok) actual.getEstadisticas().sumarPagoTasasImpuestos(Valor.PRECIO_SALIR_CARCEL);
+        actual.restarDinero(Valor.PRECIO_SALIR_CARCEL);
+        actual.getEstadisticas().sumarPagoTasasImpuestos(Valor.PRECIO_SALIR_CARCEL);
         actual.salirCarcel();
         Juego.consola.imprimir(actual.getNombre() + " paga y sale de la cárcel.");
         try {
@@ -1480,14 +1480,15 @@ public class Juego implements Comando {
         // Asumo que Jugador tiene un método getListaTratos() que devuelve la colección de tratos recibidos
         java.util.Collection<Trato> tratos = actual.getListaTratos();
         if (tratos.isEmpty()) {
-            Juego.consola.imprimir("No tienes tratos pendientes.");
+            Juego.consola.imprimir("No existen tratos pendientes.");
             return;
         }
 
         Juego.consola.imprimir("Tratos vinculados a " + actual.getNombre() + ":");
         for (Trato t : tratos) {
-            String rol = (t.getProponente() == actual) ? "[Propuesto por ti]" : "[TE PROPONEN]";
-            Juego.consola.imprimir(t.toString() + " " + rol);
+            String rol = (t.getProponente() == actual) ? "[Propuesto por ti]" : "[Propuesto por "+t.getProponente().getNombre()+"]";
+            String receptor = (t.getPropuesto() == actual) ? "[Propuesto hacia ti]" : "[Propuesto hacia "+t.getPropuesto().getNombre()+"]";
+            Juego.consola.imprimir(t.toString() + " " + rol + " " + receptor);
         }
     }
     /*
@@ -1614,7 +1615,7 @@ public class Juego implements Comando {
         aceptante.eliminarTrato(idTrato);
         proponente.eliminarTrato(idTrato); // Borrarlo también del proponente
 
-        Juego.consola.imprimir("¡Trato cerrado! Se han intercambiado los bienes.");
+        Juego.consola.imprimir("¡Trato " + idTrato + " aceptado y ejecutado con éxito!");
     }
 
     private void transferirPropiedad(Propiedad p, Jugador origen, Jugador destino) {

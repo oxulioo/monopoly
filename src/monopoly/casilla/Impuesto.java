@@ -19,20 +19,17 @@ public class Impuesto extends Casilla {
         int cantidad = (this.valor > 0) ? this.valor : Valor.IMPUESTO_FIJO;
         Juego.consola.imprimir("Jugador actual: " + actual.getNombre() + " debe pagar: " + cantidad);
 
-        // Cobrar al jugador
-        boolean ok = actual.sumarGastos(cantidad);
-        if (ok) {
             // Actualizar estadísticas
-            actual.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
+        actual.restarDinero(cantidad);
+        actual.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
 
-            // Añadir al bote del Parking
-            // Usamos la referencia estática que mantuvimos en la clase padre Casilla
-            Casilla parking = Casilla.getParkingReferencia();
-            if (parking != null) {
-                parking.sumarValor(cantidad); // Esto funcionará cuando implementemos Parking
-                // Nota: getValor() en Casilla devuelve 0 por defecto, pero Parking lo sobrescribirá
-                Juego.consola.imprimir("Dinero añadido al parking. Bote actual: " + parking.getValor());
-            }
+        // Añadir al bote del Parking
+        // Usamos la referencia estática que mantuvimos en la clase padre Casilla
+        Casilla parking = Casilla.getParkingReferencia();
+        if (parking != null) {
+            parking.sumarValor(cantidad); // Esto funcionará cuando implementemos Parking
+            // Nota: getValor() en Casilla devuelve 0 por defecto, pero Parking lo sobrescribirá
+            Juego.consola.imprimir("Dinero añadido al parking. Bote actual: " + parking.getValor());
         }
     }
 

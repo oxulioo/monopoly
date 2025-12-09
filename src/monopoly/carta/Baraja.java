@@ -14,7 +14,7 @@ public class Baraja {
         this.mazoSuerte = new ArrayList<>();
         this.mazoComunidad = new ArrayList<>();
         inicializarCartas();
-        barajar();
+        //barajar();
     }
 
     private void inicializarCartas() {
@@ -36,13 +36,13 @@ public class Baraja {
         mazoComunidad.add(new CartaCajaComunidad(6, "Ve a Solar20 para disfrutar del San Fermín. Si pasas por la casilla de Salida, cobra 2.000.000€."));
     }
 
-    public void barajar() {
+/*    public void barajar() {
         Collections.shuffle(mazoSuerte);
         Collections.shuffle(mazoComunidad);
         indiceSuerte = 0;
         indiceComunidad = 0;
     }
-
+*/
     public Carta sacarCarta(String tipo) {
         if ("Suerte".equals(tipo)) {
             if (mazoSuerte.isEmpty()) return null;

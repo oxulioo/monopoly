@@ -42,12 +42,9 @@ public class CartaCajaComunidad extends Carta {
     }
 
     private void pagarSiPuede(Jugador jugador, int cantidad) {
-        if (jugador.sumarGastos(cantidad)) {
-            jugador.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
-            Casilla parking = Casilla.getParkingReferencia();
-            if (parking != null) parking.sumarValor(cantidad);
-        } else {
-            Juego.consola.imprimir(jugador.getNombre() + " no tiene suficiente dinero.");
-        }
+        jugador.restarDinero(cantidad);
+        jugador.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
+        Casilla parking = Casilla.getParkingReferencia();
+        if (parking != null) parking.sumarValor(cantidad);
     }
 }

@@ -51,7 +51,6 @@ public class Trato {
         if (pide.isEmpty()) pide = "nada";
 
         return "id: " + id + ",\n" +
-                "jugador Propone: " + proponente.getNombre() + ",\n" +
                 "trato: cambiar (" + ofrece + ", " + pide + ")";
     }
 }

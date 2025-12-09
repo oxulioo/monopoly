@@ -103,11 +103,20 @@ public class Jugador {
 
     public void sumarFortuna(int valor) { this.fortuna += valor; }
 
-    public void sumarGastos(int valor) {
+    public boolean sumarGastos(int valor) {
         if (this.fortuna < valor) {
             Juego.consola.imprimir("No tienes suficiente dinero.");
+            return false;
         }
         this.fortuna -= valor;
+        return true;
+    }
+
+    public void restarDinero(int valor) {
+        this.fortuna -= valor;
+        if(fortuna < 0) {
+            Juego.consola.imprimir("ALERTA, USTED ESTÁ EN NÚMEROS ROJOS, REGULARICE SU SITUACIÓN ANTES DE ACABAR EL TURNO O SERÁ DECLARADO EN BANCARROTA.");
+        }
     }
 
     public void encarcelar() {
@@ -122,7 +131,6 @@ public class Jugador {
         // CORRECCIÓN: Verificamos que sea Propiedad
         if (!(c instanceof Propiedad)) return;
         Propiedad p = (Propiedad) c;
-
         Jugador dueno = p.getDueno();
         if (dueno != null && dueno != this) {
             int alquiler = 0;
@@ -151,24 +159,19 @@ public class Jugador {
             }
 
             int importe = factor_pago * alquiler;
+            this.restarDinero(importe);
+            this.estadisticas.sumarPagoDeAlquileres(importe);
+            dueno.sumarFortuna(importe);
+            dueno.getEstadisticas().sumarCobroDeAlquileres(importe);
 
-            boolean ok = this.sumarGastos(importe);
-            if (ok) {
-                this.estadisticas.sumarPagoDeAlquileres(importe);
-                dueno.sumarFortuna(importe);
-                dueno.getEstadisticas().sumarCobroDeAlquileres(importe);
-
-                // Si es Solar, tiene metodo sumarDineroGenerado propio, o lo casteamos
-                if (c instanceof Solar) {
-                    ((Solar)c).sumarDineroGenerado(importe);
-                    if (p.getGrupo() != null) {
-                        p.getGrupo().sumarRentabilidad(importe);
-                    }
+            // Si es Solar, tiene metodo sumarDineroGenerado propio, o lo casteamos
+            if (c instanceof Solar) {
+                ((Solar)c).sumarDineroGenerado(importe);
+                if (p.getGrupo() != null) {
+                    p.getGrupo().sumarRentabilidad(importe);
                 }
-                Juego.consola.imprimir(this.nombre + " ha pagado " + importe + " € a " + dueno.getNombre());
-            } else {
-                Juego.consola.imprimir(this.nombre + " no puede pagar el alquiler de " + importe + " €.");
             }
+            Juego.consola.imprimir(this.nombre + " ha pagado " + importe + " € a " + dueno.getNombre());
         }
     }
     // Atributo: El buzón de mensajes
