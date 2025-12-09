@@ -1619,8 +1619,10 @@ public class Juego implements Comando {
     }
 
     private void transferirPropiedad(Propiedad p, Jugador origen, Jugador destino) {
-        origen.eliminarPropiedad(p);
-        destino.anadirPropiedad(p);
+        if (origen.getPropiedades().contains(p)) {
+            origen.getPropiedades().remove(p);
+        }
+        destino.getPropiedades().add(p);
         p.setDueno(destino);
     }
 
