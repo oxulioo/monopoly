@@ -19,18 +19,6 @@ public class Servicio extends Propiedad {
 
     @Override
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
-        /*
-        this.incrementarVisita();
-
-        if(this.dueno != null && !this.dueno.equals(actual) && !this.dueno.getNombre().equals("Banca")){
-            int factor_pago = 4 * tirada; // Usamos la tirada
-            actual.pagarAlquiler(this, factor_pago);
-        }
-        else if (dueno == null || dueno.getNombre().equals("Banca")) {
-            Juego.consola.imprimir("Estás en " + nombre + ". Precio: " + valor);
-        }
-
-         */
         this.incrementarVisita();
 
         if (this.dueno != null && !this.dueno.equals(actual) && !this.dueno.getNombre().equals("Banca")) {
@@ -48,9 +36,9 @@ public class Servicio extends Propiedad {
             int factor_pago = multiplicador * tirada;
             actual.pagarAlquiler(this, factor_pago);
         } else if (dueno == null || dueno.getNombre().equals("Banca")) {
-            Juego.consola.imprimir("Estás en " + nombre + ". Precio: " + valor);
+            Juego.consola.imprimir("Estás en " + nombre + ". Pertenece a la Banca.");
+            Juego.consola.imprimir("Valor de compra: " + valor);
         }
-
     }
 
     @Override
