@@ -4,26 +4,26 @@ import monopoly.exceptions.BancarrotaException;
 import monopoly.exceptions.MonopolyEtseException;
 
 public interface Comando {
-    // --- Comandos Parte 1 (Creación y Movimiento) ---
+    // --- Comandos (Creación y Movimiento) ---
     void crearJugador(String nombre, String tipoAvatar) throws MonopolyEtseException;
     void lanzarDados() throws MonopolyEtseException;
     void lanzarDadosForzado(int d1, int d2) throws MonopolyEtseException; // Faltaba este (Requisito 7)
     void acabarTurno() throws BancarrotaException;
     void salirCarcel() throws MonopolyEtseException;
 
-    // --- Comandos Parte 1 (Acciones y Consultas) ---
+    // --- Comandos (Acciones y Consultas) ---
     void comprar(String nombre) throws MonopolyEtseException;
     void verTablero();
     void listarJugadores() throws MonopolyEtseException;
     void listarAvatares() throws MonopolyEtseException;
     void listarVenta() throws MonopolyEtseException;
 
-    // --- Métodos de Descripción (Faltaban estos para que Menu.java funcione bien) ---
+    // --- Métodos de Descripción  ---
     void descJugador(String nombre) throws MonopolyEtseException; // Para "describir jugador X"
     void descAvatar(String id) throws MonopolyEtseException;      // Para "describir avatar X"
     void descCasilla(String nombre) throws MonopolyEtseException; // Para "describir SolarX"
 
-    // --- Comandos Parte 2 (Edificios e Hipotecas) ---
+    // --- Comandos Parte 2  ---
     void edificarCasa() throws MonopolyEtseException;
     void edificarHotel() throws MonopolyEtseException;
     void edificarPiscina() throws MonopolyEtseException;
@@ -37,7 +37,7 @@ public interface Comando {
     void estadisticasJugador(String nombre);
     void estadisticasJuego();
 
-    // --- Nuevos métodos de la Parte 3 (Tratos) ---
+    // --- Comandos Tratos ---
     void proponerTrato(String comando) throws MonopolyEtseException;
     void aceptarTrato(String idTrato)throws MonopolyEtseException;
     void listarTratos();

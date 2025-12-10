@@ -13,7 +13,7 @@ public class Transporte extends Propiedad {
     public void alquiler(Jugador actual) {
         if (this.dueno == null) return;
 
-        // 1. Contar cuántos transportes tiene el dueño
+        // Contamos cuantos transportes tiene el dueño
         int numTransportes = 0;
         for (Casilla c : this.dueno.getPropiedades()) {
             if (c instanceof Transporte) {
@@ -21,7 +21,7 @@ public class Transporte extends Propiedad {
             }
         }
 
-        // 2. El alquiler es 250.000 * número de transportes
+        //  El alquiler es 250000 * número de transportes
         // Usamos el factor_pago para multiplicar el precio base
         actual.pagarAlquiler(this, numTransportes);
     }

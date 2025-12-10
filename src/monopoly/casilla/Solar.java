@@ -201,9 +201,9 @@ public class Solar extends Propiedad {
     // Método auxiliar para limpiar casas al construir hotel
     private void eliminarCasasParaHotel() {
         // Usamos un iterador para borrar de forma segura mientras recorremos
-        java.util.Iterator<Edificio> iter = edificios.iterator();
+        java.util.Iterator<Edificio> iter = edificios.iterator(); //nos movemos por la coleecion de elementos (edificios)
         int casasBorradas = 0;
-        while (iter.hasNext() && casasBorradas < 4) {
+        while (iter.hasNext() && casasBorradas < 4) { //mientras tenfa siguiente y no sea mayor que 4 el numero de casas borradas
             Edificio e = iter.next();
             if (e instanceof Casa) {
                 iter.remove();

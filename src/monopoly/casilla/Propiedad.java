@@ -32,36 +32,27 @@ public abstract class Propiedad extends Casilla {
     public Jugador getDueno() {
         return dueno;
     }
-
     public void setDueno(Jugador d) {
         this.dueno = d;
     }
-
     public Grupo getGrupo() {
         return grupo;
     }
-
     public void setGrupo(Grupo g) {
         this.grupo = g;
     }
-
     public int getValor() {
         return valor;
     }
-
     public int getHipoteca() {
         return hipoteca;
     }
-
     public int gethipotecada() {
         return hipotecada;
     }
-
     public void sethipotecada(int h) {
         hipotecada = h;
     }
-
-
 
     public boolean perteneceAJugador(Jugador jugador) {
         return dueno != null && dueno.equals(jugador);

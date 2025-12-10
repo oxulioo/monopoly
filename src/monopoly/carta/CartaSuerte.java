@@ -118,19 +118,19 @@ public class CartaSuerte extends Carta {
         destino.incrementarVisita();
 
         // Regla especial de la carta: Pagar el DOBLE si tiene dueño
-        if (destino instanceof Propiedad) {
+        if (destino instanceof Propiedad) { //destino instancia propiedad
             Propiedad p = (Propiedad) destino;
             Jugador dueno = p.getDueno();
 
             if (dueno != null && !dueno.equals(jugador) && !dueno.getNombre().equals("Banca")) {
-                // Calcular alquiler base de transporte (250k * numTransportes)
+                // Calcular alquiler base de transporte (250000 * numTransportes)
                 int numTransportes = 0;
                 for (Casilla c : dueno.getPropiedades()) {
                     if (c.getTipo().equals(Casilla.TTRANSPORTE)) numTransportes++;
                 }
-                long alquilerBase = (long) Valor.ALQUILER_TRANSPORTE * numTransportes;
+                long alquilerBase = (long) Valor.ALQUILER_TRANSPORTE * numTransportes; //depende ddel nunero que tenga de cartas de transporte pagas mas o menos
 
-                // ¡EL DOBLE!
+
                 long aPagar = alquilerBase * 2;
 
                 Juego.consola.imprimir("La propiedad pertenece a " + dueno.getNombre() + ".");

@@ -16,7 +16,7 @@ public abstract class Edificio {
     protected Solar solar;
     protected Jugador propietario;
 
-    public Edificio(String id, Tipo tipo, Solar solar, Jugador propietario) {
+    public Edificio(String id, Tipo tipo, Solar solar, Jugador propietario) { //Constructor
         this.id = id;
         this.tipo = tipo;
         this.solar = solar;

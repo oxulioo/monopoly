@@ -80,12 +80,13 @@ public class Jugador {
             return;
         }
 
-        // CORRECCIÓN: Comprobamos si es Propiedad
+        // Comprobamos si es Propiedad
         if (!(casilla instanceof Propiedad p)) {
             Juego.consola.imprimir("La casilla " + casilla.getNombre() + " no es una propiedad.");
             return;
         }
 
+        //Miramos que no sea de otra persona
         if (p.getDueno() != null && p.getDueno() != this && !"Banca".equals(p.getDueno().getNombre())) {
             Juego.consola.imprimir("La casilla " + p.getNombre() + " pertenece al jugador " + p.getDueno().getNombre() + ".");
             return;
@@ -126,10 +127,10 @@ public class Jugador {
     public void pagarAlquiler(Casilla c, int factor_pago) {
         if (c == null) return;
 
-        // CORRECCIÓN: Verificamos que sea Propiedad
+        // Verificamos que sea Propiedad
         if (!(c instanceof Propiedad p)) return;
         Jugador dueno = p.getDueno();
-        if (dueno != null && dueno != this) {
+        if (dueno != null && dueno != this) { //si tiene dueño y no es el
             int importe = getImporte(c, factor_pago);
             this.restarDinero(importe);
             this.estadisticas.sumarPagoDeAlquileres(importe);
@@ -169,31 +170,31 @@ public class Jugador {
             // Transporte o Servicio (casillas que son propiedad pero no solar)
             // Usamos una lógica genérica o accedemos a los valores definidos
             if (c instanceof Transporte) alquiler = Valor.ALQUILER_TRANSPORTE;
-            else if (c instanceof Servicio) alquiler = Valor.FACTOR_SERVICIO; // Ojo, servicio depende de dados, esto es simplificado
+            else if (c instanceof Servicio) alquiler = Valor.FACTOR_SERVICIO; //Servicio depende de dados
         }
 
         return factor_pago * alquiler;
     }
 
-    // Atributo: El buzón de mensajes
+    //Atributo, Hashmap con todos los tratos que tiene ese jugador
     private final java.util.Map<String, Trato> tratosRecibidos = new java.util.HashMap<>();
 
-    // Meter una carta en el buzón
+    // Mete el trato en el hashmap
     public void recibirTrato(Trato t) {
         if (t != null) tratosRecibidos.put(t.getId(), t);
     }
 
-    // Sacar una carta del buzón (borrarla)
+    // sacamos trato, lo borramos
     public void eliminarTrato(String idTrato) {
         tratosRecibidos.remove(idTrato);
     }
 
-    // Leer una carta específica
+    // vemos el trato
     public Trato getTrato(String idTrato) {
         return tratosRecibidos.get(idTrato);
     }
 
-    // Ver todas las cartas
+    //vemos todos los tratos
     public java.util.Collection<Trato> getListaTratos() {
         return tratosRecibidos.values();
     }

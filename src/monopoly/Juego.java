@@ -486,22 +486,51 @@ public class Juego implements Comando {
         }
     }
 
-    public void listarVenta() throws MonopolyEtseException {
-        ArrayList<Casilla> enVenta = new ArrayList<>();
+    public void listarVenta() {
+        // 1. Buscar todas las propiedades que pertenecen a la Banca
+        ArrayList<Propiedad> enVenta = new ArrayList<>();
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
             for (Casilla c : lado) {
-                // CORRECCIÓN: Check Propiedad
-                if (c instanceof Propiedad p) {
-                    if (p.getDueno() == this.getBanca()) {
-                        enVenta.add(c);
-                    }
+                // Verificamos que sea Propiedad y que el dueño sea la Banca
+                if (c instanceof Propiedad p && p.getDueno().equals(banca)) {
+                    enVenta.add(p);
                 }
             }
         }
-        for (Casilla c : enVenta) {
-            this.descCasilla(c.getNombre());
-            Juego.consola.imprimir("},\n{");
+
+        // 2. Construir la salida con el formato del PDF
+        if (enVenta.isEmpty()) {
+            Juego.consola.imprimir("No hay propiedades en venta.");
+            return;
         }
+
+        StringBuilder sb = new StringBuilder();
+
+        // Iteramos para imprimir cada una con el formato { ... }, { ... }
+        for (int i = 0; i < enVenta.size(); i++) {
+            Propiedad p = enVenta.get(i);
+
+            sb.append("{\n");
+            // Aunque el PDF a veces omite el nombre en el ejemplo, es fundamental para comprar:
+            sb.append("nombre: ").append(p.getNombre()).append(",\n");
+            sb.append("tipo: ").append(p.getTipo().toLowerCase()).append(",\n");
+
+            // Solo los Solares tienen Grupo
+            if (p instanceof Solar s) {
+                String color = (s.getGrupo() != null) ? s.getGrupo().getColorGrupo() : "-";
+                sb.append("grupo: ").append(color).append(",\n");
+            }
+
+            sb.append("valor: ").append(p.getValor()).append("\n");
+            sb.append("}");
+
+            // Añadimos coma entre elementos, excepto el último
+            if (i < enVenta.size() - 1) {
+                sb.append(",\n");
+            }
+        }
+
+        Juego.consola.imprimir(sb.toString());
     }
 
     public void listarAvatares() throws MonopolyEtseException {
@@ -911,24 +940,46 @@ public class Juego implements Comando {
     }
 
     // --- HIPOTECAS ---
-    public void hipotecar(String nombreProp) throws MonopolyEtseException{
+    public void hipotecar(String nombreProp) throws MonopolyEtseException {
+        if (!hayJugadores()) return;
         Jugador actual = jugadores.get(turno);
+
+        // 1. Buscar la propiedad
         Casilla c = this.tablero.encontrar_casilla(nombreProp);
+        if (c == null) {
+            throw new AccionInvalidaException("La casilla " + nombreProp + " no existe.");
+        }
+
         if (!(c instanceof Propiedad p)) {
-            throw new HipotecaNoPermitidaException("Solo se puede hipotecar propiedades.");
+            throw new HipotecaNoPermitidaException("Solo se pueden hipotecar propiedades.");
         }
 
-        if (!(p.getDueno().equals(actual))) return;
-
-        if (c instanceof Solar) {
-            ((Solar) c).hipotecar(); // Delegamos en Solar (que chequea edificios)
-        } else {
-            // Lógica genérica
-            if (p.gethipotecada() == 1) return;
-            p.sethipotecada(1);
-            actual.sumarFortuna(p.getHipoteca());
-            Juego.consola.imprimir("Hipotecada.");
+        // 2. Validar Dueño
+        if (!p.perteneceAJugador(actual)) {
+            throw new HipotecaNoPermitidaException("No puedes hipotecar " + p.getNombre() + " porque no te pertenece.");
         }
+
+        // 3. Validar Estado (si ya está hipotecada)
+        if (p.gethipotecada() == 1) {
+            throw new HipotecaNoPermitidaException("La propiedad " + p.getNombre() + " ya está hipotecada.");
+        }
+
+        // 4. Validar Edificios (Solo para Solares) - REGLA IMPORTANTE
+        if (p instanceof Solar s) {
+            if (!s.getEdificios().isEmpty()) {
+                // Opcional: Podrías venderlos automáticamente aquí, pero las reglas suelen pedir hacerlo manual
+                throw new HipotecaNoPermitidaException("No puedes hipotecar " + s.getNombre() + " mientras tenga edificios. Véndelos primero.");
+            }
+        }
+
+        // 5. EJECUTAR HIPOTECA (Común para todos)
+        p.sethipotecada(1);
+
+        long valorHipoteca = p.getHipoteca();
+        actual.sumarFortuna((int) valorHipoteca); // ¡AHORA SÍ COBRAS!
+
+        Juego.consola.imprimir(actual.getNombre() + " ha hipotecado " + p.getNombre() + " y recibe " + valorHipoteca + "€.");
+        Juego.consola.imprimir("Fortuna actual: " + actual.getFortuna() + "€");
     }
 
     public void deshipotecar(String nombreSolar) throws MonopolyEtseException{
@@ -944,8 +995,6 @@ public class Juego implements Comando {
         if (!(c instanceof Propiedad p)) {
             throw new HipotecaNoPermitidaException("La casilla " + c.getNombre() + " no es una propiedad y no se puede deshipotecar.");
         }
-
-        // Casteo seguro
 
         // 3. Verificar dueño
         if (!p.perteneceAJugador(actual)) {

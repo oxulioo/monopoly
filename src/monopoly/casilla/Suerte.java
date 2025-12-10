@@ -14,9 +14,9 @@ public class Suerte extends Accion {
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada)  {
         this.incrementarVisita();
         Juego.consola.imprimir(actual.getNombre() + " cae en Suerte.");
-        // Delegamos en Juego la gestión de la carta, tal como tenías
+
        try {
-           juego.procesarCasillaEspecial(actual, "Suerte");
+           juego.procesarCasillaEspecial(actual, "Suerte"); //llamamos para realizar la accion de suerte, para que nos de una carta
        } catch (MonopolyEtseException e){
            Juego.consola.imprimir("Error en carta: " + e.getMessage());
        }
