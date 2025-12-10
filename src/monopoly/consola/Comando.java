@@ -2,7 +2,6 @@ package monopoly.consola;
 
 import monopoly.exceptions.BancarrotaException;
 import monopoly.exceptions.MonopolyEtseException;
-import monopoly.jugador.Jugador;
 
 public interface Comando {
     // --- Comandos Parte 1 (Creación y Movimiento) ---

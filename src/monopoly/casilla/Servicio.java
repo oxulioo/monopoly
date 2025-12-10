@@ -5,16 +5,15 @@ import monopoly.jugador.Jugador;
 
 public class Servicio extends Propiedad {
 
-    public Servicio(String nombre, int posicion, int valor, int hipoteca, Jugador dueno) {
+    public Servicio(String nombre, int posicion, int valor, Jugador dueno) {
         // AÑADIMOS Casilla.TSERVICIOS
-        super(nombre, Casilla.TSERVICIOS, posicion, valor, hipoteca, dueno);
+        super(nombre, Casilla.TSERVICIOS, posicion, valor, dueno);
     }
 
     @Override
-    public boolean alquiler(Jugador j) {
+    public void alquiler(Jugador j) {
         // Este método se define por herencia, pero en Servicio la lógica depende de la tirada.
         // Por tanto, la lógica real está en evaluarCasilla.
-        return false;
     }
 
     @Override

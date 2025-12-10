@@ -18,10 +18,10 @@ public class Solar extends Propiedad {
     private final int precioPistaDeporte;
 
     // Alquileres de edificios
-    private int alquilerCasa;
-    private int alquilerHotel;
-    private int alquilerPiscina;
-    private int alquilerPistaDeporte;
+    private final int alquilerCasa;
+    private final int alquilerHotel;
+    private final int alquilerPiscina;
+    private final int alquilerPistaDeporte;
 
     // Alquiler base (necesario recuperarlo del precargarDatosCasillas o pasarlo en constructor)
     private final int alquilerBase;
@@ -29,16 +29,20 @@ public class Solar extends Propiedad {
     // Lista de edificios (tal cual la tenías)
     private final java.util.List<Edificio> edificios = new java.util.ArrayList<>();
 
-    public Solar(String nombre, int posicion, int valor, int hipoteca, Jugador dueno,
-                 int precioCasa, int precioHotel, int precioPiscina, int precioPistaDeporte,
-                 int alquilerBase) {
+    public Solar(String nombre, int posicion, Jugador dueno, int valor,
+                 int precioCasaYHotel, int precioPiscina,
+                 int alquilerBase, int alquilerCasa, int alquilerHotel, int alquilerPiscinaYPistaDeporte) {
 
-        super(nombre, Casilla.TSOLAR, posicion, valor, hipoteca, dueno);
-        this.precioCasa = precioCasa;
-        this.precioHotel = precioHotel;
+        super(nombre, Casilla.TSOLAR, posicion, valor, dueno);
+        this.precioCasa = precioCasaYHotel;
+        this.precioHotel = precioCasaYHotel;
         this.precioPiscina = precioPiscina;
-        this.precioPistaDeporte = precioPistaDeporte;
+        this.precioPistaDeporte = 2*precioPiscina;
         this.alquilerBase = alquilerBase;
+        this.alquilerCasa = alquilerCasa;
+        this.alquilerHotel = alquilerHotel;
+        this.alquilerPiscina = alquilerPiscinaYPistaDeporte;
+        this.alquilerPistaDeporte = alquilerPiscinaYPistaDeporte;
     }
 
     // --- GETTERS Y SETTERS MOVIDOS DE CASILLA.JAVA ---
@@ -58,7 +62,6 @@ public class Solar extends Propiedad {
     public int getPrecioPiscina() { return precioPiscina; }
     public int getPrecioPistaDeporte() { return precioPistaDeporte; }
 
-
     public int getAlquilerCasa() { return alquilerCasa; }
     public int getAlquilerHotel() { return alquilerHotel; }
     public int getAlquilerPiscina() { return alquilerPiscina; }
@@ -77,7 +80,7 @@ public class Solar extends Propiedad {
     }
 
     @Override
-    public boolean alquiler(Jugador actual) {
+    public void alquiler(Jugador actual) {
         // TU LÓGICA DE EVALUAR CASILLA (CASO TSOLAR) PEGADA AQUÍ
         // Recuperamos la lógica de cobro:
 
@@ -97,20 +100,15 @@ public class Solar extends Propiedad {
                     actual.pagarAlquiler(this, 1);
                 }
             }
-            return true;
         }
-        return false;
     }
 
-
-    // Requisito: hipotecar()
-    // TU lógica de hipotecar estaba en Juego.hipotecar.
-    // El PDF pide que Solar tenga hipotecar().
     public void hipotecar() {
         // Lógica movida si quieres, o dejamos que Juego gestione.
         // Para cumplir expediente PDF:
         this.sethipotecada(1);
     }
+
 
     @Override
     public String toString() {
@@ -149,12 +147,6 @@ public class Solar extends Propiedad {
                 + "}";
     }
 
-    public void deshipotecar() {
-        // La lógica de pago (hipoteca + interés) se debe manejar en Juego.java o Jugador.java.
-        // Esta implementación solo cambia el estado de la propiedad.
-        this.sethipotecada(0);
-    }
-
     private String generarIdEdificio(String prefijo) {
         return prefijo + "-" + (this.edificios.size() + 1);
     }
@@ -162,46 +154,57 @@ public class Solar extends Propiedad {
     public void edificar(String tipo) {
         // Validación básica (el resto de validaciones de dinero/grupo están en Juego.java)
         // Aquí solo instanciamos y guardamos.
-
+    boolean ok;
         Edificio nuevoEdificio;
         Jugador propietario = this.getDueno();
 
         switch (tipo.toLowerCase()) {
             case "casa":
-                nuevoEdificio = new Casa(generarIdEdificio("casa"), this, propietario);
-                this.setNumCasas(this.getNumCasas() + 1);
+                ok = propietario.sumarGastos(this.getPrecioCasa());
+                if(ok){
+                    nuevoEdificio = new Casa(generarIdEdificio("casa"), this, propietario);
+                    this.setNumCasas(this.getNumCasas() + 1);
+                    this.edificios.add(nuevoEdificio);
+                    propietario.anadirEdificio(nuevoEdificio);
+                }
                 break;
 
             case "hotel":
                 // Regla: Al poner un hotel, se quitan las casas previas
                 // Debemos borrar las casas de la lista 'edificios'
-                eliminarCasasParaHotel();
-
-                nuevoEdificio = new Hotel(generarIdEdificio("hotel"), this, propietario);
-                this.setNumCasas(0); // Reset contador casas
-                this.setNumHoteles(this.getNumHoteles() + 1);
+                ok = propietario.sumarGastos(this.getPrecioHotel());
+                if(ok) {
+                    eliminarCasasParaHotel();
+                    nuevoEdificio = new Hotel(generarIdEdificio("hotel"), this, propietario);
+                    this.setNumCasas(0); // Reset contador casas
+                    this.setNumHoteles(this.getNumHoteles() + 1);
+                    this.edificios.add(nuevoEdificio);
+                    propietario.anadirEdificio(nuevoEdificio);
+                }
                 break;
 
             case "piscina":
-                nuevoEdificio = new Piscina(generarIdEdificio("piscina"), this, propietario);
-                this.setNumPiscinas(this.getNumPiscinas() + 1);
+                ok = propietario.sumarGastos(this.getPrecioPiscina());
+                if(ok) {
+                    nuevoEdificio = new Piscina(generarIdEdificio("piscina"), this, propietario);
+                    this.setNumPiscinas(this.getNumPiscinas() + 1);
+                    this.edificios.add(nuevoEdificio);
+                    propietario.anadirEdificio(nuevoEdificio);
+                }
                 break;
 
             case "pista deporte":
             case "pista":
-                nuevoEdificio = new PistaDeporte(generarIdEdificio("pista"), this, propietario);
-                this.setNumPistas(this.getNumPistas() + 1);
+                ok = propietario.sumarGastos(this.getPrecioPistaDeporte());
+                if(ok) {
+                    nuevoEdificio = new PistaDeporte(generarIdEdificio("pista"), this, propietario);
+                    this.setNumPistas(this.getNumPistas() + 1);
+                    this.edificios.add(nuevoEdificio);
+                    propietario.anadirEdificio(nuevoEdificio);
+                }
                 break;
-
             default:
                 // Si el tipo no existe, salimos
-                return;
-        }
-
-        this.edificios.add(nuevoEdificio); // ¡IMPORTANTE! Añadimos a la lista
-        // También deberíamos añadirlo a la lista del jugador si la tiene
-        if (propietario != null) {
-            propietario.anadirEdificio(nuevoEdificio);
         }
     }
 

@@ -7,16 +7,6 @@ public class Casa extends Edificio {
     }
 
     @Override
-    public long getCosteConstruccion() {
-        return solar.getPrecioCasa();
-    }
-
-    @Override
-    public long getAlquiler() {
-        return solar.getAlquilerCasa();
-    }
-
-    @Override
     public String toString() {
         return "Casa{id='" + id + "', solar=" + solar.getNombre() + "}";
     }

@@ -81,12 +81,10 @@ public class Jugador {
         }
 
         // CORRECCIÓN: Comprobamos si es Propiedad
-        if (!(casilla instanceof Propiedad)) {
+        if (!(casilla instanceof Propiedad p)) {
             Juego.consola.imprimir("La casilla " + casilla.getNombre() + " no es una propiedad.");
             return;
         }
-
-        Propiedad p = (Propiedad) casilla;
 
         if (p.getDueno() != null && p.getDueno() != this && !"Banca".equals(p.getDueno().getNombre())) {
             Juego.consola.imprimir("La casilla " + p.getNombre() + " pertenece al jugador " + p.getDueno().getNombre() + ".");
@@ -129,36 +127,10 @@ public class Jugador {
         if (c == null) return;
 
         // CORRECCIÓN: Verificamos que sea Propiedad
-        if (!(c instanceof Propiedad)) return;
-        Propiedad p = (Propiedad) c;
+        if (!(c instanceof Propiedad p)) return;
         Jugador dueno = p.getDueno();
         if (dueno != null && dueno != this) {
-            int alquiler = 0;
-
-            // Si es solar, calculamos con edificios
-            if (c instanceof Solar) {
-                Solar s = (Solar) c;
-                int casas = s.getNumCasas();
-                int hoteles = s.getNumHoteles();
-                int piscinas = s.getNumPiscinas();
-                int pistas = s.getNumPistas();
-
-                if (casas > 0 || hoteles > 0 || piscinas > 0 || pistas > 0) {
-                    if (casas > 0) alquiler += casas * s.getAlquilerCasa();
-                    if (hoteles > 0) alquiler += hoteles * s.getAlquilerHotel();
-                    if (piscinas > 0) alquiler += piscinas * s.getAlquilerPiscina();
-                    if (pistas > 0) alquiler += pistas * s.getAlquilerPistaDeporte();
-                } else {
-                    alquiler = s.getAlquilerBase();
-                }
-            } else {
-                // Transporte o Servicio (casillas que son propiedad pero no solar)
-                // Usamos una lógica genérica o accedemos a los valores definidos
-                if (c instanceof Transporte) alquiler = Valor.ALQUILER_TRANSPORTE;
-                else if (c instanceof Servicio) alquiler = Valor.FACTOR_SERVICIO; // Ojo, servicio depende de dados, esto es simplificado
-            }
-
-            int importe = factor_pago * alquiler;
+            int importe = getImporte(c, factor_pago);
             this.restarDinero(importe);
             this.estadisticas.sumarPagoDeAlquileres(importe);
             dueno.sumarFortuna(importe);
@@ -174,6 +146,35 @@ public class Jugador {
             Juego.consola.imprimir(this.nombre + " ha pagado " + importe + " € a " + dueno.getNombre());
         }
     }
+
+    private static int getImporte(Casilla c, int factor_pago) {
+        int alquiler = 0;
+
+        // Si es solar, calculamos con edificios
+        if (c instanceof Solar s) {
+            int casas = s.getNumCasas();
+            int hoteles = s.getNumHoteles();
+            int piscinas = s.getNumPiscinas();
+            int pistas = s.getNumPistas();
+
+            if (casas > 0 || hoteles > 0 || piscinas > 0 || pistas > 0) {
+                if (casas > 0) alquiler += casas * s.getAlquilerCasa();
+                if (hoteles > 0) alquiler += hoteles * s.getAlquilerHotel();
+                if (piscinas > 0) alquiler += piscinas * s.getAlquilerPiscina();
+                if (pistas > 0) alquiler += pistas * s.getAlquilerPistaDeporte();
+            } else {
+                alquiler = s.getAlquilerBase();
+            }
+        } else {
+            // Transporte o Servicio (casillas que son propiedad pero no solar)
+            // Usamos una lógica genérica o accedemos a los valores definidos
+            if (c instanceof Transporte) alquiler = Valor.ALQUILER_TRANSPORTE;
+            else if (c instanceof Servicio) alquiler = Valor.FACTOR_SERVICIO; // Ojo, servicio depende de dados, esto es simplificado
+        }
+
+        return factor_pago * alquiler;
+    }
+
     // Atributo: El buzón de mensajes
     private final java.util.Map<String, Trato> tratosRecibidos = new java.util.HashMap<>();
 
@@ -196,10 +197,5 @@ public class Jugador {
     public java.util.Collection<Trato> getListaTratos() {
         return tratosRecibidos.values();
     }
-    // Método necesario para completar el intercambio de propiedades en los Tratos
-    public void eliminarPropiedad(Casilla casilla) {
-        if (casilla != null) {
-            propiedades.remove(casilla);
-        }
-    }
+
 }

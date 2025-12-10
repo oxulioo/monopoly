@@ -18,10 +18,10 @@ public abstract class Propiedad extends Casilla {
     public void sumarDineroGenerado(long cantidad){
         this.dineroGenerado+=cantidad;
     }
-    public Propiedad(String nombre, String tipo, int posicion, int valor, int hipoteca, Jugador dueno) {
+    public Propiedad(String nombre, String tipo, int posicion, int valor, Jugador dueno) {
         super(nombre, tipo, posicion); // ¡Ahora sí le pasamos el tipo a Casilla!
         this.valor = valor;
-        this.hipoteca = hipoteca;
+        this.hipoteca = valor/2;
         this.dueno = dueno;
         this.hipotecada = 0;
         this.grupo = null;
@@ -69,7 +69,7 @@ public abstract class Propiedad extends Casilla {
 
     // Requisito 26: abstract boolean alquiler() y abstract float valor()
     // Los definimos abstractos para que Solar los implemente con TU lógica
-    public abstract boolean alquiler(Jugador j);
+    public abstract void alquiler(Jugador j);
 
     public abstract int valor();
 

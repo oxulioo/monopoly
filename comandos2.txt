@@ -16,6 +16,8 @@ comprar Solar22
 edificar hotel
 edificar casa
 edificar casa
+edificar casa
+edificar casa
 acabar turno
 describir jugador Pedro
 describir jugador Maria
@@ -30,14 +32,14 @@ listar tratos
 acabar turno
 lanzar dados 1+3
 comprar Solar12
-aceptar trato trato1
+aceptar trato1
 trato Pedro: cambiar (Solar12, Solar3)
-eliminar trato trato2
+eliminar trato2
 trato Pedro: cambiar (Solar12, Solar3 y 100000)
 listar tratos
 acabar turno
-eliminar trato trato3
-aceptar trato trato1
-aceptar trato trato3
+eliminar trato3
+aceptar trato1
+aceptar trato3
 describir jugador Pedro
 describir jugador Maria

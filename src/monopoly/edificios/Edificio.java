@@ -4,9 +4,6 @@ import monopoly.jugador.Jugador;
 
 
 public abstract class Edificio {
-    public abstract long getCosteConstruccion();
-
-    public abstract long getAlquiler();
 
     public enum Tipo {
         CASA, HOTEL, PISCINA, PISTA

@@ -4,14 +4,14 @@ import monopoly.jugador.Jugador;
 
 public class Transporte extends Propiedad {
 
-    public Transporte(String nombre, int posicion, int valor, int hipoteca, Jugador dueno) {
+    public Transporte(String nombre, int posicion, int valor, Jugador dueno) {
 
-        super(nombre, Casilla.TTRANSPORTE, posicion, valor, hipoteca, dueno);
+        super(nombre, Casilla.TTRANSPORTE, posicion, valor, dueno);
     }
 
     @Override
-    public boolean alquiler(Jugador actual) {
-        if (this.dueno == null) return false;
+    public void alquiler(Jugador actual) {
+        if (this.dueno == null) return;
 
         // 1. Contar cuántos transportes tiene el dueño
         int numTransportes = 0;
@@ -24,7 +24,6 @@ public class Transporte extends Propiedad {
         // 2. El alquiler es 250.000 * número de transportes
         // Usamos el factor_pago para multiplicar el precio base
         actual.pagarAlquiler(this, numTransportes);
-        return true;
     }
 
     @Override

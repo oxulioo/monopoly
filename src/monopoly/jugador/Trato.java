@@ -1,7 +1,6 @@
 package monopoly.jugador;
-
 import monopoly.casilla.Propiedad;
-import monopoly.jugador.Jugador;
+
 public class Trato {
     private static int contadorId = 1;
 

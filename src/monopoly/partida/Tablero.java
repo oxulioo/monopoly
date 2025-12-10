@@ -32,42 +32,46 @@ public class Tablero {
 
     // --- MÉTODOS AUXILIARES ACTUALIZADOS CON LOS NUEVOS CONSTRUCTORES ---
 
-    private Casilla crearSolar(String nombre, int pos, int valor) {
+    private Casilla crearSolar(String nombre, int pos) {
         // Datos específicos extraídos de tu antiguo precargarDatosCasillas
-        // Formato: new Solar(nombre, pos, valor, hipoteca, dueno, precioCasa, precioHotel, precioPiscina, precioPista, ALQUILER_BASE)
-        // Nota: He calculado la hipoteca como valor/2 y puesto los alquileres base que tenías en el switch.
-
-        int hipoteca = valor / 2;
+        // Formato: new Solar(nombre, pos, dueno, precioCasa, precioHotel, precioPiscina, precioPista, ALQUILER_BASE)
+        // Nota: He calculado l como2 y puesto los alquileres base que tenías en el switch.
 
         return switch (nombre) {
-            case "Solar1" -> new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 20000);
-            case "Solar2" -> new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 40000);
-            case "Solar3", "Solar4" -> new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 60000);
-            case "Solar5" -> new Solar(nombre, pos, valor, hipoteca, banca, 500000, 2500000, 500000, 500000, 80000);
-            case "Solar6", "Solar7" -> new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 100000);
-            case "Solar8" -> new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 120000);
-            case "Solar9", "Solar10" -> new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 140000);
-            case "Solar11" -> new Solar(nombre, pos, valor, hipoteca, banca, 1000000, 5000000, 1000000, 1000000, 160000);
-            case "Solar12", "Solar13" -> new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 180000);
-            case "Solar14" -> new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 200000);
-            case "Solar15", "Solar16" -> new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 220000);
-            case "Solar17" -> new Solar(nombre, pos, valor, hipoteca, banca, 1500000, 7500000, 1500000, 1500000, 240000);
-            case "Solar18", "Solar19" -> new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 260000);
-            case "Solar20" -> new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 280000);
-            case "Solar21" -> new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 350000);
-            case "Solar22" -> new Solar(nombre, pos, valor, hipoteca, banca, 2000000, 10000000, 2000000, 2000000, 500000);
+            case "Solar1" -> new Solar(nombre, pos, banca, 600000, 500000, 100000, 20000, 400000, 2500000, 500000);
+            case "Solar2" -> new Solar(nombre, pos, banca, 600000, 500000, 100000, 40000, 800000, 4500000, 900000);
+            case "Solar3",
+                 "Solar4" -> new Solar(nombre, pos, banca, 1000000, 500000, 100000, 60000, 1000000, 5500000, 1100000);
+            case "Solar5" -> new Solar(nombre, pos, banca, 1200000, 500000, 100000, 80000, 1250000, 6000000, 1200000);
+            case "Solar6",
+                 "Solar7" -> new Solar(nombre, pos, banca, 1400000, 1000000, 200000, 100000, 1500000, 7500000, 1500000);
+            case "Solar8" -> new Solar(nombre, pos, banca, 1600000, 1000000, 200000, 120000, 1750000, 9000000, 1800000);
+            case "Solar9",
+                 "Solar10" -> new Solar(nombre, pos, banca, 1800000, 1000000, 200000, 140000, 1850000, 9500000, 1900000);
+            case "Solar11" -> new Solar(nombre, pos, banca, 2000000, 1000000, 200000, 160000, 2000000, 10000000, 200000);
+            case "Solar12",
+                 "Solar13" -> new Solar(nombre, pos, banca, 2200000, 1500000, 300000, 180000, 2200000, 10500000, 2100000);
+            case "Solar14" -> new Solar(nombre, pos, banca, 2400000, 1500000, 300000, 200000, 2325000, 11000000, 2200000);
+            case "Solar15",
+                 "Solar16" -> new Solar(nombre, pos, banca, 2600000, 1500000, 300000, 220000, 2450000, 11500000, 2300000);
+            case "Solar17" -> new Solar(nombre, pos, banca, 2800000, 1500000, 300000, 240000, 2600000, 12000000, 2400000);
+            case "Solar18",
+                 "Solar19" -> new Solar(nombre, pos, banca, 3000000, 2000000, 400000, 260000, 2750000, 12750000, 2550000);
+            case "Solar20" -> new Solar(nombre, pos, banca, 3200000, 2000000, 400000, 280000, 3000000, 14000000, 2800000);
+            case "Solar21" -> new Solar(nombre, pos, banca, 3500000, 2000000, 400000, 350000, 3250000, 17000000, 3400000);
+            case "Solar22" -> new Solar(nombre, pos, banca, 4000000, 2000000, 400000, 500000, 4250000, 20000000, 4000000);
             default -> null;
         };
     }
 
     private Casilla crearServicio(String nombre, int pos) {
-        // nombre, pos, valor, hipoteca, dueño
-        return new Servicio(nombre, pos, Valor.PRECIO_SERVICIO_TRANSPORTE, 0, banca);
+        // nombre, pos, dueño
+        return new Servicio(nombre, pos, Valor.PRECIO_SERVICIO_TRANSPORTE, banca);
     }
 
     private Casilla crearTransporte(String nombre, int pos) {
-        // nombre, pos, valor, hipoteca, dueño
-        return new Transporte(nombre, pos, Valor.PRECIO_SERVICIO_TRANSPORTE, 0, banca);
+        // nombre, pos, dueño
+        return new Transporte(nombre, pos, Valor.PRECIO_SERVICIO_TRANSPORTE, banca);
     }
 
     // --- GENERACIÓN DE CASILLAS (Insertando las nuevas clases) ---
@@ -82,29 +86,29 @@ public class Tablero {
     private void insertarLadoSur() {
         ArrayList<Casilla> sur = posiciones.getFirst();
         sur.add(new Salida(1)); // Antes: new Casilla("Salida", 1, TESPECIAL)
-        sur.add(crearSolar("Solar1", 2, 600000));
+        sur.add(crearSolar("Solar1", 2));
         sur.add(new CajaComunidad(3)); // Antes: new Casilla("Caja", 3, TCOMUNIDAD)
-        sur.add(crearSolar("Solar2", 4, 600000));
+        sur.add(crearSolar("Solar2", 4));
         sur.add(new Impuesto("Imp1", 5, 2000000)); // Antes: new Casilla("Imp1", 5, 2000000)
         sur.add(crearTransporte("Trans1", 6));
-        sur.add(crearSolar("Solar3", 7, 1000000));
+        sur.add(crearSolar("Solar3", 7));
         sur.add(new Suerte(8)); // Antes: new Casilla("Suerte", 8, TSUERTE)
-        sur.add(crearSolar("Solar4", 9, 1000000));
-        sur.add(crearSolar("Solar5", 10, 1200000));
+        sur.add(crearSolar("Solar4", 9));
+        sur.add(crearSolar("Solar5", 10));
         sur.add(new Carcel(11)); // Antes: new Casilla("Cárcel", 11, TESPECIAL)
     }
 
     private void insertarLadoOeste() {
         ArrayList<Casilla> oeste = posiciones.get(1);
-        oeste.add(crearSolar("Solar6", 12, 1400000));
+        oeste.add(crearSolar("Solar6", 12));
         oeste.add(crearServicio("Serv1", 13));
-        oeste.add(crearSolar("Solar7", 14, 1400000));
-        oeste.add(crearSolar("Solar8", 15, 1600000));
+        oeste.add(crearSolar("Solar7", 14));
+        oeste.add(crearSolar("Solar8", 15));
         oeste.add(crearTransporte("Trans2", 16));
-        oeste.add(crearSolar("Solar9", 17, 1800000));
+        oeste.add(crearSolar("Solar9", 17));
         oeste.add(new CajaComunidad(18));
-        oeste.add(crearSolar("Solar10", 19, 1800000));
-        oeste.add(crearSolar("Solar11", 20, 2200000));
+        oeste.add(crearSolar("Solar10", 19));
+        oeste.add(crearSolar("Solar11", 20));
     }
 
     private void insertarLadoNorte() {
@@ -114,29 +118,29 @@ public class Tablero {
         norte.add(parking);
         Casilla.setParkingReferencia(parking);
 
-        norte.add(crearSolar("Solar12", 22, 2200000));
+        norte.add(crearSolar("Solar12", 22));
         norte.add(new Suerte(23));
-        norte.add(crearSolar("Solar13", 24, 2200000));
-        norte.add(crearSolar("Solar14", 25, 2400000));
+        norte.add(crearSolar("Solar13", 24));
+        norte.add(crearSolar("Solar14", 25));
         norte.add(crearTransporte("Trans3", 26));
-        norte.add(crearSolar("Solar15", 27, 2600000));
-        norte.add(crearSolar("Solar16", 28, 2600000));
+        norte.add(crearSolar("Solar15", 27));
+        norte.add(crearSolar("Solar16", 28));
         norte.add(crearServicio("Serv2", 29));
-        norte.add(crearSolar("Solar17", 30, 2800000));
+        norte.add(crearSolar("Solar17", 30));
         norte.add(new IrCarcel(31)); // Antes: new Casilla("IrCarcel", ...)
     }
 
     private void insertarLadoEste() {
         ArrayList<Casilla> este = posiciones.get(3);
-        este.add(crearSolar("Solar18", 32, 3000000));
-        este.add(crearSolar("Solar19", 33, 3000000));
+        este.add(crearSolar("Solar18", 32));
+        este.add(crearSolar("Solar19", 33));
         este.add(new CajaComunidad(34));
-        este.add(crearSolar("Solar20", 35, 3200000));
+        este.add(crearSolar("Solar20", 35));
         este.add(crearTransporte("Trans4", 36));
         este.add(new Suerte(37));
-        este.add(crearSolar("Solar21", 38, 3500000));
+        este.add(crearSolar("Solar21", 38));
         este.add(new Impuesto("Imp2", 39, 2000000));
-        este.add(crearSolar("Solar22", 40, 4000000));
+        este.add(crearSolar("Solar22", 40));
     }
 
     // --- GRUPOS (Se mantiene igual) ---

@@ -180,7 +180,7 @@ public class Menu {
             } else {//Si no hay tres partes en la entrada, no es válida
                 String tipo = partes[0]; //"casas" por ejemplo
                 String solar = partes[1]; //"Solar1" por ejemplo
-                int cantidad = Integer.parseInt(partes[2]); // 3
+                int cantidad;
                 try {
                     cantidad = Integer.parseInt(partes[2]);
                 } catch (NumberFormatException e) {
@@ -196,8 +196,10 @@ public class Menu {
             String nombreJugador = comando.substring("estadisticas ".length());
             juego.estadisticasJugador(nombreJugador);
         }
-
-
+        if (comando.equalsIgnoreCase("ayuda") || comando.equalsIgnoreCase("help")) {
+            mostrarAyuda();
+            return;
+        }
         if (comando.startsWith("trato ")) {
             juego.proponerTrato(comando);
             return;
@@ -217,7 +219,6 @@ public class Menu {
 
         if (comando.equals("tratos")) {
             juego.listarTratos();
-            return;
         }
     }
 
@@ -237,83 +238,91 @@ public class Menu {
                 Juego.consola.imprimir("¡Hasta luego!");
                 break;
             }
-            try {
-                analizarComando(linea);
-            } catch (SaldoInsuficienteException e) { //bancarrota
-                // CASO 1: Problemas de dinero (Requisito 29: tratada diferente)
-                // Podrías ponerlo en rojo, o sugerir hipotecar
-                Juego.consola.imprimir("[!] PROBLEMA DE FONDOS: " + e.getMessage());
+            catcher(linea);
+        }
+    }
 
-            } catch (CompraNoPermitidaException e) {
-                // CASO 2: Error específico de compras
-                Juego.consola.imprimir("[!] COMPRA RECHAZADA: " + e.getMessage());
+    private void mostrarAyuda() {
+        Juego.consola.imprimir("\n=== GUÍA DE COMANDOS MONOPOLY ===");
+        Juego.consola.imprimir("--- MOVIMIENTO Y TURNOS ---");
+        Juego.consola.imprimir(" • crear jugador <Nombre> <Avatar> : Crea un nuevo jugador (ej: crear jugador Ana coche).");
+        Juego.consola.imprimir(" • lanzar dados                    : Tira los dados y mueve tu avatar.");
+        Juego.consola.imprimir(" • acabar turno                    : Pasa el turno al siguiente jugador.");
+        Juego.consola.imprimir(" • salir carcel                    : Paga la fianza para salir de la cárcel.");
+        Juego.consola.imprimir(" • jugador                         : Muestra quién tiene el turno actual.");
+        Juego.consola.imprimir(" • ver tablero                     : Imprime el estado visual del tablero.");
 
-            } catch (EdificacionNoPermitidaException e) {
-                // CASO 3: Error al edificar
-                Juego.consola.imprimir("[!] NO PUEDES CONSTRUIR: " + e.getMessage());
+        Juego.consola.imprimir("\n--- GESTIÓN DE PROPIEDADES ---");
+        Juego.consola.imprimir(" • comprar <Casilla>               : Compra la casilla en la que estás (ej: comprar Solar1).");
+        Juego.consola.imprimir(" • edificar <tipo>                 : Construye 'casa', 'hotel', 'piscina' o 'pista deporte'.");
+        Juego.consola.imprimir(" • vender <tipo> <solar> <n>       : Vende n edificios de ese tipo (ej: vender casas Solar1 2).");
+        Juego.consola.imprimir(" • hipotecar <Casilla>             : Recibes la mitad del valor a cambio de bloquearla.");
+        Juego.consola.imprimir(" • deshipotecar <Casilla>          : Pagas la hipoteca + 10% para recuperarla.");
 
-            } catch (BancarrotaException e) {
-                Juego.consola.imprimir("[!] BANCARROTA: " + e.getMessage());
-                juego.declararBancarrota();
+        Juego.consola.imprimir("\n--- INFORMACIÓN ---");
+        Juego.consola.imprimir(" • describir <Casilla>             : Muestra detalles de un solar, impuesto, etc.");
+        Juego.consola.imprimir(" • describir jugador <Nombre>      : Muestra dinero, propiedades y perfil de un jugador.");
+        Juego.consola.imprimir(" • listar jugadores                : Lista todos los jugadores en la partida.");
+        Juego.consola.imprimir(" • listar enventa                  : Muestra qué propiedades siguen libres.");
+        Juego.consola.imprimir(" • listar edificios [color]        : Muestra tus edificios (opcional: filtrar por color de grupo).");
+        Juego.consola.imprimir(" • estadisticas [jugador]          : Muestra estadísticas globales o de un jugador específico.");
 
-            } catch (AccionInvalidaException e) {
-                // CASO 4: Otros errores de reglas (turno, moverse, etc)
-                Juego.consola.imprimir("[!] Acción no válida: " + e.getMessage());
+        Juego.consola.imprimir("\n--- TRATOS ---");
+        Juego.consola.imprimir(" • trato <Jugador>: cambiar (A, B) : Propone un cambio. A es lo que das, B lo que pides.");
+        Juego.consola.imprimir("      Ejemplo: trato Maria: cambiar (Solar1, 5000) -> Das Solar1, pides 5000.");
+        Juego.consola.imprimir(" • tratos                          : Muestra los tratos que has propuesto o recibido.");
+        Juego.consola.imprimir(" • aceptar trato <id>              : Acepta y ejecuta un trato (ej: aceptar trato trato1).");
+        Juego.consola.imprimir(" • eliminar trato <id>             : Borra una propuesta de trato.");
 
-            } catch (MonopolyEtseException e) {
-                // CASO 5: Cualquier otra excepción propia que se nos haya olvidado
-                Juego.consola.imprimir("Error del juego: " + e.getMessage());
+        Juego.consola.imprimir("\n • salir                           : Cierra el juego.");
+    }
 
-            } catch (Exception e) {
-                // Error inesperado de Java (Bugs, NullPointer, etc)
-                Juego.consola.imprimir("Ocurrió un error interno: " + e.toString());
+    private void catcher(String linea) {
+        try {
+            analizarComando(linea);
+        } catch (SaldoInsuficienteException e) { //bancarrota
+            // CASO 1: Problemas de dinero (Requisito 29: tratada diferente)
+            // Podrías ponerlo en rojo, o sugerir hipotecar
+            Juego.consola.imprimir("[!] PROBLEMA DE FONDOS: " + e.getMessage());
 
-            }
+        } catch (CompraNoPermitidaException e) {
+            // CASO 2: Error específico de compras
+            Juego.consola.imprimir("[!] COMPRA RECHAZADA: " + e.getMessage());
+
+        } catch (EdificacionNoPermitidaException e) {
+            // CASO 3: Error al edificar
+            Juego.consola.imprimir("[!] NO PUEDES CONSTRUIR: " + e.getMessage());
+
+        } catch (BancarrotaException e) {
+            Juego.consola.imprimir("[!] BANCARROTA: " + e.getMessage());
+            juego.declararBancarrota();
+
+        } catch (AccionInvalidaException e) {
+            // CASO 4: Otros errores de reglas (turno, moverse, etc)
+            Juego.consola.imprimir("[!] Acción no válida: " + e.getMessage());
+
+        } catch (MonopolyEtseException e) {
+            // CASO 5: Cualquier otra excepción propia que se nos haya olvidado
+            Juego.consola.imprimir("Error del juego: " + e.getMessage());
+
+        } catch (Exception e) {
+            // Error inesperado de Java (Bugs, NullPointer, etc)
+            Juego.consola.imprimir("Ocurrió un error interno: " + e);
+
         }
     }
 
 
     private void ejecutarFichero(String ruta) {
         if (ruta == null) {
-            Juego.consola.imprimir("Error leyendo: " + ruta);
+            Juego.consola.imprimir("Error leyendo: " + null);
             return;
         }
         try (java.util.Scanner sc = new java.util.Scanner(new java.io.File(ruta))) {
             while (sc.hasNextLine()) {
                 String linea = sc.nextLine();
 
-                try {
-                    analizarComando(linea);
-                } catch (SaldoInsuficienteException e) { //bancarrota
-                    // CASO 1: Problemas de dinero (Requisito 29: tratada diferente)
-                    // Podrías ponerlo en rojo, o sugerir hipotecar
-                    Juego.consola.imprimir("[!] PROBLEMA DE FONDOS: " + e.getMessage());
-
-                } catch (CompraNoPermitidaException e) {
-                    // CASO 2: Error específico de compras
-                    Juego.consola.imprimir("[!] COMPRA RECHAZADA: " + e.getMessage());
-
-                } catch (EdificacionNoPermitidaException e) {
-                    // CASO 3: Error al edificar
-                    Juego.consola.imprimir("[!] NO PUEDES CONSTRUIR: " + e.getMessage());
-
-                } catch (BancarrotaException e) {
-                    Juego.consola.imprimir("[!] BANCARROTA: " + e.getMessage());
-                    juego.declararBancarrota();
-
-                } catch (AccionInvalidaException e) {
-                    // CASO 4: Otros errores de reglas (turno, moverse, etc)
-                    Juego.consola.imprimir("[!] Acción no válida: " + e.getMessage());
-
-                } catch (MonopolyEtseException e) {
-                    // CASO 5: Cualquier otra excepción propia que se nos haya olvidado
-                    Juego.consola.imprimir("Error del juego: " + e.getMessage());
-
-                } catch (Exception e) {
-                    // Error inesperado de Java (Bugs, NullPointer, etc)
-                    Juego.consola.imprimir("Ocurrió un error interno: " + e.toString());
-
-                }
+                catcher(linea);
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

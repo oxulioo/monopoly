@@ -12,7 +12,5 @@ public abstract class Especial extends Casilla {
 
     @Override
     // 2. AÑADIR throws MonopolyEtseException
-    public void evaluarCasilla(Jugador actual, Juego juego, int tirada) throws MonopolyEtseException {
-        // Método vacío por defecto
-    }
+    public void evaluarCasilla(Jugador actual, Juego juego, int tirada) throws MonopolyEtseException{}
 }
