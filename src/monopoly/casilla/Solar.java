@@ -7,7 +7,7 @@ import monopoly.partida.Tablero;
 public class Solar extends Propiedad {
 
 
-    // MOVIDO TAL CUAL DESDE CASILLA.JAVA (Atributos de edificios)
+    //Atributos
     private int numCasas=0;
     private int numHoteles=0;
     private int numPiscinas=0;
@@ -27,13 +27,14 @@ public class Solar extends Propiedad {
     // Alquiler base (necesario recuperarlo del precargarDatosCasillas o pasarlo en constructor)
     private final int alquilerBase;
 
-    // Lista de edificios (tal cual la tenías)
+    // Lista de edificios
     private final java.util.List<Edificio> edificios = new java.util.ArrayList<>();
 
     public Solar(String nombre, int posicion, Jugador dueno, int valor,
                  int precioCasaYHotel, int precioPiscina,
                  int alquilerBase, int alquilerCasa, int alquilerHotel, int alquilerPiscinaYPistaDeporte) {
 
+        //llamamos al constructor y cargamos todos los datos
         super(nombre, Casilla.TSOLAR, posicion, valor, dueno);
         this.precioCasa = precioCasaYHotel;
         this.precioHotel = precioCasaYHotel;
@@ -81,7 +82,7 @@ public class Solar extends Propiedad {
     }
 
 
-    // --- MÉTODO ALQUILER AJUSTADO AL GUION ---
+    //Reescribimos alquiler, es un metodo abstracto en propiedad
     @Override
     public void alquiler(Jugador actual) {
         if (this.gethipotecada() == 1) return; // Si está hipotecada no cobra
@@ -106,11 +107,7 @@ public class Solar extends Propiedad {
         // Cobrar
         if (alquilerTotal > 0) {
             actual.pagarAlquiler(this, 1); // Pasamos 1 porque el cálculo ya lo hicimos aquí
-            // NOTA: Tu método pagarAlquiler en Jugador.java recalculaba el importe.
-            // Para cumplir el guion ESTRICTAMENTE, deberías modificar pagarAlquiler para que acepte
-            // el importe final o modificar la lógica interna de Jugador para que use Solar.getAlquilerTotal().
-            // Si quieres mantener tu estructura actual, asegúrate de que el cálculo en Jugador.java
-            // coincida con esta lógica de suma.
+
         }
     }
 
@@ -128,7 +125,7 @@ public class Solar extends Propiedad {
                 break;
 
             case "hotel":
-                // Regla: ...se deberán substituir todas las casas por el hotel
+                // Regla:se deberán substituir todas las casas por el hotel
                 eliminarCasasParaHotel(); // Método privado que borra las 4 casas
 
                 nuevoEdificio = new Hotel(generarIdEdificio("hotel"), this, propietario);
@@ -156,20 +153,18 @@ public class Solar extends Propiedad {
     }
 
     public void hipotecar() {
-        // Lógica movida si quieres, o dejamos que Juego gestione.
-        // Para cumplir expediente PDF:
         this.sethipotecada(1);
     }
 
 
     @Override
     public String toString() {
-        return infoCasilla(); // Reutiliza tu infoCasilla si la traes, o reimplementamos el string
+        return infoCasilla();
     }
 
     // Método auxiliar para usar tu infoCasilla original
     public String infoCasilla() {
-        // COPIA PEGA DE TU INFO CASILLA (parte Solar)
+
         String grupoStr = (this.grupo != null) ? this.grupo.getColorGrupo() : "-";
         String propietario = (this.dueno == null) ? "Banca" : this.dueno.getNombre();
 

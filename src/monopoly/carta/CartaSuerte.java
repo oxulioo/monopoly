@@ -74,74 +74,77 @@ public class CartaSuerte extends Carta {
     }
 
     private void avanzarTransporteMasCercano(Jugador jugador, Juego juego) throws AccionInvalidaException {
-        // Buscar primer transporte
-        String[] transportes = {"Trans1", "Trans2", "Trans3", "Trans4"};
-        for (String trans : transportes) {
-            if (juego.getTablero().encontrar_casilla(trans) != null) {
-                try {
-                    juego.moverJugadorACasilla(jugador, trans, true);
-                } catch (MonopolyEtseException e) {
-                   throw new AccionInvalidaException("No se ha podido avanzar");
+        final String[] nomTransportes = {"Trans1", "Trans2", "Trans3", "Trans4"};
+        int minDistancia = Integer.MAX_VALUE;
+        String transporteMasCercano = null;
+        int posActual = jugador.getAvatar().getPosicion().getPosicion();
+
+        // vemos cual esta más cerca
+        for (String nombre : nomTransportes) {
+            Casilla c = juego.getTablero().encontrar_casilla(nombre);
+            if (c != null) {
+                int posDestino = c.getPosicion();
+
+                // Distancia hacia adelante (teniendo en cuenta la vuelta al tablero)
+                int distancia = (posDestino >= posActual)
+                        ? (posDestino - posActual)
+                        : (40 - posActual + posDestino);
+
+                if (distancia < minDistancia) {
+                    minDistancia = distancia;
+                    transporteMasCercano = nombre;
                 }
+            }
+        }
 
-                // Posiciones fijas de las casillas de Transporte
-                final int[] posTransportes = {6, 16, 26, 36};
-                final String[] nomTransportes = {"Trans1", "Trans2", "Trans3", "Trans4"};
+        if (transporteMasCercano == null) throw new AccionInvalidaException("No hay transportes en el tablero.");
 
-                Casilla actual = jugador.getAvatar().getPosicion();
-                int minDistancia = 1000; // iniciamos un número muy grande para que no se encuentre nunca
-                String transporteMasCercano = nomTransportes[0];
-                int posDestinoFinal = posTransportes[0];
+        // Nos movemos
+        Casilla destino = juego.getTablero().encontrar_casilla(transporteMasCercano); //buscamos la casilla
+        Juego.consola.imprimir("El transporte más cercano es " + transporteMasCercano + " (avanzas " + minDistancia + " casillas).");
 
-                // 1. Calcular la casilla más cercana
-                for (int i = 0; i < posTransportes.length; i++) {
-                    int posDestino = posTransportes[i];
-                    int distancia;
 
-                    if (posDestino > actual.getPosicion()) {
-                        distancia = posDestino - actual.getPosicion(); // Movimiento hacia adelante
-                    } else {
-                        distancia = (40 - actual.getPosicion()) + posDestino; // Dando la vuelta, menos o igual que donde estamos
-                    }
 
-                    if (distancia < minDistancia) {
-                        minDistancia = distancia;
-                        transporteMasCercano = nomTransportes[i];
-                        posDestinoFinal = posDestino;
-                    }
+        // Si pasamos por salida al ir allí, cobramos
+        if (destino.getPosicion() < posActual) {
+            jugador.sumarFortuna(Valor.SUMA_VUELTA);
+            jugador.getEstadisticas().sumarPasarPorSalida();
+            jugador.setVueltas(jugador.getVueltas() + 1);
+            Juego.consola.imprimir("Has pasado por Salida: cobras " + Valor.SUMA_VUELTA + "€.");
+        }
+
+        // Colocamos el avatar
+        jugador.getAvatar().setPosicion(destino);
+        destino.incrementarVisita();
+
+        // Regla especial de la carta: Pagar el DOBLE si tiene dueño
+        if (destino instanceof Propiedad) {
+            Propiedad p = (Propiedad) destino;
+            Jugador dueno = p.getDueno();
+
+            if (dueno != null && !dueno.equals(jugador) && !dueno.getNombre().equals("Banca")) {
+                // Calcular alquiler base de transporte (250k * numTransportes)
+                int numTransportes = 0;
+                for (Casilla c : dueno.getPropiedades()) {
+                    if (c.getTipo().equals(Casilla.TTRANSPORTE)) numTransportes++;
                 }
+                long alquilerBase = (long) Valor.ALQUILER_TRANSPORTE * numTransportes;
 
-                // 2. Mover al jugador y gestionar pago
-                Propiedad destino = (Propiedad) juego.getTablero().encontrar_casilla(transporteMasCercano);
-                if (destino == null) return;
+                // ¡EL DOBLE!
+                long aPagar = alquilerBase * 2;
 
-                System.out.println("Avanzando al transporte más cercano: " + destino.getNombre());
+                Juego.consola.imprimir("La propiedad pertenece a " + dueno.getNombre() + ".");
+                Juego.consola.imprimir("La carta te obliga a pagar el DOBLE del alquiler: " + aPagar + "€.");
 
-                // 3. Comprobar si pasa por Salida (antes de mover)
-                boolean cobraSalida = posDestinoFinal < actual.getPosicion();
-                if (cobraSalida) {
-                    jugador.sumarFortuna(Valor.SUMA_VUELTA);
-                    jugador.getEstadisticas().sumarPasarPorSalida();
-                    jugador.setVueltas(jugador.getVueltas() + 1);
-                    System.out.println(jugador.getNombre() + " pasa por salida y recibe " + Valor.SUMA_VUELTA + "€.");
-                }
+                jugador.restarDinero((int) aPagar);
+                dueno.sumarFortuna((int) aPagar);
 
-                // 4. Mover el avatar (sin llamar a evaluarCasilla)
-                jugador.getAvatar().setPosicion(destino);
-                destino.incrementarVisita();
+                // Actualizar estadísticas
+                jugador.getEstadisticas().sumarPagoDeAlquileres(aPagar);
+                dueno.getEstadisticas().sumarCobroDeAlquileres(aPagar);
 
-                // 5. Lógica de pago de la carta
-                Jugador dueno = destino.getDueno();
-                if (dueno != null && dueno != juego.getBanca() && dueno != jugador) {
-                    // "paga al dueño el doble de la operación indicada"
-                    System.out.println("La casilla pertenece a " + dueno.getNombre() + ". ¡Pagas el doble de alquiler!");
-
-                    // Reutilizamos el método existente con factor 2
-                    jugador.pagarAlquiler(destino, 2);
-
-                } else if (dueno == null || dueno == juego.getBanca()) {
-                    System.out.println("La casilla no tiene dueño. Puedes comprarla en tu turno.");
-                }
+            } else if (dueno == null || dueno.getNombre().equals("Banca")) {
+                Juego.consola.imprimir("Has llegado a " + p.getNombre() + ". Está libre y puedes comprarla.");
             }
         }
     }

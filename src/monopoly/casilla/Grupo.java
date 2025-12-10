@@ -51,7 +51,7 @@ public class Grupo {
         }
         for (Casilla c : miembros) {
             if (c instanceof Propiedad) {
-                Jugador d = ((Propiedad)c).getDueno();
+                Jugador d = ((Propiedad)c).getDueno(); //Downcasting
                 if (d == null || d != jugador) {
                     return false;
                 }

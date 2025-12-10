@@ -1357,6 +1357,14 @@ public class Juego implements Comando {
         if (dineroOfrece > proponente.getFortuna()) {
             throw new SaldoInsuficienteException(proponente.getNombre(), dineroOfrece - proponente.getFortuna(),0);
         }
+        // --- CORRECCIÓN BUG 3: VALIDAR EDIFICIOS ---
+        if (propOfrece instanceof Solar s && !s.getEdificios().isEmpty()) {
+            throw new AccionInvalidaException("No puedes ofrecer " + s.getNombre() + " porque tiene edificios. Véndelos primero.");
+        }
+        if (propPide instanceof Solar s && !s.getEdificios().isEmpty()) {
+            throw new AccionInvalidaException("No puedes pedir " + s.getNombre() + " porque tiene edificios construidos.");
+        }
+        // -------------------------------------------
 
         // 4. Crear trato
         Trato nuevoTrato = new Trato(proponente, propuesto, propOfrece, dineroOfrece, propPide, dineroPide);

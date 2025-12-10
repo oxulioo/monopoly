@@ -5,7 +5,7 @@ import monopoly.jugador.Jugador;
 
 public abstract class Propiedad extends Casilla {
 
-    // MOVIDO TAL CUAL DESDE CASILLA.JAVA
+
     protected Jugador dueno;
     protected int valor;
     protected Grupo grupo;
@@ -61,20 +61,18 @@ public abstract class Propiedad extends Casilla {
         hipotecada = h;
     }
 
-    // Requisito 26: boolean perteneceAJugador(Jugador jugador)
-    // Implementación simple para cumplir
+
+
     public boolean perteneceAJugador(Jugador jugador) {
         return dueno != null && dueno.equals(jugador);
     }
 
-    // Requisito 26: abstract boolean alquiler() y abstract float valor()
-    // Los definimos abstractos para que Solar los implemente con TU lógica
+   //Abstractos
     public abstract void alquiler(Jugador j);
 
     public abstract int valor();
 
-    // MOVIDO: Tu método comprarCasilla
-    // Lógica idéntica a tu Casilla.java
+    //metodo existente
     public void comprar(Jugador solicitante) {
         int precio = Math.max(0, this.valor);
 
@@ -86,17 +84,16 @@ public abstract class Propiedad extends Casilla {
         solicitante.anadirPropiedad(this);
     }
 
-    // Implementación base de evaluarCasilla para Propiedades
-    // Usa TU lógica original de Casilla.java para cuando no tiene dueño
+
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
         this.incrementarVisita(); // Tu línea original
 
-        // TU LÓGICA: Si tiene dueño y no soy yo -> Pagar
+
         if (dueno != null && !dueno.equals(actual) && !dueno.getNombre().equals("Banca")) {
             // Llama al método alquiler() específico de cada hijo (Solar/Transporte)
             alquiler(actual);
         }
-        // TU LÓGICA: Si no tiene dueño -> Info
+
         else if (dueno == null || dueno.getNombre().equals("Banca")) {
             Juego.consola.imprimir("Estás en " + nombre + ". Pertenece a la Banca.");
             Juego.consola.imprimir("Valor de compra: " + valor);

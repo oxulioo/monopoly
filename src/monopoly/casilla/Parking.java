@@ -15,7 +15,7 @@ public class Parking extends Accion {
     @Override
     public void evaluarCasilla(Jugador actual, Juego juego, int tirada) {
         this.incrementarVisita();
-        if(this.getValor() > 0){ // getValor() devuelve el bote,, SINO THIS.BOTE
+        if(this.getValor() > 0){ // getValor() devuelve el bote,
             int premio = this.getValor();
             actual.sumarFortuna(premio);
             actual.getEstadisticas().sumarPremiosInversionesOBote(premio);
@@ -43,7 +43,7 @@ public class Parking extends Accion {
     @Override
     public String toString() {
         StringBuilder jugadores = new StringBuilder();
-        if (this.avatares != null && !this.avatares.isEmpty()) {
+        if (this.avatares != null && !this.avatares.isEmpty()) { //avatares que se encuentran en ese momento en el parking
             for (int i = 0; i < this.avatares.size(); i++) {
                 Jugador j = this.avatares.get(i).getJugador();
                 String nombre = (j == null) ? "-" : j.getNombre();
