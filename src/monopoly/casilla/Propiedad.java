@@ -53,10 +53,6 @@ public abstract class Propiedad extends Casilla {
         return hipoteca;
     }
 
-    public void setHipoteca(int hip) {
-        this.hipoteca = hip;
-    }
-
     public int gethipotecada() {
         return hipotecada;
     }

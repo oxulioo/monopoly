@@ -24,7 +24,7 @@ public class Solar extends Propiedad {
     private int alquilerPistaDeporte;
 
     // Alquiler base (necesario recuperarlo del precargarDatosCasillas o pasarlo en constructor)
-    private int alquilerBase;
+    private final int alquilerBase;
 
     // Lista de edificios (tal cual la tenías)
     private final java.util.List<Edificio> edificios = new java.util.ArrayList<>();
@@ -67,7 +67,6 @@ public class Solar extends Propiedad {
     public int getAlquilerBase() { return this.alquilerBase; }
 
     public java.util.List<Edificio> getEdificios() { return java.util.Collections.unmodifiableList(edificios); }
-    public void anadirEdificio(Edificio e) { edificios.add(e); }
     public void eliminarEdificio(Edificio e){ edificios.remove(e); }
 
     // --- IMPLEMENTACIÓN DE MÉTODOS (Lógica extraída de Casilla.java) ---
@@ -111,10 +110,6 @@ public class Solar extends Propiedad {
         // Lógica movida si quieres, o dejamos que Juego gestione.
         // Para cumplir expediente PDF:
         this.sethipotecada(1);
-    }
-
-    public boolean estaHipotecada() {
-        return this.gethipotecada() == 1;
     }
 
     @Override
@@ -168,7 +163,7 @@ public class Solar extends Propiedad {
         // Validación básica (el resto de validaciones de dinero/grupo están en Juego.java)
         // Aquí solo instanciamos y guardamos.
 
-        Edificio nuevoEdificio = null;
+        Edificio nuevoEdificio;
         Jugador propietario = this.getDueno();
 
         switch (tipo.toLowerCase()) {
@@ -203,12 +198,10 @@ public class Solar extends Propiedad {
                 return;
         }
 
-        if (nuevoEdificio != null) {
-            this.edificios.add(nuevoEdificio); // ¡IMPORTANTE! Añadimos a la lista
-            // También deberíamos añadirlo a la lista del jugador si la tiene
-            if (propietario != null) {
-                propietario.anadirEdificio(nuevoEdificio);
-            }
+        this.edificios.add(nuevoEdificio); // ¡IMPORTANTE! Añadimos a la lista
+        // También deberíamos añadirlo a la lista del jugador si la tiene
+        if (propietario != null) {
+            propietario.anadirEdificio(nuevoEdificio);
         }
     }
 

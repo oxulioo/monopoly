@@ -7,7 +7,6 @@ public class SaldoInsuficienteException extends FinancialException {
         super("El jugador " + nombre + " no tiene saldo. Faltan " + falta + "€.");
         this.nivelBancarrota = bancarrota;
     }
-
     public boolean esDeBancarrota() {
         return nivelBancarrota == 1;
     }

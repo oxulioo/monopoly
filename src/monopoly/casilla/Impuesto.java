@@ -6,7 +6,7 @@ import monopoly.jugador.Jugador;
 
 public class Impuesto extends Casilla {
 
-    private int valor; // El impuesto definido
+    private final int valor; // El impuesto definido
 
     public Impuesto(String nombre, int posicion, int valor) {
         super(nombre, Casilla.TIMPUESTO, posicion);

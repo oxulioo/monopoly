@@ -2,6 +2,8 @@ package monopoly;
 import monopoly.exceptions.*;
 import monopoly.exceptions.MonopolyEtseException;
 
+import java.io.FileNotFoundException;
+
 
 public class Menu {
 
@@ -250,6 +252,10 @@ public class Menu {
                 // CASO 3: Error al edificar
                 Juego.consola.imprimir("[!] NO PUEDES CONSTRUIR: " + e.getMessage());
 
+            } catch (BancarrotaException e) {
+                Juego.consola.imprimir("[!] BANCARROTA: " + e.getMessage());
+                juego.declararBancarrota();
+
             } catch (AccionInvalidaException e) {
                 // CASO 4: Otros errores de reglas (turno, moverse, etc)
                 Juego.consola.imprimir("[!] Acción no válida: " + e.getMessage());
@@ -261,6 +267,7 @@ public class Menu {
             } catch (Exception e) {
                 // Error inesperado de Java (Bugs, NullPointer, etc)
                 Juego.consola.imprimir("Ocurrió un error interno: " + e.toString());
+
             }
         }
     }
@@ -274,6 +281,7 @@ public class Menu {
         try (java.util.Scanner sc = new java.util.Scanner(new java.io.File(ruta))) {
             while (sc.hasNextLine()) {
                 String linea = sc.nextLine();
+
                 try {
                     analizarComando(linea);
                 } catch (SaldoInsuficienteException e) { //bancarrota
@@ -289,6 +297,10 @@ public class Menu {
                     // CASO 3: Error al edificar
                     Juego.consola.imprimir("[!] NO PUEDES CONSTRUIR: " + e.getMessage());
 
+                } catch (BancarrotaException e) {
+                    Juego.consola.imprimir("[!] BANCARROTA: " + e.getMessage());
+                    juego.declararBancarrota();
+
                 } catch (AccionInvalidaException e) {
                     // CASO 4: Otros errores de reglas (turno, moverse, etc)
                     Juego.consola.imprimir("[!] Acción no válida: " + e.getMessage());
@@ -300,10 +312,11 @@ public class Menu {
                 } catch (Exception e) {
                     // Error inesperado de Java (Bugs, NullPointer, etc)
                     Juego.consola.imprimir("Ocurrió un error interno: " + e.toString());
+
                 }
             }
-        } catch (Exception _) {
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
-

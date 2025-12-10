@@ -1,5 +1,6 @@
 package monopoly.consola;
 
+import monopoly.exceptions.BancarrotaException;
 import monopoly.exceptions.MonopolyEtseException;
 import monopoly.jugador.Jugador;
 
@@ -8,7 +9,7 @@ public interface Comando {
     void crearJugador(String nombre, String tipoAvatar) throws MonopolyEtseException;
     void lanzarDados() throws MonopolyEtseException;
     void lanzarDadosForzado(int d1, int d2) throws MonopolyEtseException; // Faltaba este (Requisito 7)
-    void acabarTurno();
+    void acabarTurno() throws BancarrotaException;
     void salirCarcel() throws MonopolyEtseException;
 
     // --- Comandos Parte 1 (Acciones y Consultas) ---
@@ -42,5 +43,5 @@ public interface Comando {
     void aceptarTrato(String idTrato)throws MonopolyEtseException;
     void listarTratos();
     void eliminarTrato(String idTrato) throws MonopolyEtseException;
-    void declararBancarrota(Jugador deudor);
+    void declararBancarrota();
 }

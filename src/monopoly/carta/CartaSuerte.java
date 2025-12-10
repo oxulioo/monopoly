@@ -47,22 +47,17 @@ public class CartaSuerte extends Carta {
         }
     }
 
-    // --- Métodos privados copiados de tu antigua lógica ---
-
     private void pagarATodos(Jugador jugador, Juego juego, int cantidad) {
-        // Tu lógica de iterar jugadores y pagar
-        // Ejemplo simplificado:
-        /*
         for (Jugador otro : juego.getJugadores()) {
-            if (otro != jugador && !"Banca".equals(otro.getNombre())) {
-                if (jugador.sumarGastos(cantidad)) {
-                    otro.sumarFortuna(cantidad);
-                    otro.getEstadisticas().sumarCobroDeAlquileres(cantidad);
-                }
+            if (!otro.equals(jugador) && !"Banca".equals(otro.getNombre())) {
+                jugador.restarDinero(cantidad);
+                otro.sumarFortuna(cantidad);
+                otro.getEstadisticas().sumarCobroDeAlquileres(cantidad);
+                // (Al que paga se le cuenta como tasas/impuestos al ser carta de suerte)
+                jugador.getEstadisticas().sumarPagoTasasImpuestos(cantidad);
+                Juego.consola.imprimir(jugador.getNombre() + " paga " + cantidad + "€ a " + otro.getNombre() + ".");
             }
         }
-        */
-        // IMPLEMENTA TU LÓGICA AQUÍ
     }
 
     private void retrocederCasillas(Jugador jugador, Juego juego, int casillas) throws MonopolyEtseException {
@@ -84,7 +79,7 @@ public class CartaSuerte extends Carta {
         for (String trans : transportes) {
             if (juego.getTablero().encontrar_casilla(trans) != null) {
                 try {
-                    avanzarACasilla(jugador, juego, trans, true);
+                    juego.moverJugadorACasilla(jugador, trans, true);
                 } catch (MonopolyEtseException e) {
                    throw new AccionInvalidaException("No se ha podido avanzar");
                 }
@@ -149,8 +144,5 @@ public class CartaSuerte extends Carta {
                 }
             }
         }
-    }
-    private void avanzarACasilla(Jugador jugador, Juego juego, String casilla, boolean cobrarSalida) throws MonopolyEtseException {
-        juego.moverJugadorACasilla(jugador, casilla, cobrarSalida);
     }
 }
