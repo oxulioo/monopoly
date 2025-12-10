@@ -2,7 +2,7 @@ package monopoly.casilla;
 
 import monopoly.Juego;
 import monopoly.jugador.Jugador;
-import monopoly.exceptions.MonopolyEtseException; // <--- 1. AÑADIR IMPORT
+import monopoly.exceptions.MonopolyEtseException;
 
 public abstract class Especial extends Casilla {
 

@@ -580,108 +580,151 @@ public class Juego implements Comando {
 
     // --- EDIFICACIÓN (Requiere casteo a Solar) ---
 
+    // --- MÉTODO AUXILIAR PARA VALIDACIONES COMUNES ---
+    private Solar obtenerSolarEdificable(Jugador actual) throws EdificacionNoPermitidaException {
+        Casilla pos = actual.getAvatar().getPosicion();
+
+        // Regla: En cada casilla de solar se pueden construir edificios
+        if (!(pos instanceof Solar)) {
+            throw new EdificacionNoPermitidaException("Esta casilla no es un Solar.");
+        }
+        Solar s = (Solar) pos;
+
+        // Regla: ...si dicho solar pertenece al jugador cuyo avatar se encuentra en la casilla...
+        if (!s.getDueno().equals(actual)) {
+            throw new EdificacionNoPermitidaException("No puedes edificar aquí, la propiedad no es tuya.");
+        }
+
+        return s;
+    }
+
+    // --- EDIFICAR CASA ---
     public void edificarCasa() throws MonopolyEtseException {
         if (!hayJugadores()) return;
         Jugador actual = jugadores.get(turno);
-        Solar s = getSolar(actual);
+        Solar s = obtenerSolarEdificable(actual);
 
-        // CORRECCIÓN: Grupo es Propiedad, pero Solar lo tiene.
+        // Regla: ...si el jugador posee todas las casillas del grupo...
         if (s.getGrupo() == null || !s.getGrupo().esDuenoGrupo(actual)) {
-            Juego.consola.imprimir("No se puede edificar: no tienes el grupo completo.\n");
-            return;
+            throw new EdificacionNoPermitidaException("No puedes edificar: no tienes el grupo de color completo.");
         }
 
-        s.edificar("casa"); // Delegamos en Solar (nuevo método)
-        // NOTA: Tu Solar.edificar ya hace la lógica. Si quieres mantener la lógica AQUÍ,
-        // deberías usar los setters de Solar (setNumCasas, etc).
-        // Para respetar "mover código", asumo que la lógica compleja se movió a Solar.java
-        // Si no, copia-pega tu bloque original aquí casteando 'pos' a 'Solar'.
-    }
-
-    private static Solar getSolar(Jugador actual) throws EdificacionNoPermitidaException {
-        Casilla pos = actual.getAvatar().getPosicion();
-
-        // CORRECCIÓN: Check Solar
-        if (!(pos instanceof Solar s)) {
-            throw new EdificacionNoPermitidaException("Solo se puede edificar propiedades.");
+        // Regla: Una vez se construye un hotel, no se van a poder construir ni más casas...
+        if (s.getNumHoteles() > 0) {
+            throw new EdificacionNoPermitidaException("No puedes construir casas porque ya hay un hotel.");
         }
 
-
-        // VALIDACIÓN: No puedes construir casas si ya hay edificios superiores
-        if (s.getNumHoteles() > 0 || s.getNumPiscinas() > 0 || s.getNumPistas() > 0) {
-            throw new EdificacionNoPermitidaException("No puedes edificar casas porque ya has mejorado esta propiedad (Hotel/Piscina/Pista).");
-        }
-        // VALIDACIÓN: Límite de 4 casas
+        // Regla: Se pueden construir un máximo de cuatro casas
         if (s.getNumCasas() >= 4) {
-            throw new EdificacionNoPermitidaException("Límite de casas alcanzado (4). Debes evolucionar a Hotel.");
+            throw new EdificacionNoPermitidaException("Límite de 4 casas alcanzado. Debes construir un hotel.");
         }
-        return s;
+
+        // Pago y Ejecución
+        long coste = s.getPrecioCasa();
+        if (actual.getFortuna() < coste) {
+            throw new SaldoInsuficienteException(actual.getNombre(), coste - actual.getFortuna(), 0);
+        }
+        actual.restarDinero((int)coste);
+        actual.getEstadisticas().sumarDineroInvertido(coste);
+
+        s.edificar("casa");
+        Juego.consola.imprimir("Casa construida en " + s.getNombre() + " por " + coste + "€.");
     }
 
+    // --- EDIFICAR HOTEL ---
     public void edificarHotel() throws MonopolyEtseException {
-        if (!hayJugadores()) {
-            throw new AccionInvalidaException("No hay jugadores");
+        if (!hayJugadores()) return;
+        Jugador actual = jugadores.get(turno);
+        Solar s = obtenerSolarEdificable(actual);
+
+        if (s.getGrupo() == null || !s.getGrupo().esDuenoGrupo(actual)) {
+            throw new EdificacionNoPermitidaException("No tienes el grupo de color completo.");
         }
-        Solar s = getSolar();
-        // VALIDACIÓN: Requisito previo (4 casas)
+
+        // Regla: ...si en ese solar ya se han construido cuatro casas...
         if (s.getNumCasas() != 4) {
-            throw new EdificacionNoPermitidaException("Necesitas tener exactamente 4 casas para poder edificar un hotel.");
+            throw new EdificacionNoPermitidaException("Necesitas tener exactamente 4 casas para construir un hotel.");
         }
-        s.edificar("hotel");
+
+        // Regla: ...se puede construir un único hotel... / ...no más hoteles...
+        if (s.getNumHoteles() > 0) {
+            throw new EdificacionNoPermitidaException("Solo se permite un único hotel por solar.");
+        }
+
+        // Pago y Ejecución
+        long coste = s.getPrecioHotel();
+        if (actual.getFortuna() < coste) {
+            throw new SaldoInsuficienteException(actual.getNombre(), coste - actual.getFortuna(), 0);
+        }
+        actual.restarDinero((int)coste);
+        actual.getEstadisticas().sumarDineroInvertido(coste);
+
+        s.edificar("hotel"); // La sustitución de casas se hace dentro de Solar
+        Juego.consola.imprimir("Hotel construido en " + s.getNombre() + " por " + coste + "€.");
     }
 
-    private Solar getSolar() throws EdificacionNoPermitidaException {
+    // --- EDIFICAR PISCINA ---
+    public void edificarPiscina() throws MonopolyEtseException {
+        if (!hayJugadores()) return;
         Jugador actual = jugadores.get(turno);
-        Casilla pos = actual.getAvatar().getPosicion();
-        if (!(pos instanceof Solar s)){
-            throw new EdificacionNoPermitidaException("Solo se puede edificar propiedades.");
-        }
-        // VALIDACIÓN: No puedes construir hotel si ya lo tienes o tienes mejoras superiores
-        if (s.getNumHoteles() > 0 || s.getNumPiscinas() > 0 || s.getNumPistas() > 0) {
-            throw new EdificacionNoPermitidaException("Ya tienes un hotel (o una mejora superior) en esta propiedad.");
-        }
-        return s;
-    }
+        Solar s = obtenerSolarEdificable(actual);
 
-    public void edificarPiscina() throws MonopolyEtseException{
-        if (!hayJugadores()) {
-            throw new AccionInvalidaException("No hay jugadores");
+        if (s.getGrupo() == null || !s.getGrupo().esDuenoGrupo(actual)) {
+            throw new EdificacionNoPermitidaException("No tienes el grupo de color completo.");
         }
-        Jugador actual = jugadores.get(turno);
-        Casilla pos = actual.getAvatar().getPosicion();
 
-        if (!(pos instanceof Solar s)) {
-            throw new EdificacionNoPermitidaException("Solo se puede edificar propiedades.");
-        }
-        // VALIDACIÓN: Requisito previo (Tener Hotel)
+        // Regla: ...si se ha construido un hotel...
         if (s.getNumHoteles() == 0) {
-            throw new EdificacionNoPermitidaException("No puedes edificar una piscina sin tener previamente un hotel.");
+            throw new EdificacionNoPermitidaException("Necesitas tener un hotel para construir una piscina.");
         }
-        // VALIDACIÓN: No puedes construir piscina si ya tienes una o algo superior
-        if (s.getNumPiscinas() > 0 || s.getNumPistas() > 0) {
-            throw new EdificacionNoPermitidaException("Ya tienes una piscina (o una mejora superior) en esta propiedad.");
+
+        // Regla: ...se puede construir una única piscina...
+        if (s.getNumPiscinas() > 0) {
+            throw new EdificacionNoPermitidaException("Solo se permite una única piscina por solar.");
         }
+
+        // Pago y Ejecución
+        long coste = s.getPrecioPiscina();
+        if (actual.getFortuna() < coste) {
+            throw new SaldoInsuficienteException(actual.getNombre(), coste - actual.getFortuna(), 0);
+        }
+        actual.restarDinero((int)coste);
+        actual.getEstadisticas().sumarDineroInvertido(coste);
+
         s.edificar("piscina");
+        Juego.consola.imprimir("Piscina construida en " + s.getNombre() + " por " + coste + "€.");
     }
 
+    // --- EDIFICAR PISTA DE DEPORTE ---
     public void edificarPista() throws MonopolyEtseException {
-        if (!hayJugadores()){
-            throw new AccionInvalidaException("No hay jugadores");
-        }
+        if (!hayJugadores()) return;
         Jugador actual = jugadores.get(turno);
-        Casilla pos = actual.getAvatar().getPosicion();
-        if (!(pos instanceof Solar s)){
-            throw new EdificacionNoPermitidaException("Solo se puede edificar propiedades.");
+        Solar s = obtenerSolarEdificable(actual);
+
+        if (s.getGrupo() == null || !s.getGrupo().esDuenoGrupo(actual)) {
+            throw new EdificacionNoPermitidaException("No tienes el grupo de color completo.");
         }
-        // VALIDACIÓN: Requisitos previos (Hotel y Piscina)
+
+        // Regla: ...si se ha construido un hotel y una piscina...
         if (s.getNumHoteles() == 0 || s.getNumPiscinas() == 0) {
-            throw new EdificacionNoPermitidaException("Para edificar una pista necesitas tener un hotel y una piscina.");
+            throw new EdificacionNoPermitidaException("Necesitas tener un hotel y una piscina para construir la pista.");
         }
-        // VALIDACIÓN: Límite (Máximo 1 pista)
+
+        // Regla: ...se puede construir una única pista...
         if (s.getNumPistas() > 0) {
-            throw new EdificacionNoPermitidaException("Ya hay una pista de deporte construida en esta propiedad.");
+            throw new EdificacionNoPermitidaException("Solo se permite una única pista de deporte por solar.");
         }
+
+        // Pago y Ejecución
+        long coste = s.getPrecioPistaDeporte();
+        if (actual.getFortuna() < coste) {
+            throw new SaldoInsuficienteException(actual.getNombre(), coste - actual.getFortuna(), 0);
+        }
+        actual.restarDinero((int)coste);
+        actual.getEstadisticas().sumarDineroInvertido(coste);
+
         s.edificar("pista");
+        Juego.consola.imprimir("Pista de deporte construida en " + s.getNombre() + " por " + coste + "€.");
     }
 
     // --- LISTAR EDIFICIOS ---

@@ -7,6 +7,11 @@ public class Casa extends Edificio {
     }
 
     @Override
+    public long getAlquiler() {
+        return solar.getAlquilerCasa(); // Pide el dato al Solar
+    }
+
+    @Override
     public String toString() {
         return "Casa{id='" + id + "', solar=" + solar.getNombre() + "}";
     }

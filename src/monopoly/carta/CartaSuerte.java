@@ -101,7 +101,7 @@ public class CartaSuerte extends Carta {
                     if (posDestino > actual.getPosicion()) {
                         distancia = posDestino - actual.getPosicion(); // Movimiento hacia adelante
                     } else {
-                        distancia = (40 - actual.getPosicion()) + posDestino; // Dando la vuelta
+                        distancia = (40 - actual.getPosicion()) + posDestino; // Dando la vuelta, menos o igual que donde estamos
                     }
 
                     if (distancia < minDistancia) {
@@ -128,9 +128,9 @@ public class CartaSuerte extends Carta {
 
                 // 4. Mover el avatar (sin llamar a evaluarCasilla)
                 jugador.getAvatar().setPosicion(destino);
-                destino.incrementarVisita(); // Importante: registrar la visita manualmente
+                destino.incrementarVisita();
 
-                // 5. Lógica de pago de la carta (REUTILIZANDO pagarAlquiler)
+                // 5. Lógica de pago de la carta
                 Jugador dueno = destino.getDueno();
                 if (dueno != null && dueno != juego.getBanca() && dueno != jugador) {
                     // "paga al dueño el doble de la operación indicada"

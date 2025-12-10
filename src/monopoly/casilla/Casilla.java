@@ -19,10 +19,10 @@ public abstract class Casilla {
 
     // --- ATRIBUTOS COMUNES ---
     protected String nombre;
-    protected String tipo; // Mantenemos 'tipo' porque tu Tablero y Juego lo usan mucho
+    protected String tipo; // Mantenemos 'tipo'
     protected int posicion;
     protected ArrayList<Avatar> avatares;
-    protected int vecesVisitada = 0; // Para estadísticas (Requisito 26)
+    protected int vecesVisitada = 0; // Para estadísticas
 
     // Variable estática para el bote del parking (usada por casillas de impuestos)
     private static Casilla parkingReferencia;
@@ -66,12 +66,10 @@ public abstract class Casilla {
 
     // --- MÉTODOS ABSTRACTOS O DE COMPATIBILIDAD ---
 
-    // Este es el método clave que reemplaza tu switch gigante
+
     public abstract void evaluarCasilla(Jugador actual, Juego juego, int tirada) throws MonopolyEtseException;
 
-    // Método de compatibilidad: Como 'Casilla' ya no tiene 'valor' (lo tiene Propiedad),
-    // dejamos esto para que si alguien llama a casilla.getValor() devuelva 0 por defecto
-    // y no rompa el código antiguo. Las hijas lo sobrescribirán.
+
     public int getValor() {
         return 0;
     }

@@ -8,6 +8,11 @@ public class Piscina extends Edificio {
     }
 
     @Override
+    public long getAlquiler() {
+        return solar.getAlquilerPiscina();
+    }
+
+    @Override
     public String toString() {
         return "Piscina{id='" + id + "', solar=" + solar.getNombre() + "}";
     }

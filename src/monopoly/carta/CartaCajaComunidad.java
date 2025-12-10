@@ -41,6 +41,8 @@ public class CartaCajaComunidad extends Carta {
         }
     }
 
+
+    //Para el caso 1, vemos si puede pagar lo que le pide la carta, 500000
     private void pagarSiPuede(Jugador jugador, int cantidad) {
         jugador.restarDinero(cantidad);
         jugador.getEstadisticas().sumarPagoTasasImpuestos(cantidad);

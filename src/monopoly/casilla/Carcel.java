@@ -15,7 +15,7 @@ public class Carcel extends Especial {
         int salir = Valor.PRECIO_SALIR_CARCEL;
         StringBuilder jugadores = new StringBuilder();
 
-        if (this.avatares != null && !this.avatares.isEmpty()) {
+        if (this.avatares != null && !this.avatares.isEmpty()) { //busca los jugadores en la carcel
             for (int i = 0; i < this.avatares.size(); i++) {
                 Jugador j = this.avatares.get(i).getJugador();
                 String nom = (j == null) ? "-" : j.getNombre();

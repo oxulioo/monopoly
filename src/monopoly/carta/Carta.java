@@ -15,6 +15,6 @@ public abstract class Carta {
 
     public int getId() { return id; }
 
-    // Método abstracto: cada hija definirá qué hace
+    // Método abstracto: cada hijo definirá qué hace
     public abstract void accion(Jugador jugador, Juego juego) throws MonopolyEtseException;
 }

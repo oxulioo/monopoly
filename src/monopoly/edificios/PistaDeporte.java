@@ -8,6 +8,11 @@ public class PistaDeporte extends Edificio {
     }
 
     @Override
+    public long getAlquiler() {
+        return solar.getAlquilerPistaDeporte();
+    }
+
+    @Override
     public String toString() {
         return "PistaDeporte{id='" + id + "', solar=" + solar.getNombre() + "}";
     }

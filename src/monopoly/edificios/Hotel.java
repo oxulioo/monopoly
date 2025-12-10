@@ -8,6 +8,11 @@ public class Hotel extends Edificio {
     }
 
     @Override
+    public long getAlquiler() {
+        return solar.getAlquilerHotel();
+    }
+
+    @Override
     public String toString() {
         return "Hotel{id='" + id + "', solar=" + solar.getNombre() + "}";
     }
