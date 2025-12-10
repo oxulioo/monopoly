@@ -202,18 +202,18 @@ public class Menu {
         }
 
         if (comando.startsWith("aceptar trato")) { // ej: aceptar trato trato1
-            String id = comando.substring("aceptar trato".length()).trim();
+            String id = comando.substring("aceptar".length()).trim();
             juego.aceptarTrato(id);
             return;
         }
 
         if (comando.startsWith("eliminar trato")) {
-            String idtrato = comando.substring("eliminar trato".length()).trim();
+            String idtrato = comando.substring("eliminar".length()).trim();
             juego.eliminarTrato(idtrato);
             return;
         }
 
-        if (comando.equals("listar tratos")) {
+        if (comando.equals("tratos")) {
             juego.listarTratos();
             return;
         }

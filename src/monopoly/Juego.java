@@ -1381,7 +1381,6 @@ public class Juego implements Comando {
 
      */
     // --- REEMPLAZAR EN JUEGO.JAVA ---
-
     @Override
     public void proponerTrato(String comando) throws MonopolyEtseException {
         if (!hayJugadores()) throw new AccionInvalidaException("No hay jugadores.");
@@ -1417,6 +1416,9 @@ public class Juego implements Comando {
         int dineroPide = (int) demanda[1];
 
         // 3. Validaciones de propiedad (Punto 3: Estado actual)
+        if(propOfrece == null && propPide == null){
+            throw new AccionInvalidaException("No se permiten tratos exclusivamente de dinero por dinero");
+        }
         if (propOfrece != null && !propOfrece.perteneceAJugador(proponente)) {
             throw new AccionInvalidaException("No puedes ofrecer " + propOfrece.getNombre() + " porque no es tuya.");
         }
@@ -1434,7 +1436,6 @@ public class Juego implements Comando {
 
         Juego.consola.imprimir("Trato propuesto correctamente: " + nuevoTrato.getId());
     }
-
     // --- NUEVO MÉTODO DE PARSEO ESTRICTO (Punto 1) ---
     private Object[] analizarParteTrato(String texto) throws AccionInvalidaException {
         Propiedad p = null;
