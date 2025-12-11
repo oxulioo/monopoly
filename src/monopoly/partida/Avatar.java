@@ -8,12 +8,7 @@ import monopoly.jugador.Jugador;
 import java.util.ArrayList;
 
 public class Avatar {
-    //A continuación, tenemos otros métodos útiles para el desarrollo del juego.
-    /*Método que permite mover a un avatar a una casilla concreta. Parámetros:
-    * - Un array con las casillas del tablero. Se trata de un arrayList de arrayList de casillas (uno por lado).
-    * - Un entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).
-    * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siempre es positivo.
-     */
+
 
     private char id;
     private final String tipo;
@@ -42,11 +37,11 @@ public class Avatar {
     }
     public void setPosicion(Casilla posicion) {
         if (this.lugar == posicion) return; // no hacemos nada
-        // quitar de la casilla anterior
+
         try {
-            if (this.lugar != null) this.lugar.eliminarAvatar(this);
+            if (this.lugar != null) this.lugar.eliminarAvatar(this); //lo sacamos de la casilla anterior
         } catch (Throwable ignored) {}
-        // poner nueva
+        // ponemos en la nueva
         this.lugar = posicion;
         // añadir a la casilla nueva (una sola vez)
         try {

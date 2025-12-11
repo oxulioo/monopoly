@@ -20,23 +20,21 @@ public class Tablero {
     public Tablero(Jugador banca) {
         this.banca = banca;
         this.posiciones = new ArrayList<>(4);
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) { //4 lados de tablero
             this.posiciones.add(new ArrayList<>());
         }
         this.grupos = new HashMap<>();
 
         generarCasillas();
-        // precargarDatosCasillas(); -> YA NO ES NECESARIO, los datos van en el constructor de Solar
+
         generarGrupos();
     }
 
-    // --- MÉTODOS AUXILIARES ACTUALIZADOS CON LOS NUEVOS CONSTRUCTORES ---
+
 
     private Casilla crearSolar(String nombre, int pos) {
-        // Datos específicos extraídos de tu antiguo precargarDatosCasillas
-        // Formato: new Solar(nombre, pos, dueno, precioCasa, precioHotel, precioPiscina, precioPista, ALQUILER_BASE)
-        // Nota: He calculado l como2 y puesto los alquileres base que tenías en el switch.
 
+    // cargamos los datos
         return switch (nombre) {
             case "Solar1" -> new Solar(nombre, pos, banca, 600000, 500000, 100000, 20000, 400000, 2500000, 500000);
             case "Solar2" -> new Solar(nombre, pos, banca, 600000, 500000, 100000, 40000, 800000, 4500000, 900000);

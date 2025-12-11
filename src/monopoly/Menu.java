@@ -70,7 +70,7 @@ public class Menu {
                 String s1 = resto.substring(0, mas);
                 String s2 = resto.substring(mas + 1);
                 try {
-                    int d1 = Integer.parseInt(s1);
+                    int d1 = Integer.parseInt(s1); //transformamos texto en numeros enteros
                     int d2 = Integer.parseInt(s2);
                     juego.lanzarDadosForzado(d1, d2);
                     return;
@@ -117,7 +117,7 @@ public class Menu {
 
         // describir <Casilla>
         if (comando.startsWith("describir ")) {
-            // si más adelante añades 'describir jugador ...', ese tendrá su propio if antes
+
             String nombreCasilla = comando.substring("describir ".length());
             juego.descCasilla(nombreCasilla);
             return;
@@ -205,7 +205,7 @@ public class Menu {
             return;
         }
 
-        if (comando.startsWith("aceptar trato")) { // ej: aceptar trato trato1
+        if (comando.startsWith("aceptar trato")) {
             String id = comando.substring("aceptar".length()).trim();
             juego.aceptarTrato(id);
             return;
@@ -230,9 +230,9 @@ public class Menu {
 
         while (true) {
             String linea = Juego.consola.leer("> ");
-            //Juego.consola.imprimir("> ");
+
             if (linea == null) break;
-            linea = linea.trim();
+            linea = linea.trim(); //quitamos espacios en blanco
             if (linea.isEmpty()) continue;
             if (linea.equalsIgnoreCase("salir")) {
                 Juego.consola.imprimir("¡Hasta luego!");

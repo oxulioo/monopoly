@@ -65,7 +65,7 @@ public class Juego implements Comando {
         dado1 = new Dado();
         dado2 = new Dado();
         tablero = new Tablero(this.banca);
-        this.baraja = new Baraja(); // <-- Reiniciar baraja al iniciar nueva monopoly.partida
+        this.baraja = new Baraja(); //Reiniciamos baraja
       //  this.baraja.barajar();
     }
 
@@ -116,7 +116,7 @@ public class Juego implements Comando {
             throw new AccionInvalidaException("Uso: describir jugador <Nombre>");
         }
         if (!hayJugadores()) {
-            return;
+            throw new AccionInvalidaException("No hay jugadores");
         }
 
         Jugador j = null;
@@ -151,8 +151,8 @@ public class Juego implements Comando {
             StringBuilder sb = new StringBuilder();
             int added = 0;
             for (Casilla c : auxProps) {
-                // CORRECCIÓN: Check propiedad
-                if (c instanceof Propiedad && ((Propiedad) c).gethipotecada() == 0) {
+
+                if (c instanceof Propiedad && ((Propiedad) c).gethipotecada() == 0) { //instancia de propiedad y no hipotecada
                     if (added++ > 0) sb.append(", ");
                     sb.append(c.getNombre());
                 }
@@ -166,8 +166,8 @@ public class Juego implements Comando {
             StringBuilder sb = new StringBuilder();
             int added = 0;
             for (Casilla c : auxHip) {
-                // CORRECCIÓN: Check propiedad
-                if (c instanceof Propiedad && ((Propiedad) c).gethipotecada() == 1) {
+
+                if (c instanceof Propiedad && ((Propiedad) c).gethipotecada() == 1) { //instancia de propiedad e hipotecada
                     if (added++ > 0) sb.append(", ");
                     sb.append(c.getNombre());
                 }
@@ -198,14 +198,9 @@ public class Juego implements Comando {
             for (int i = 0; i < eds.size(); i++) {
                 Edificio e = eds.get(i);
 
-                // CORRECCIÓN: Usamos directamente el ID real (ej: "casa-1")
-                // en lugar de fabricar uno falso con el mapa vacío.
                 sb.append(e.getId());
 
-                // Si quieres que salga "casa 1" en vez de "casa-1", puedes usar:
-                // sb.append(e.getId().replace("-", " "));
-
-                if (i < eds.size() - 1) sb.append(", ");
+                if (i < eds.size() - 1) sb.append(", "); //numero de iteraciones menor que el total, ponemos una coma
             }
             edificiosLista = sb.toString();
         }
@@ -263,7 +258,7 @@ public class Juego implements Comando {
             throw new AccionInvalidaException ("No existe la casilla con ese nombre");
 
         }
-        // Casilla.toString() ya hace lo correcto en las hijas
+        // Casilla.toString() ya hace lo correcto en las hijas, metodo implementado en las hijas
         Juego.consola.imprimir(c.toString());
     }
 
@@ -284,13 +279,14 @@ public class Juego implements Comando {
         for (Casilla c : props) {
             if (c instanceof Propiedad p) {
                 p.setDueno(banca);
-                p.sethipotecada(0);
+                p.sethipotecada(0); //si tenia hopotecadas, las deshipotecamos para poner como nuevo dueño la banca
                 if (p instanceof Solar s) {
                     java.util.List<Edificio> listaEdificios = new ArrayList<>(s.getEdificios());
                     for (Edificio ed : listaEdificios) {
 
                         s.eliminarEdificio(ed);
                     }
+                    //Sacamos todos sus edificios
                     s.setNumCasas(0);
                     s.setNumHoteles(0);
                     s.setNumPiscinas(0);
@@ -298,8 +294,8 @@ public class Juego implements Comando {
                 }
             }
         }
-        deudor.getPropiedades().clear();
-        jugadores.remove(deudor);
+        deudor.getPropiedades().clear(); //sin propiedades
+        jugadores.remove(deudor); //eliminamos de la partida
         if (turno >= jugadores.size()) {
             turno = 0;
         }
@@ -357,11 +353,11 @@ public class Juego implements Comando {
             Casilla c = a.getPosicion();
 
 
-            if (c instanceof IrCarcel) {
+            if (c instanceof IrCarcel) { //si de es la casilla de ir a la carcel
                actual.encarcelar();
             }
             if (c != null) {
-               try{ c.evaluarCasilla(actual, this, suma);
+               try{ c.evaluarCasilla(actual, this, suma); //acccion de la casilla
                } catch (SaldoInsuficienteException e){
                    throw new SaldoInsuficienteException(actual.getNombre(), suma-actual.getFortuna(), 1);
                }
@@ -375,16 +371,15 @@ public class Juego implements Comando {
         }
     }
 
-    public void lanzarDadosForzado(int d1, int d2) throws MonopolyEtseException {
-        // ... (misma lógica de cast en movimiento, resumida)
+    public void lanzarDadosForzado(int d1, int d2) throws MonopolyEtseException {)
         if (!hayJugadores()) {
-            return;
+           throw new AccionInvalidaException("No hay jugadores");
         }
         if (turno < 0) turno = 0;
         if (turno >= jugadores.size()) turno = turno % jugadores.size();
         Jugador actual = jugadores.get(turno);
 
-        // ... lógica de cárcel igual ...
+
         int suma = d1 + d2;
         boolean esDoble = (d1 == d2);
 
@@ -434,7 +429,7 @@ public class Juego implements Comando {
 
         }
 
-        // CORRECCIÓN: Check Propiedad
+
         if (!(cas instanceof Propiedad prop)) {
             throw new AccionInvalidaException("Solo se puede comprar propiedades.");
         }
@@ -445,7 +440,7 @@ public class Juego implements Comando {
         }
 
         Jugador propietario = prop.getDueno();
-        if (propietario != null && propietario != this.getBanca()) {
+        if (propietario != null && propietario != this.getBanca()) { //miramos que no tenga dueño
             throw new AccionInvalidaException("Esta propiedad no esta en venta."+ prop.getDueno());
         }
 
@@ -487,7 +482,7 @@ public class Juego implements Comando {
     }
 
     public void listarVenta() {
-        // 1. Buscar todas las propiedades que pertenecen a la Banca
+        // Buscamos todas las propiedades que pertenecen a la Banca
         ArrayList<Propiedad> enVenta = new ArrayList<>();
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
             for (Casilla c : lado) {
@@ -498,25 +493,25 @@ public class Juego implements Comando {
             }
         }
 
-        // 2. Construir la salida con el formato del PDF
-        if (enVenta.isEmpty()) {
+
+        if (enVenta.isEmpty()) { // vacio
             Juego.consola.imprimir("No hay propiedades en venta.");
             return;
         }
 
         StringBuilder sb = new StringBuilder();
 
-        // Iteramos para imprimir cada una con el formato { ... }, { ... }
+
         for (int i = 0; i < enVenta.size(); i++) {
             Propiedad p = enVenta.get(i);
 
             sb.append("{\n");
-            // Aunque el PDF a veces omite el nombre en el ejemplo, es fundamental para comprar:
+
             sb.append("nombre: ").append(p.getNombre()).append(",\n");
             sb.append("tipo: ").append(p.getTipo().toLowerCase()).append(",\n");
 
             // Solo los Solares tienen Grupo
-            if (p instanceof Solar s) {
+            if (p instanceof Solar s) { //si es un solar::
                 String color = (s.getGrupo() != null) ? s.getGrupo().getColorGrupo() : "-";
                 sb.append("grupo: ").append(color).append(",\n");
             }
@@ -577,7 +572,7 @@ public class Juego implements Comando {
 
         Jugador actual = jugadores.get(turno);
 
-        if (actual.getFortuna() < 0) {
+        if (actual.getFortuna() < 0) { //si esta en numeros rojos
             throw new BancarrotaException("SU TURNO HA TERMINADO CON SALDO INSUFICIENTE, POR LO TANTO, SERÁ DECLARADO EN BANCARROTA");
         } else {
 
@@ -597,7 +592,9 @@ public class Juego implements Comando {
     }
 
     public void enviarACarcel(Jugador j) throws MonopolyEtseException{
-        if (j == null || tablero == null) return;
+        if (j == null || tablero == null) {
+            throw new AccionInvalidaException("No hay jugador")
+        }
         Casilla carcel = tablero.encontrar_casilla("Cárcel");
         j.encarcelar();
         Avatar a = j.getAvatar();
@@ -607,29 +604,31 @@ public class Juego implements Comando {
         }
     }
 
-    // --- EDIFICACIÓN (Requiere casteo a Solar) ---
 
-    // --- MÉTODO AUXILIAR PARA VALIDACIONES COMUNES ---
+
+
     private Solar obtenerSolarEdificable(Jugador actual) throws EdificacionNoPermitidaException {
         Casilla pos = actual.getAvatar().getPosicion();
 
-        // Regla: En cada casilla de solar se pueden construir edificios
-        if (!(pos instanceof Solar)) {
+
+        if (!(pos instanceof Solar)) { //si no es solar
             throw new EdificacionNoPermitidaException("Esta casilla no es un Solar.");
         }
         Solar s = (Solar) pos;
 
-        // Regla: ...si dicho solar pertenece al jugador cuyo avatar se encuentra en la casilla...
-        if (!s.getDueno().equals(actual)) {
+
+        if (!s.getDueno().equals(actual)) { //miramos que el jugador sea el dueño
             throw new EdificacionNoPermitidaException("No puedes edificar aquí, la propiedad no es tuya.");
         }
 
         return s;
     }
 
-    // --- EDIFICAR CASA ---
+
     public void edificarCasa() throws MonopolyEtseException {
-        if (!hayJugadores()) return;
+        if (!hayJugadores()) {
+            throw 
+        }
         Jugador actual = jugadores.get(turno);
         Solar s = obtenerSolarEdificable(actual);
 
