@@ -34,8 +34,8 @@ public interface Comando {
     void venderPropiedad(String tipo, String solar, int cantidad) throws MonopolyEtseException;
 
     // --- Comandos Estadísticas ---
-    void estadisticasJugador(String nombre);
-    void estadisticasJuego();
+    void estadisticasJugador(String nombre) throws MonopolyEtseException;
+    void estadisticasJuego() throws MonopolyEtseException;
 
     // --- Comandos Tratos ---
     void proponerTrato(String comando) throws MonopolyEtseException;
